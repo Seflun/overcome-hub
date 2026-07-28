@@ -59,9 +59,9 @@ function Settings() {
         </div>
 
         <div className="mt-6 space-y-2">
-          <Row to="/journal" icon={BookHeart} label="Journal & mood" premium={!state.isPremium} />
+          <Row to="/journal" icon={BookHeart} label="Journal & mood" />
           <Row to="/insights" icon={LineChart} label="Health & money insights" premium={!state.isPremium} />
-          <Row to="/reminders" icon={Bell} label="Reminders" premium={!state.isPremium} />
+          <Row to="/reminders" icon={Bell} label="Reminders" />
           <Row to="/sos" icon={ShieldAlert} label="Craving SOS toolkit" />
         </div>
 
