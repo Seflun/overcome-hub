@@ -261,7 +261,7 @@ function JournalInner() {
                           <div className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-primary">
                             <Sparkles className="h-3 w-3" /> Coach review
                           </div>
-                          <div className="whitespace-pre-wrap text-xs leading-relaxed">{e.aiReview}</div>
+                          <AiMessage text={e.aiReview} className="text-xs leading-relaxed" />
                         </div>
                       )}
                       {e.aiReviewStatus === "error" && e.aiReview && (
