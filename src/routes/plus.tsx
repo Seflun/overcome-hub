@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
+import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download, X } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
-import { usePaddleCheckout } from "../hooks/usePaddleCheckout";
+import { useStripeCheckout } from "../hooks/useStripeCheckout";
 
 export const Route = createFileRoute("/plus")({
   head: () => ({
@@ -30,12 +30,12 @@ const FEATURES = [
 function Plus() {
   const { state, userId, userEmail } = useStore();
   const navigate = useNavigate();
-  const { openCheckout, loading } = usePaddleCheckout();
+  const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
 
   const isPremium = state.isPremium;
 
-  const buy = async (plan: "monthly" | "yearly") => {
+  const buy = (plan: "monthly" | "yearly") => {
     if (!userId) {
       toast("Sign in to subscribe");
       navigate({ to: "/auth" });
@@ -43,11 +43,11 @@ function Plus() {
     }
     setBusy(plan);
     try {
-      await openCheckout({
+      openCheckout({
         priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
         customerEmail: userEmail ?? undefined,
-        customData: { userId },
-        successUrl: `${window.location.origin}/checkout/success`,
+        userId,
+        returnUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       });
     } catch (e: any) {
       console.error(e);
