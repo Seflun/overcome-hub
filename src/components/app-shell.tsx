@@ -10,7 +10,7 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { to: "/", label: "Today", icon: Home },
-  { to: "/coach", label: "AI Coach", icon: Sparkles },
+  { to: "/coach", label: "Coach", icon: Sparkles },
   { to: "/sos", label: "SOS", icon: ShieldAlert },
   { to: "/journal", label: "Journal", icon: BookHeart },
   { to: "/explore", label: "Explore", icon: Compass },

@@ -19,6 +19,8 @@ export interface JournalEntry {
   mood: 1 | 2 | 3 | 4 | 5;
   trigger?: string;
   note?: string;
+  aiReview?: string;
+  aiReviewStatus?: "pending" | "done" | "error";
 }
 
 export interface Reminder {
@@ -43,11 +45,16 @@ export interface AppState {
   reminders: Reminder[];
   sos: SosSession[];
   coachCredits: number;
+  coachStreak: number;
+  lastCoachRefill: string | null;
+  aiReviewEnabled: boolean;
 }
 
 const KEY = "reclaim.state.v2";
 
 export const FREE_COACH_CREDITS = 25;
+export const COACH_STREAK_SCHEDULE = [5, 8, 13, 20, 30, 45, 60, 75];
+export const COACH_STREAK_MAX = 75;
 
 const empty: AppState = {
   journeys: [],
@@ -57,6 +64,9 @@ const empty: AppState = {
   reminders: [],
   sos: [],
   coachCredits: FREE_COACH_CREDITS,
+  coachStreak: 0,
+  lastCoachRefill: null,
+  aiReviewEnabled: false,
 };
 
 export const FREE_JOURNEY_LIMIT = 2;
@@ -74,7 +84,9 @@ interface Ctx {
   resetStreak: (journeyId: string) => void;
   setCostPerDay: (journeyId: string, cost: number) => void;
   setPremium: (v: boolean) => void;
-  addJournal: (e: Omit<JournalEntry, "id" | "createdAt">) => void;
+  addJournal: (e: Omit<JournalEntry, "id" | "createdAt">) => string;
+  updateJournalReview: (id: string, review: string, status: "done" | "error") => void;
+  setAiReviewEnabled: (v: boolean) => void;
   addReminder: (r: Omit<Reminder, "id">) => void;
   toggleReminder: (id: string) => void;
   removeReminder: (id: string) => void;
@@ -112,6 +124,23 @@ function loadLocal(): AppState {
   }
 }
 
+function applyDailyCoachRefill(s: AppState): AppState {
+  if (s.isPremium) return s;
+  const today = todayKey();
+  if (s.lastCoachRefill === today) return s;
+  if (!s.lastCoachRefill) {
+    // First-time free user — keep welcome bonus, stamp today
+    return { ...s, lastCoachRefill: today };
+  }
+  const prev = new Date(s.lastCoachRefill + "T00:00:00");
+  const now = new Date(today + "T00:00:00");
+  const diffDays = Math.round((now.getTime() - prev.getTime()) / 86400000);
+  if (diffDays <= 0) return { ...s, lastCoachRefill: today };
+  const streak = diffDays === 1 ? s.coachStreak + 1 : 1;
+  const daily = COACH_STREAK_SCHEDULE[Math.min(streak - 1, COACH_STREAK_SCHEDULE.length - 1)];
+  return { ...s, coachStreak: streak, coachCredits: daily, lastCoachRefill: today };
+}
+
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(empty);
   const [hydrated, setHydrated] = useState(false);
@@ -123,7 +152,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Initial local load + auth listener
   useEffect(() => {
-    setState(loadLocal());
+    setState(applyDailyCoachRefill(loadLocal()));
     setHydrated(true);
 
     const applySession = async (uid: string | null, email: string | null) => {
@@ -139,9 +168,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (data?.data && Object.keys(data.data as object).length > 0) {
           skipNextSave.current = true;
-          setState(migrate({ ...empty, ...(data.data as unknown as AppState) }));
+          setState(applyDailyCoachRefill(migrate({ ...empty, ...(data.data as unknown as AppState) })));
         } else {
-          // First sign-in: push whatever the user has locally up to the cloud
           const local = loadLocal();
           await supabase.from("user_state").upsert({ user_id: uid, data: local as any });
         }
@@ -190,7 +218,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     userEmail,
     syncing,
     signOut: async () => {
-      // Flush any pending debounced save so latest state is in the cloud before sign-out
       if (saveTimer.current) {
         clearTimeout(saveTimer.current);
         saveTimer.current = null;
@@ -277,14 +304,25 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         journeys: s.journeys.map((j) => (j.id === journeyId ? { ...j, costPerDay: cost } : j)),
       })),
     setPremium: (v) => setState((s) => ({ ...s, isPremium: v })),
-    addJournal: (e) =>
+    addJournal: (e) => {
+      const id = `jr-${Date.now()}`;
       setState((s) => ({
         ...s,
         journal: [
-          { ...e, id: `jr-${Date.now()}`, createdAt: new Date().toISOString() },
+          { ...e, id, createdAt: new Date().toISOString() },
           ...s.journal,
         ].slice(0, 500),
+      }));
+      return id;
+    },
+    updateJournalReview: (id, review, status) =>
+      setState((s) => ({
+        ...s,
+        journal: s.journal.map((j) =>
+          j.id === id ? { ...j, aiReview: review, aiReviewStatus: status } : j,
+        ),
       })),
+    setAiReviewEnabled: (v) => setState((s) => ({ ...s, aiReviewEnabled: v })),
     addReminder: (r) =>
       setState((s) => ({
         ...s,
