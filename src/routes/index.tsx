@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw } from "lucide-react";
+import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
@@ -80,21 +80,26 @@ function Today() {
 }
 
 function Header() {
-  const { totalXp } = useStore();
+  const { totalXp, state } = useStore();
   const { level } = levelFromXp(totalXp);
   return (
     <div className="mb-6 flex items-center justify-between">
       <div>
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Reclaim
+          Reclaim{state.isPremium && <span className="ml-1 text-primary">+</span>}
         </div>
         <h1 className="mt-1 text-3xl font-black tracking-tight">
           Today's <span className="text-aurora">plan</span>
         </h1>
       </div>
-      <div className="rounded-full border border-border/60 bg-card/70 px-3 py-1.5 text-xs font-semibold">
-        <span className="text-muted-foreground">LVL</span>{" "}
-        <span className="text-primary">{level}</span>
+      <div className="flex items-center gap-2">
+        <div className="rounded-full border border-border/60 bg-card/70 px-3 py-1.5 text-xs font-semibold">
+          <span className="text-muted-foreground">LVL</span>{" "}
+          <span className="text-primary">{level}</span>
+        </div>
+        <Link to="/settings" className="rounded-full border border-border/60 bg-card/70 p-2 text-muted-foreground">
+          <Settings className="h-4 w-4" />
+        </Link>
       </div>
     </div>
   );

@@ -9,13 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SosRouteImport } from './routes/sos'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RemindersRouteImport } from './routes/reminders'
 import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as PlusRouteImport } from './routes/plus'
+import { Route as JournalRouteImport } from './routes/journal'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SosRoute = SosRouteImport.update({
+  id: '/sos',
+  path: '/sos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RemindersRoute = RemindersRouteImport.update({
+  id: '/reminders',
+  path: '/reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlusRoute = PlusRouteImport.update({
+  id: '/plus',
+  path: '/plus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -32,40 +68,134 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
+  '/plus': typeof PlusRoute
   '/progress': typeof ProgressRoute
+  '/reminders': typeof RemindersRoute
+  '/settings': typeof SettingsRoute
+  '/sos': typeof SosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
+  '/plus': typeof PlusRoute
   '/progress': typeof ProgressRoute
+  '/reminders': typeof RemindersRoute
+  '/settings': typeof SettingsRoute
+  '/sos': typeof SosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
+  '/plus': typeof PlusRoute
   '/progress': typeof ProgressRoute
+  '/reminders': typeof RemindersRoute
+  '/settings': typeof SettingsRoute
+  '/sos': typeof SosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/explore' | '/progress'
+  fullPaths:
+    | '/'
+    | '/explore'
+    | '/insights'
+    | '/journal'
+    | '/plus'
+    | '/progress'
+    | '/reminders'
+    | '/settings'
+    | '/sos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/progress'
-  id: '__root__' | '/' | '/explore' | '/progress'
+  to:
+    | '/'
+    | '/explore'
+    | '/insights'
+    | '/journal'
+    | '/plus'
+    | '/progress'
+    | '/reminders'
+    | '/settings'
+    | '/sos'
+  id:
+    | '__root__'
+    | '/'
+    | '/explore'
+    | '/insights'
+    | '/journal'
+    | '/plus'
+    | '/progress'
+    | '/reminders'
+    | '/settings'
+    | '/sos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
+  InsightsRoute: typeof InsightsRoute
+  JournalRoute: typeof JournalRoute
+  PlusRoute: typeof PlusRoute
   ProgressRoute: typeof ProgressRoute
+  RemindersRoute: typeof RemindersRoute
+  SettingsRoute: typeof SettingsRoute
+  SosRoute: typeof SosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sos': {
+      id: '/sos'
+      path: '/sos'
+      fullPath: '/sos'
+      preLoaderRoute: typeof SosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reminders': {
+      id: '/reminders'
+      path: '/reminders'
+      fullPath: '/reminders'
+      preLoaderRoute: typeof RemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progress': {
       id: '/progress'
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plus': {
+      id: '/plus'
+      path: '/plus'
+      fullPath: '/plus'
+      preLoaderRoute: typeof PlusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -88,7 +218,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
+  InsightsRoute: InsightsRoute,
+  JournalRoute: JournalRoute,
+  PlusRoute: PlusRoute,
   ProgressRoute: ProgressRoute,
+  RemindersRoute: RemindersRoute,
+  SettingsRoute: SettingsRoute,
+  SosRoute: SosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
