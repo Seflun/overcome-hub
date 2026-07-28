@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "../lib/store";
 import { Toaster } from "../components/ui/sonner";
 import { ConfirmProvider } from "../components/confirm-dialog";
+import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
 
 function NotFoundComponent() {
   return (
