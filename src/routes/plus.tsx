@@ -165,6 +165,21 @@ function Plus() {
           </ul>
         </div>
       </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 backdrop-blur-sm p-4">
+          <div className="relative my-6 w-full max-w-2xl rounded-2xl border border-border/60 bg-card shadow-2xl">
+            <button
+              onClick={closeCheckout}
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
+              aria-label="Close checkout"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="p-4 pt-10">{checkoutElement}</div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
