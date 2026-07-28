@@ -125,7 +125,7 @@ function Coach() {
                     : "bg-background/60 text-foreground"
                 }`}
               >
-                {m.content}
+                {m.role === "assistant" ? renderInlineMarkdown(m.content) : m.content}
               </div>
               {m.role === "user" && (
                 <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
