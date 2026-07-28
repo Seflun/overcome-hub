@@ -104,7 +104,7 @@ function Coach() {
         <div className="mb-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach · AI Coach</div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach</div>
               <h1 className="mt-1 text-3xl font-black tracking-tight">
                 Talk it <span className="text-aurora">out</span>
               </h1>
