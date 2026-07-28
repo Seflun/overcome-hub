@@ -22,6 +22,7 @@ export const Route = createFileRoute("/explore")({
 function Explore() {
   const { state, startJourney, removeJourney } = useStore();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const activeMap = new Map(state.journeys.map((j) => [j.category, j.id] as const));
   const atLimit = !state.isPremium && state.journeys.length >= FREE_JOURNEY_LIMIT;
 
