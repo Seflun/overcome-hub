@@ -66,8 +66,8 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">8. Subscriptions, payments, and refunds</h2>
-            <p>Paid plans are sold and fulfilled by our reseller Paddle. <strong>Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns.</strong></p>
-            <p>Payment, billing, tax, cancellation, and refund mechanics are governed by Paddle's <a className="underline" href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noreferrer">Buyer Terms</a>. See our <Link to="/refund" className="underline">Refund Policy</Link> for our position on refunds.</p>
+            <p>Paid plans are billed by Addiction Breaker and processed by our payment provider, Stripe. Applicable taxes are calculated and collected at checkout.</p>
+            <p>By subscribing, you authorize recurring charges to your payment method until you cancel. You can cancel at any time from your account page. See our <Link to="/refund" className="underline">Refund Policy</Link> for our position on refunds.</p>
           </section>
 
           <section>
