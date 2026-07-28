@@ -102,10 +102,23 @@ function Coach() {
     <AppShell>
       <div className="flex h-[calc(100dvh-7rem)] flex-col px-5 pt-6">
         <div className="mb-3">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach</div>
-          <h1 className="mt-1 text-3xl font-black tracking-tight">
-            Talk it <span className="text-aurora">out</span>
-          </h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach · AI Coach</div>
+              <h1 className="mt-1 text-3xl font-black tracking-tight">
+                Talk it <span className="text-aurora">out</span>
+              </h1>
+            </div>
+            <div className="shrink-0 rounded-full border border-border/60 bg-card/70 px-3 py-1 text-[11px] font-semibold">
+              {state.isPremium ? (
+                <span className="text-primary">Unlimited</span>
+              ) : (
+                <span className={outOfCredits ? "text-destructive" : "text-muted-foreground"}>
+                  {state.coachCredits}/25 credits
+                </span>
+              )}
+            </div>
+          </div>
           <p className="mt-2 text-xs text-muted-foreground">
             AI companion, not a therapist. In a crisis, contact local emergency services.
           </p>
