@@ -19,7 +19,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function Settings() {
-  const { state, exportAll, setPremium, userId, userEmail, signOut, syncing } = useStore();
+  const { state, exportAll, userId, userEmail, signOut, syncing } = useStore();
   const navigate = useNavigate();
 
   const download = () => {
@@ -118,19 +118,6 @@ function Settings() {
           </div>
         </button>
 
-        <div className="mt-8 rounded-2xl border border-dashed border-border/60 bg-card/40 p-4 text-xs text-muted-foreground">
-          <div className="font-semibold text-foreground">Demo controls</div>
-          <p className="mt-1">Payments aren't wired yet. Toggle Plus to preview the gated features.</p>
-          <button
-            onClick={() => {
-              setPremium(!state.isPremium);
-              toast(state.isPremium ? "Plus off." : "Plus on.");
-            }}
-            className="mt-3 rounded-full border border-border/60 bg-background/60 px-3 py-1.5 text-xs font-semibold"
-          >
-            {state.isPremium ? "Turn Plus OFF" : "Turn Plus ON"}
-          </button>
-        </div>
       </div>
     </AppShell>
   );
