@@ -8,6 +8,26 @@ import { daysBetween } from "../lib/addiction-data";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+function renderInlineMarkdown(text: string): React.ReactNode {
+  // Tokenize: ***bold-italic***, **bold**, *italic*, _italic_, `code`
+  const regex = /(\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*\n]+\*|_[^_\n]+_|`[^`\n]+`)/g;
+  const parts = text.split(regex);
+  return parts.map((part, i) => {
+    if (!part) return null;
+    if (part.startsWith("***") && part.endsWith("***"))
+      return <strong key={i}><em>{part.slice(3, -3)}</em></strong>;
+    if (part.startsWith("**") && part.endsWith("**"))
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("*") && part.endsWith("*"))
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    if (part.startsWith("_") && part.endsWith("_"))
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    if (part.startsWith("`") && part.endsWith("`"))
+      return <code key={i} className="rounded bg-muted px-1 py-0.5 text-[0.85em]">{part.slice(1, -1)}</code>;
+    return <span key={i}>{part}</span>;
+  });
+}
+
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
