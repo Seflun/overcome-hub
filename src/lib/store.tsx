@@ -190,6 +190,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     userEmail,
     syncing,
     signOut: async () => {
+      // Flush any pending debounced save so latest state is in the cloud before sign-out
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+      }
+      if (userId) {
+        try {
+          await supabase.from("user_state").upsert({ user_id: userId, data: state as any });
+        } catch {}
+      }
       await supabase.auth.signOut();
       setUserId(null);
       setUserEmail(null);
