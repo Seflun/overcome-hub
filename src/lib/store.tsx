@@ -64,6 +64,7 @@ interface Ctx {
   state: AppState;
   startJourney: (category: CategoryId) => { id: string | null; blocked?: "premium" };
   setActive: (id: string) => void;
+  removeJourney: (id: string) => void;
   toggleTask: (journeyId: string, taskId: string, xp: number) => void;
   resetStreak: (journeyId: string) => void;
   setCostPerDay: (journeyId: string, cost: number) => void;
@@ -73,6 +74,7 @@ interface Ctx {
   toggleReminder: (id: string) => void;
   removeReminder: (id: string) => void;
   logSos: (tool: string, survived: boolean) => void;
+  useCoachCredit: () => boolean;
   exportAll: () => string;
   totalXp: number;
 }
