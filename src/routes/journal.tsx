@@ -39,16 +39,11 @@ function Journal() {
           The <span className="text-aurora">pattern</span> is the point.
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Log a craving, a mood, or what triggered you. Addiction Blocker+ shows you the patterns behind your slips.
+          Log a craving, a mood, or what triggered you. Spot the patterns behind your slips.
         </p>
 
         <div className="mt-6">
-          <PremiumGate
-            title="Journaling is a Plus feature"
-            blurb="Log moods, triggers and notes — see when and why cravings hit hardest."
-          >
-            <JournalInner />
-          </PremiumGate>
+          <JournalInner />
         </div>
       </div>
     </AppShell>
