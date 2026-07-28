@@ -18,6 +18,7 @@ import { Route as JournalRouteImport } from './routes/journal'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CoachRouteImport } from './routes/coach'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
@@ -66,6 +67,11 @@ const CoachRoute = CoachRouteImport.update({
   path: '/coach',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,6 +85,7 @@ const ApiChatRoute = ApiChatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/coach': typeof CoachRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/coach': typeof CoachRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/coach': typeof CoachRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/coach'
     | '/explore'
     | '/insights'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/coach'
     | '/explore'
     | '/insights'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/coach'
     | '/explore'
     | '/insights'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   CoachRoute: typeof CoachRoute
   ExploreRoute: typeof ExploreRoute
   InsightsRoute: typeof InsightsRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoachRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   CoachRoute: CoachRoute,
   ExploreRoute: ExploreRoute,
   InsightsRoute: InsightsRoute,
