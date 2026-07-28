@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, BookHeart, LineChart, Bell, Download } from "lucide-react";
+import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
@@ -8,9 +8,9 @@ import { useStore } from "../lib/store";
 export const Route = createFileRoute("/plus")({
   head: () => ({
     meta: [
-      { title: "Reclaim+ — Go deeper" },
+      { title: "Addiction Blocker+ — Go deeper" },
       { name: "description", content: "Unlock unlimited journeys, the craving SOS toolkit, journaling, insights and custom reminders." },
-      { property: "og:title", content: "Reclaim+ — Go deeper" },
+      { property: "og:title", content: "Addiction Blocker+ — Go deeper" },
       { property: "og:description", content: "Deeper recovery tools: SOS toolkit, journaling, insights, reminders." },
     ],
   }),
@@ -18,11 +18,10 @@ export const Route = createFileRoute("/plus")({
 });
 
 const FEATURES = [
-  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than one loop at once — vaping + gambling, alcohol + sugar, whatever you need." },
-  { icon: ShieldAlert,   title: "Craving SOS toolkit",    blurb: "Panic button, guided breathing, urge-surf timer, and a 3-minute science-backed protocol." },
-  { icon: BookHeart,     title: "Journaling & mood",      blurb: "Log cravings and mood — see patterns like 'you slip most on Friday evenings'." },
+  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than 2 loops at once — vaping + gambling + alcohol, whatever you need." },
+  { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes 25 chats total." },
+  { icon: ShieldAlert,   title: "3-minute SOS protocol",  blurb: "Guided science-backed protocol: cold water → move → ground → reach out." },
   { icon: LineChart,     title: "Health & money insights", blurb: "Watch your lungs recover, dollars saved, and personal milestones stack up." },
-  { icon: Bell,          title: "Custom reminders",       blurb: "Smart nudges at your trigger times — not spammy, actually useful." },
   { icon: Download,      title: "Export your progress",   blurb: "For your therapist, doctor, or your own future self." },
 ];
 
@@ -44,13 +43,13 @@ function Plus() {
 
         <div className="rounded-3xl border border-primary/40 bg-card-grad p-6 shadow-glow">
           <div className="inline-flex items-center gap-1 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-            <Sparkles className="h-3 w-3" /> Reclaim+
+            <Sparkles className="h-3 w-3" /> Addiction Blocker+
           </div>
           <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight">
             Go <span className="text-aurora">deeper</span> into your recovery.
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Reclaim's core — streaks, XP, daily missions, slip resets — stays free forever. Reclaim+ adds the tools that make the hard moments survivable.
+            Addiction Blocker's core — streaks, XP, daily missions, slip resets — stays free forever. Addiction Blocker+ adds the tools that make the hard moments survivable.
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
@@ -79,10 +78,10 @@ function Plus() {
             onClick={() => {
               if (isPremium) {
                 setPremium(false);
-                toast("Reclaim+ turned off. Core stays free.");
+                toast("Addiction Blocker+ turned off. Core stays free.");
               } else {
                 setPremium(true);
-                toast.success("Welcome to Reclaim+ 🎉");
+                toast.success("Welcome to Addiction Blocker+ 🎉");
                 navigate({ to: "/" });
               }
             }}

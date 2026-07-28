@@ -11,9 +11,9 @@ import { Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/sos")({
   head: () => ({
     meta: [
-      { title: "Craving SOS — Reclaim" },
+      { title: "Craving SOS — Addiction Blocker" },
       { name: "description", content: "Panic button, guided breathing and urge-surf timer for cravings in the moment." },
-      { property: "og:title", content: "Craving SOS — Reclaim" },
+      { property: "og:title", content: "Craving SOS — Addiction Blocker" },
       { property: "og:description", content: "Survive the craving. 3-minute science-backed protocol." },
     ],
   }),
@@ -56,9 +56,8 @@ function Sos() {
             active={tool === "urge"}
             onClick={() => setTool(tool === "urge" ? null : "urge")}
             icon={Waves}
-            premium={!state.isPremium}
           />
-          {tool === "urge" && state.isPremium && (
+          {tool === "urge" && (
             <UrgeSurf onDone={() => logSos("urge", true)} />
           )}
 
@@ -81,8 +80,8 @@ function Sos() {
             className="mt-6 block rounded-2xl border border-primary/40 bg-aurora/10 p-4 text-center"
           >
             <div className="text-xs font-bold uppercase tracking-widest text-primary">Unlock the full toolkit</div>
-            <div className="mt-1 text-sm font-semibold">Urge surf timer + guided SOS protocol</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">With Reclaim+</div>
+            <div className="mt-1 text-sm font-semibold">Guided 3-minute SOS protocol</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">With Addiction Blocker+</div>
           </Link>
         )}
 

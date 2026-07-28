@@ -31,9 +31,9 @@ function renderInlineMarkdown(text: string): React.ReactNode {
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
-      { title: "Coach — Reclaim" },
+      { title: "Coach — Addiction Blocker" },
       { name: "description", content: "Talk to an AI companion trained to help you ride out cravings and rebuild habits. Not a therapist." },
-      { property: "og:title", content: "Coach — Reclaim" },
+      { property: "og:title", content: "Coach — Addiction Blocker" },
       { property: "og:description", content: "An AI companion for the tough moments in recovery." },
     ],
   }),
@@ -48,7 +48,7 @@ const STARTERS = [
 ];
 
 function Coach() {
-  const { state } = useStore();
+  const { state, useCoachCredit } = useStore();
   const active = state.journeys.find((j) => j.id === state.activeId) ?? state.journeys[0];
   const meta = useCategoryMeta(active?.category);
   const days = active ? daysBetween(active.startedAt) : 0;
@@ -59,6 +59,9 @@ function Coach() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const creditsLeft = state.isPremium ? Infinity : state.coachCredits;
+  const outOfCredits = !state.isPremium && state.coachCredits <= 0;
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
@@ -66,6 +69,10 @@ function Coach() {
   async function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
+    if (!useCoachCredit()) {
+      setError("You're out of free Coach credits. Upgrade to Addiction Blocker+ for unlimited chats.");
+      return;
+    }
     setError(null);
     const next: Msg[] = [...messages, { role: "user", content: trimmed }];
     setMessages(next);
@@ -95,10 +102,23 @@ function Coach() {
     <AppShell>
       <div className="flex h-[calc(100dvh-7rem)] flex-col px-5 pt-6">
         <div className="mb-3">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach</div>
-          <h1 className="mt-1 text-3xl font-black tracking-tight">
-            Talk it <span className="text-aurora">out</span>
-          </h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach · AI Coach</div>
+              <h1 className="mt-1 text-3xl font-black tracking-tight">
+                Talk it <span className="text-aurora">out</span>
+              </h1>
+            </div>
+            <div className="shrink-0 rounded-full border border-border/60 bg-card/70 px-3 py-1 text-[11px] font-semibold">
+              {state.isPremium ? (
+                <span className="text-primary">Unlimited</span>
+              ) : (
+                <span className={outOfCredits ? "text-destructive" : "text-muted-foreground"}>
+                  {state.coachCredits}/25 credits
+                </span>
+              )}
+            </div>
+          </div>
           <p className="mt-2 text-xs text-muted-foreground">
             AI companion, not a therapist. In a crisis, contact local emergency services.
           </p>
@@ -168,27 +188,42 @@ function Coach() {
           )}
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            send(input);
-          }}
-          className="mt-3 flex items-center gap-2"
-        >
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Tell me what's going on…"
-            className="flex-1 rounded-full border border-border/60 bg-card/70 px-4 py-2.5 text-sm outline-none focus:border-primary/60"
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-50"
+        {outOfCredits ? (
+          <a
+            href="/plus"
+            className="mt-3 block rounded-full bg-aurora px-5 py-3 text-center text-sm font-bold text-primary-foreground shadow-glow"
           >
-            <Send className="h-4 w-4" />
-          </button>
-        </form>
+            Out of Coach credits — Unlock unlimited with Plus
+          </a>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              send(input);
+            }}
+            className="mt-3 flex items-center gap-2"
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Tell me what's going on…"
+              className="flex-1 rounded-full border border-border/60 bg-card/70 px-4 py-2.5 text-sm outline-none focus:border-primary/60"
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-50"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
+        )}
+        {!state.isPremium && !outOfCredits && creditsLeft !== Infinity && state.coachCredits <= 5 && (
+          <div className="mt-2 text-center text-[11px] text-muted-foreground">
+            {state.coachCredits} free Coach credits left ·{" "}
+            <a href="/plus" className="text-primary underline">Go unlimited</a>
+          </div>
+        )}
       </div>
     </AppShell>
   );

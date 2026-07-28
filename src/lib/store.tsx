@@ -41,9 +41,12 @@ export interface AppState {
   journal: JournalEntry[];
   reminders: Reminder[];
   sos: SosSession[];
+  coachCredits: number;
 }
 
 const KEY = "reclaim.state.v2";
+
+export const FREE_COACH_CREDITS = 25;
 
 const empty: AppState = {
   journeys: [],
@@ -52,14 +55,16 @@ const empty: AppState = {
   journal: [],
   reminders: [],
   sos: [],
+  coachCredits: FREE_COACH_CREDITS,
 };
 
-export const FREE_JOURNEY_LIMIT = 1;
+export const FREE_JOURNEY_LIMIT = 2;
 
 interface Ctx {
   state: AppState;
   startJourney: (category: CategoryId) => { id: string | null; blocked?: "premium" };
   setActive: (id: string) => void;
+  removeJourney: (id: string) => void;
   toggleTask: (journeyId: string, taskId: string, xp: number) => void;
   resetStreak: (journeyId: string) => void;
   setCostPerDay: (journeyId: string, cost: number) => void;
@@ -69,6 +74,7 @@ interface Ctx {
   toggleReminder: (id: string) => void;
   removeReminder: (id: string) => void;
   logSos: (tool: string, survived: boolean) => void;
+  useCoachCredit: () => boolean;
   exportAll: () => string;
   totalXp: number;
 }
@@ -132,6 +138,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return { id };
     },
     setActive: (id) => setState((s) => ({ ...s, activeId: id })),
+    removeJourney: (id) =>
+      setState((s) => {
+        const journeys = s.journeys.filter((j) => j.id !== id);
+        const activeId = s.activeId === id ? (journeys[0]?.id ?? null) : s.activeId;
+        return { ...s, journeys, activeId };
+      }),
+    useCoachCredit: () => {
+      if (state.isPremium) return true;
+      if (state.coachCredits <= 0) return false;
+      setState((s) => ({ ...s, coachCredits: Math.max(0, s.coachCredits - 1) }));
+      return true;
+    },
     toggleTask: (journeyId, taskId, xp) => {
       setState((s) => {
         const key = todayKey();

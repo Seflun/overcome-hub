@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings } from "lucide-react";
+import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
@@ -15,9 +15,9 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Today — Reclaim" },
+      { title: "Today — Addiction Blocker" },
       { name: "description", content: "Your daily plan to break the addiction loop." },
-      { property: "og:title", content: "Today — Reclaim" },
+      { property: "og:title", content: "Today — Addiction Blocker" },
       { property: "og:description", content: "Daily tasks and streaks to help you quit." },
     ],
   }),
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Today() {
-  const { state, setActive, startJourney } = useStore();
+  const { state, setActive, startJourney, removeJourney } = useStore();
 
   if (state.journeys.length === 0) return <Onboarding onPick={startJourney} />;
 
@@ -38,40 +38,52 @@ function Today() {
         <Header />
         <ActiveCard journeyId={active.id} />
 
-        {state.journeys.length > 1 && (
-          <div className="mt-5">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Your journeys
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {state.journeys.map((j) => {
-                const meta = CATEGORIES.find((c) => c.id === j.category)!;
-                const isActive = j.id === active.id;
-                return (
-                  <button
-                    key={j.id}
-                    onClick={() => setActive(j.id)}
-                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${
-                      isActive
-                        ? "border-primary/60 bg-primary/10 text-foreground"
-                        : "border-border/60 bg-card/60 text-muted-foreground"
-                    }`}
-                  >
+        <div className="mt-5">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Your journeys
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {state.journeys.map((j) => {
+              const meta = CATEGORIES.find((c) => c.id === j.category)!;
+              const isActive = j.id === active.id;
+              return (
+                <div
+                  key={j.id}
+                  className={`flex shrink-0 items-center gap-2 rounded-full border py-1.5 pl-3 pr-1.5 text-sm transition ${
+                    isActive
+                      ? "border-primary/60 bg-primary/10 text-foreground"
+                      : "border-border/60 bg-card/60 text-muted-foreground"
+                  }`}
+                >
+                  <button onClick={() => setActive(j.id)} className="flex items-center gap-2">
                     <span>{meta.emoji}</span>
                     <span className="font-medium">{meta.name}</span>
                     <span className="text-xs opacity-70">{daysBetween(j.startedAt)}d</span>
                   </button>
-                );
-              })}
-              <Link
-                to="/explore"
-                className="flex shrink-0 items-center gap-1 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-sm text-muted-foreground"
-              >
-                <Plus className="h-4 w-4" /> Add
-              </Link>
-            </div>
+                  <button
+                    aria-label={`Cancel ${meta.name} journey`}
+                    onClick={() => {
+                      if (window.confirm(`Cancel your "${meta.name}" journey? Your progress on it will be removed.`)) {
+                        removeJourney(j.id);
+                        toast(`Journey removed: ${meta.name}`);
+                      }
+                    }}
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-background/60 text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              );
+            })}
+            <Link
+              to="/explore"
+              className="flex shrink-0 items-center gap-1 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-sm text-muted-foreground"
+            >
+              <Plus className="h-4 w-4" /> Add
+            </Link>
           </div>
-        )}
+        </div>
+
 
         <TaskList journeyId={active.id} />
       </div>
@@ -86,7 +98,7 @@ function Header() {
     <div className="mb-6 flex items-center justify-between">
       <div>
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Reclaim{state.isPremium && <span className="ml-1 text-primary">+</span>}
+          Addiction Blocker{state.isPremium && <span className="ml-1 text-primary">+</span>}
         </div>
         <h1 className="mt-1 text-3xl font-black tracking-tight">
           Today's <span className="text-aurora">plan</span>
@@ -192,6 +204,10 @@ function TaskList({ journeyId }: { journeyId: string }) {
             <li key={t.id}>
               <button
                 onClick={() => {
+                  const msg = isDone
+                    ? `Mark "${t.title}" as not done? You'll lose ${t.xp} XP.`
+                    : `Confirm you completed "${t.title}"? You'll earn +${t.xp} XP.`;
+                  if (!window.confirm(msg)) return;
                   toggleTask(journey.id, t.id, t.xp);
                   if (!isDone) toast.success(`+${t.xp} XP · ${t.title}`);
                 }}
@@ -237,7 +253,7 @@ function Onboarding({ onPick }: { onPick: (c: (typeof CATEGORIES)[number]["id"])
       <div className="px-5 pt-10">
         <div className="mb-8">
           <div className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-            Reclaim
+            Addiction Blocker
           </div>
           <h1 className="mt-3 text-4xl font-black leading-tight tracking-tight">
             What do you want to <span className="text-aurora">break free</span> from?

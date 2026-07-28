@@ -66,9 +66,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Reclaim — Break the loop" },
+      { title: "Addiction Blocker — Break the loop" },
       { name: "description", content: "A calm, structured recovery companion. Pick an addiction, follow a daily plan, and rebuild the version of you that's underneath." },
-      { property: "og:title", content: "Reclaim — Break the loop" },
+      { property: "og:title", content: "Addiction Blocker — Break the loop" },
       { property: "og:description", content: "Daily tasks, streaks and XP to help you quit vaping, smoking, alcohol, gambling and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

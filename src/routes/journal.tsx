@@ -4,16 +4,15 @@ import { BookHeart, Plus, TrendingDown, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
-import { PremiumGate } from "../components/premium-badge";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 
 export const Route = createFileRoute("/journal")({
   head: () => ({
     meta: [
-      { title: "Journal — Reclaim" },
+      { title: "Journal — Addiction Blocker" },
       { name: "description", content: "Log cravings, moods and triggers. See the patterns behind your slips." },
-      { property: "og:title", content: "Journal — Reclaim" },
+      { property: "og:title", content: "Journal — Addiction Blocker" },
       { property: "og:description", content: "Track mood and triggers to spot the patterns behind your slips." },
     ],
   }),
@@ -39,16 +38,11 @@ function Journal() {
           The <span className="text-aurora">pattern</span> is the point.
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Log a craving, a mood, or what triggered you. Reclaim+ shows you the patterns behind your slips.
+          Log a craving, a mood, or what triggered you. Spot the patterns behind your slips.
         </p>
 
         <div className="mt-6">
-          <PremiumGate
-            title="Journaling is a Plus feature"
-            blurb="Log moods, triggers and notes — see when and why cravings hit hardest."
-          >
-            <JournalInner />
-          </PremiumGate>
+          <JournalInner />
         </div>
       </div>
     </AppShell>

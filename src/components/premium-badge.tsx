@@ -39,7 +39,7 @@ export function PremiumGate({
             to="/plus"
             className="mt-4 inline-flex items-center gap-1 rounded-full bg-aurora px-4 py-2 text-xs font-bold text-primary-foreground shadow-glow"
           >
-            <Sparkles className="h-3.5 w-3.5" /> Unlock Reclaim+
+            <Sparkles className="h-3.5 w-3.5" /> Unlock Addiction Blocker+
           </Link>
         </div>
       </div>

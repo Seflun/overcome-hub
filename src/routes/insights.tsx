@@ -11,9 +11,9 @@ import { CATEGORIES, daysBetween, type CategoryId } from "../lib/addiction-data"
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Insights — Reclaim" },
+      { title: "Insights — Addiction Blocker" },
       { name: "description", content: "Health recovery timeline and money saved as you break the habit." },
-      { property: "og:title", content: "Insights — Reclaim" },
+      { property: "og:title", content: "Insights — Addiction Blocker" },
       { property: "og:description", content: "Watch your body recover and dollars stack up." },
     ],
   }),

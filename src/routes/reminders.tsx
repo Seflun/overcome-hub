@@ -4,15 +4,14 @@ import { Bell, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
-import { PremiumGate } from "../components/premium-badge";
 import { useStore } from "../lib/store";
 
 export const Route = createFileRoute("/reminders")({
   head: () => ({
     meta: [
-      { title: "Reminders — Reclaim" },
+      { title: "Reminders — Addiction Blocker" },
       { name: "description", content: "Smart nudges at your trigger times." },
-      { property: "og:title", content: "Reminders — Reclaim" },
+      { property: "og:title", content: "Reminders — Addiction Blocker" },
       { property: "og:description", content: "Set custom recovery reminders at the times you need them." },
     ],
   }),
@@ -40,9 +39,7 @@ function Reminders() {
           Set your own recovery reminders. Simple and quiet.
         </p>
         <div className="mt-6">
-          <PremiumGate title="Reminders are a Plus feature" blurb="Set custom check-ins at your trigger times.">
-            <RemindersInner />
-          </PremiumGate>
+          <RemindersInner />
         </div>
       </div>
     </AppShell>
