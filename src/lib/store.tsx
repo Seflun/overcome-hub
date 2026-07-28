@@ -86,16 +86,27 @@ interface Ctx {
 
 const StoreCtx = createContext<Ctx | null>(null);
 
+function migrate(s: AppState): AppState {
+  const journeys = s.journeys.map((j) => {
+    const cat = j.category as string;
+    if (cat === "smoking" || cat === "vaping") {
+      return { ...j, category: "nicotine" as CategoryId };
+    }
+    return j;
+  });
+  return { ...s, journeys };
+}
+
 function loadLocal(): AppState {
   if (typeof window === "undefined") return empty;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) {
       const legacy = localStorage.getItem("reclaim.state.v1");
-      if (legacy) return { ...empty, ...JSON.parse(legacy) };
+      if (legacy) return migrate({ ...empty, ...JSON.parse(legacy) });
       return empty;
     }
-    return { ...empty, ...(JSON.parse(raw) as AppState) };
+    return migrate({ ...empty, ...(JSON.parse(raw) as AppState) });
   } catch {
     return empty;
   }
@@ -128,7 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (data?.data && Object.keys(data.data as object).length > 0) {
           skipNextSave.current = true;
-          setState({ ...empty, ...(data.data as unknown as AppState) });
+          setState(migrate({ ...empty, ...(data.data as unknown as AppState) }));
         } else {
           // First sign-in: push whatever the user has locally up to the cloud
           const local = loadLocal();
@@ -179,6 +190,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     userEmail,
     syncing,
     signOut: async () => {
+      // Flush any pending debounced save so latest state is in the cloud before sign-out
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+      }
+      if (userId) {
+        try {
+          await supabase.from("user_state").upsert({ user_id: userId, data: state as any });
+        } catch {}
+      }
       await supabase.auth.signOut();
       setUserId(null);
       setUserEmail(null);

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/plus")({
 });
 
 const FEATURES = [
-  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than 2 loops at once — vaping + gambling + alcohol, whatever you need." },
+  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than 2 loops at once — nicotine + gambling + alcohol, whatever you need." },
   { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes 25 chats total." },
   { icon: ShieldAlert,   title: "3-minute SOS protocol",  blurb: "Guided science-backed protocol: cold water → move → ground → reach out." },
   { icon: LineChart,     title: "Health & money insights", blurb: "Watch your lungs recover, dollars saved, and personal milestones stack up." },

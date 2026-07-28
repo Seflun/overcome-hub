@@ -70,7 +70,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Addiction Blocker — Break the loop" },
       { name: "description", content: "A calm, structured recovery companion. Pick an addiction, follow a daily plan, and rebuild the version of you that's underneath." },
       { property: "og:title", content: "Addiction Blocker — Break the loop" },
-      { property: "og:description", content: "Daily tasks, streaks and XP to help you quit vaping, smoking, alcohol, gambling and more." },
+      { property: "og:description", content: "Daily tasks, streaks and XP to help you quit nicotine, alcohol, gambling, gaming and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

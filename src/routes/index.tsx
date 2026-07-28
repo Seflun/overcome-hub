@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings, X } from "lucide-react";
+import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
@@ -117,9 +117,6 @@ function Header() {
           <span className="text-muted-foreground">LVL</span>{" "}
           <span className="text-primary">{level}</span>
         </div>
-        <Link to="/settings" className="rounded-full border border-border/60 bg-card/70 p-2 text-muted-foreground">
-          <Settings className="h-4 w-4" />
-        </Link>
       </div>
     </div>
   );

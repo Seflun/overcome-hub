@@ -1,12 +1,12 @@
 export type CategoryId =
-  | "vaping"
-  | "smoking"
+  | "nicotine"
   | "alcohol"
   | "gambling"
   | "sugar"
   | "cannabis"
   | "porn"
-  | "social";
+  | "social"
+  | "gaming";
 
 
 export interface Category {
@@ -19,14 +19,14 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "vaping",   name: "Vaping",         emoji: "💨", tagline: "Reclaim your lungs and focus", color: "oklch(0.75 0.15 210)", benefit: "Lung capacity improves in 72 hours" },
-  { id: "smoking",  name: "Smoking",        emoji: "🚭", tagline: "One breath at a time",         color: "oklch(0.7 0.18 30)",   benefit: "Circulation improves in 2 weeks" },
-  { id: "alcohol",  name: "Alcohol",        emoji: "🍺", tagline: "Wake up clear again",          color: "oklch(0.78 0.17 80)",  benefit: "Sleep quality up 30% in a week" },
-  { id: "gambling", name: "Gambling",       emoji: "🎰", tagline: "Win back your peace",          color: "oklch(0.7 0.2 340)",   benefit: "Anxiety drops sharply after 21 days" },
-  { id: "sugar",    name: "Sugar",          emoji: "🍬", tagline: "Steady energy, clearer skin",  color: "oklch(0.78 0.14 20)",  benefit: "Cravings fade in ~10 days" },
-  { id: "cannabis", name: "Drugs",          emoji: "💊", tagline: "Sharpen your mind",            color: "oklch(0.78 0.16 155)", benefit: "Dreams & memory return in ~2 weeks" },
-  { id: "porn",     name: "Porn",           emoji: "🧠", tagline: "Rewire, refocus, reconnect",   color: "oklch(0.68 0.18 285)", benefit: "Motivation & confidence climb" },
-  { id: "social",   name: "Social Media",   emoji: "📱", tagline: "Reclaim your attention",       color: "oklch(0.75 0.15 250)", benefit: "Focus & mood improve in days" },
+  { id: "nicotine", name: "Nicotine",     emoji: "🚭", tagline: "Reclaim your lungs and focus", color: "oklch(0.75 0.15 210)", benefit: "Lung capacity improves in 72 hours" },
+  { id: "alcohol",  name: "Alcohol",      emoji: "🍺", tagline: "Wake up clear again",          color: "oklch(0.78 0.17 80)",  benefit: "Sleep quality up 30% in a week" },
+  { id: "gambling", name: "Gambling",     emoji: "🎰", tagline: "Win back your peace",          color: "oklch(0.7 0.2 340)",   benefit: "Anxiety drops sharply after 21 days" },
+  { id: "sugar",    name: "Sugar",        emoji: "🍬", tagline: "Steady energy, clearer skin",  color: "oklch(0.78 0.14 20)",  benefit: "Cravings fade in ~10 days" },
+  { id: "cannabis", name: "Drugs",        emoji: "💊", tagline: "Sharpen your mind",            color: "oklch(0.78 0.16 155)", benefit: "Dreams & memory return in ~2 weeks" },
+  { id: "porn",     name: "Porn",         emoji: "🧠", tagline: "Rewire, refocus, reconnect",   color: "oklch(0.68 0.18 285)", benefit: "Motivation & confidence climb" },
+  { id: "social",   name: "Social Media", emoji: "📱", tagline: "Reclaim your attention",       color: "oklch(0.75 0.15 250)", benefit: "Focus & mood improve in days" },
+  { id: "gaming",   name: "Video Games",  emoji: "🎮", tagline: "Reclaim your time and drive",  color: "oklch(0.72 0.16 300)", benefit: "Sleep, focus & motivation rebound in ~2 weeks" },
 ];
 
 export interface Task {
@@ -52,16 +52,13 @@ const UNIVERSAL: Task[] = [
 ];
 
 const BY_CATEGORY: Record<CategoryId, Task[]> = {
-  vaping: [
-    { id: "v-1", category: "vaping", title: "Move your vape out of reach", description: "Give it to a friend or lock it away.", minutes: 2, xp: 25 },
-    { id: "v-2", category: "vaping", title: "Chew gum or mints instead", description: "Sub the oral fixation, not the nicotine.", minutes: 1, xp: 15 },
-    { id: "v-3", category: "vaping", title: "Track puff-count for one hour", description: "Awareness alone reduces use.", minutes: 60, xp: 30 },
-    { id: "v-4", category: "vaping", title: "Delay first vape by 20 min", description: "Push the window a little each day.", minutes: 20, xp: 30 },
-  ],
-  smoking: [
-    { id: "s-1", category: "smoking", title: "Throw out one pack", description: "Physical distance = mental distance.", minutes: 2, xp: 30 },
-    { id: "s-2", category: "smoking", title: "Brush teeth right after cravings", description: "Clean mouth kills the urge.", minutes: 3, xp: 15 },
-    { id: "s-3", category: "smoking", title: "Take a 5 min walk instead of a smoke break", description: "Same ritual, better outcome.", minutes: 5, xp: 25 },
+  nicotine: [
+    { id: "n-1", category: "nicotine", title: "Move your vape/pack out of reach", description: "Give it to a friend or lock it away.", minutes: 2, xp: 30 },
+    { id: "n-2", category: "nicotine", title: "Chew gum or mints instead", description: "Sub the oral fixation, not the nicotine.", minutes: 1, xp: 15 },
+    { id: "n-3", category: "nicotine", title: "Track puff/cig count for one hour", description: "Awareness alone reduces use.", minutes: 60, xp: 30 },
+    { id: "n-4", category: "nicotine", title: "Delay first hit by 20 min", description: "Push the window a little each day.", minutes: 20, xp: 30 },
+    { id: "n-5", category: "nicotine", title: "Brush teeth right after cravings", description: "Clean mouth kills the urge.", minutes: 3, xp: 15 },
+    { id: "n-6", category: "nicotine", title: "Take a 5 min walk instead of a smoke break", description: "Same ritual, better outcome.", minutes: 5, xp: 25 },
   ],
   alcohol: [
     { id: "a-1", category: "alcohol", title: "Pour a mocktail with soda + lime", description: "Ritual > substance.", minutes: 3, xp: 20 },
@@ -92,6 +89,13 @@ const BY_CATEGORY: Record<CategoryId, Task[]> = {
     { id: "so-1", category: "social", title: "Move apps off your home screen", description: "Add friction. It works.", minutes: 3, xp: 20 },
     { id: "so-2", category: "social", title: "Set a 20 min daily app timer", description: "Enforce your intention.", minutes: 3, xp: 25 },
     { id: "so-3", category: "social", title: "Grayscale your phone for 2 hours", description: "Kills the dopamine loop.", minutes: 2, xp: 25 },
+  ],
+  gaming: [
+    { id: "gm-1", category: "gaming", title: "Uninstall your most-played game", description: "Reinstall later if you truly miss it — most people don't.", minutes: 3, xp: 40 },
+    { id: "gm-2", category: "gaming", title: "Move console/PC out of the bedroom", description: "Physical distance breaks the auto-loop.", minutes: 10, xp: 30 },
+    { id: "gm-3", category: "gaming", title: "Set a 1-hour play cap today", description: "Use a timer. Stop when it rings.", minutes: 3, xp: 25 },
+    { id: "gm-4", category: "gaming", title: "Replace one gaming hour with a hobby", description: "Read, draw, walk, cook, lift — pick one.", minutes: 60, xp: 30 },
+    { id: "gm-5", category: "gaming", title: "Log out of every gaming account", description: "Even 30 seconds of friction is enough.", minutes: 3, xp: 20 },
   ],
 };
 

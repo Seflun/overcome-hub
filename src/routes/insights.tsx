@@ -21,18 +21,13 @@ export const Route = createFileRoute("/insights")({
 });
 
 const HEALTH: Record<CategoryId, { hours: number; label: string }[]> = {
-  vaping: [
+  nicotine: [
     { hours: 8,    label: "Nicotine level halves in your blood" },
+    { hours: 20,   label: "Heart rate and blood pressure drop" },
     { hours: 24,   label: "Carbon monoxide has left your body" },
     { hours: 72,   label: "Lung capacity begins to improve" },
     { hours: 336,  label: "Circulation and lung function up 30%" },
-    { hours: 2160, label: "Coughing and shortness of breath drop" },
-  ],
-  smoking: [
-    { hours: 20,   label: "Heart rate and blood pressure drop" },
-    { hours: 12,   label: "Carbon monoxide normalizes" },
-    { hours: 336,  label: "Circulation improves, walking easier" },
-    { hours: 2160, label: "Lung cilia regenerate" },
+    { hours: 2160, label: "Lung cilia regenerate, coughing fades" },
     { hours: 8760, label: "Heart-disease risk halved" },
   ],
   alcohol: [
@@ -65,6 +60,13 @@ const HEALTH: Record<CategoryId, { hours: number; label: string }[]> = {
     { hours: 72,   label: "Attention span begins to lengthen" },
     { hours: 168,  label: "Anxiety and comparison drop" },
     { hours: 336,  label: "Real-world presence deepens" },
+  ],
+  gaming: [
+    { hours: 24,   label: "Sleep debt starts to clear" },
+    { hours: 72,   label: "Dopamine baseline begins resetting" },
+    { hours: 168,  label: "Focus on slow tasks returns" },
+    { hours: 336,  label: "Motivation for real-world goals climbs" },
+    { hours: 720,  label: "Time perception and mood stabilize" },
   ],
 };
 
