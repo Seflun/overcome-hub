@@ -4,7 +4,6 @@ import { Bell, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
-import { PremiumGate } from "../components/premium-badge";
 import { useStore } from "../lib/store";
 
 export const Route = createFileRoute("/reminders")({
