@@ -234,14 +234,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
     },
     resetStreak: (journeyId) =>
-      setState((s) => ({
-        ...s,
-        journeys: s.journeys.map((j) =>
-          j.id === journeyId
-            ? { ...j, startedAt: new Date().toISOString(), lastRelapse: new Date().toISOString() }
-            : j,
-        ),
-      })),
+      setState((s) => {
+        const key = todayKey();
+        return {
+          ...s,
+          journeys: s.journeys.map((j) => {
+            if (j.id !== journeyId) return j;
+            const { [key]: _cleared, ...restCompletions } = j.completions;
+            return {
+              ...j,
+              startedAt: new Date().toISOString(),
+              lastRelapse: new Date().toISOString(),
+              completions: restCompletions,
+            };
+          }),
+        };
+      }),
     setCostPerDay: (journeyId, cost) =>
       setState((s) => ({
         ...s,
