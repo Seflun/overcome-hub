@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, BookHeart, LineChart, Bell, Download } from "lucide-react";
+import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
