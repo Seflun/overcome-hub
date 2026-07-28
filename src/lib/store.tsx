@@ -238,6 +238,50 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }, 600);
   }, [state, hydrated, userId]);
 
+  // Sync premium status from subscriptions table
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("test_")
+      ? "sandbox"
+      : "live";
+    const check = async () => {
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("status, current_period_end")
+        .eq("user_id", userId)
+        .eq("environment", env)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cancelled) return;
+      const s: any = data;
+      const active =
+        !!s &&
+        (
+          (["active", "trialing", "past_due"].includes(s.status) &&
+            (!s.current_period_end || new Date(s.current_period_end) > new Date())) ||
+          (s.status === "canceled" &&
+            !!s.current_period_end &&
+            new Date(s.current_period_end) > new Date())
+        );
+      setState((prev) => (prev.isPremium === active ? prev : { ...prev, isPremium: active }));
+    };
+    check();
+    const channel = supabase
+      .channel(`subs:${userId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${userId}` },
+        () => check()
+      )
+      .subscribe();
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
+
   const value = useMemo<Ctx>(() => ({
     state,
     userId,
