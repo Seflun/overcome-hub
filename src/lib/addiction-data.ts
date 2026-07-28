@@ -90,6 +90,13 @@ const BY_CATEGORY: Record<CategoryId, Task[]> = {
     { id: "so-2", category: "social", title: "Set a 20 min daily app timer", description: "Enforce your intention.", minutes: 3, xp: 25 },
     { id: "so-3", category: "social", title: "Grayscale your phone for 2 hours", description: "Kills the dopamine loop.", minutes: 2, xp: 25 },
   ],
+  gaming: [
+    { id: "gm-1", category: "gaming", title: "Uninstall your most-played game", description: "Reinstall later if you truly miss it — most people don't.", minutes: 3, xp: 40 },
+    { id: "gm-2", category: "gaming", title: "Move console/PC out of the bedroom", description: "Physical distance breaks the auto-loop.", minutes: 10, xp: 30 },
+    { id: "gm-3", category: "gaming", title: "Set a 1-hour play cap today", description: "Use a timer. Stop when it rings.", minutes: 3, xp: 25 },
+    { id: "gm-4", category: "gaming", title: "Replace one gaming hour with a hobby", description: "Read, draw, walk, cook, lift — pick one.", minutes: 60, xp: 30 },
+    { id: "gm-5", category: "gaming", title: "Log out of every gaming account", description: "Even 30 seconds of friction is enough.", minutes: 3, xp: 20 },
+  ],
 };
 
 // Deterministic pseudo-random pick per day so tasks stay stable within a date.
