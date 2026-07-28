@@ -97,9 +97,15 @@ function Explore() {
                 {isActive && activeJourneyId && (
                   <button
                     aria-label={`Cancel ${c.name} journey`}
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      if (window.confirm(`Cancel your "${c.name}" journey? Your progress on it will be removed.`)) {
+                      const ok = await confirm({
+                        title: `Cancel ${c.name} journey?`,
+                        description: "Your streak and XP on this journey will be removed. This can't be undone.",
+                        confirmLabel: "Remove journey",
+                        tone: "destructive",
+                      });
+                      if (ok) {
                         removeJourney(activeJourneyId);
                         toast(`Removed: ${c.name}`);
                       }
