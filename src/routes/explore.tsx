@@ -1,10 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Check } from "lucide-react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { CATEGORIES } from "../lib/addiction-data";
-import { useStore } from "../lib/store";
+import { useStore, FREE_JOURNEY_LIMIT } from "../lib/store";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
@@ -22,6 +22,7 @@ function Explore() {
   const { state, startJourney } = useStore();
   const navigate = useNavigate();
   const active = new Set(state.journeys.map((j) => j.category));
+  const atLimit = !state.isPremium && state.journeys.length >= FREE_JOURNEY_LIMIT;
 
   return (
     <AppShell>
@@ -38,18 +39,36 @@ function Explore() {
           </p>
         </div>
 
+        {atLimit && (
+          <Link
+            to="/plus"
+            className="mb-4 flex items-center gap-3 rounded-2xl border border-primary/40 bg-aurora/10 p-4"
+          >
+            <Sparkles className="h-5 w-5 text-primary" />
+            <div className="flex-1 text-sm">
+              <div className="font-bold">Unlock unlimited journeys</div>
+              <div className="text-xs text-muted-foreground">Free plan supports 1 active journey.</div>
+            </div>
+          </Link>
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIES.map((c) => {
             const isActive = active.has(c.id);
+            const locked = atLimit && !isActive;
             return (
               <button
                 key={c.id}
                 onClick={() => {
-                  startJourney(c.id);
+                  if (locked) { navigate({ to: "/plus" }); return; }
+                  const res = startJourney(c.id);
+                  if (res.blocked === "premium") { navigate({ to: "/plus" }); return; }
                   toast.success(isActive ? `Switched to ${c.name}` : `New journey: quitting ${c.name}`);
                   navigate({ to: "/" });
                 }}
-                className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-4 text-left shadow-soft transition hover:border-primary/40"
+                className={`group relative overflow-hidden rounded-2xl border p-4 text-left shadow-soft transition ${
+                  locked ? "border-border/40 bg-card/40 opacity-60" : "border-border/60 bg-card/70 hover:border-primary/40"
+                }`}
               >
                 <div
                   className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-30 blur-2xl transition group-hover:opacity-50"
@@ -62,6 +81,7 @@ function Explore() {
                       <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     </div>
                   )}
+                  {locked && <Sparkles className="h-3.5 w-3.5 text-primary" />}
                 </div>
                 <div className="mt-3 font-bold">{c.name}</div>
                 <div className="mt-0.5 text-xs text-muted-foreground">{c.tagline}</div>
@@ -73,3 +93,4 @@ function Explore() {
     </AppShell>
   );
 }
+
