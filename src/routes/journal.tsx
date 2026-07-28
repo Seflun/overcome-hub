@@ -7,6 +7,7 @@ import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 import { PremiumBadge } from "../components/premium-badge";
+import { AiMessage } from "../lib/markdown";
 
 export const Route = createFileRoute("/journal")({
   head: () => ({
@@ -261,7 +262,7 @@ function JournalInner() {
                           <div className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-primary">
                             <Sparkles className="h-3 w-3" /> Coach review
                           </div>
-                          <div className="whitespace-pre-wrap text-xs leading-relaxed">{e.aiReview}</div>
+                          <AiMessage text={e.aiReview} className="text-xs leading-relaxed" />
                         </div>
                       )}
                       {e.aiReviewStatus === "error" && e.aiReview && (
