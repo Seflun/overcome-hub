@@ -128,7 +128,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (data?.data && Object.keys(data.data as object).length > 0) {
           skipNextSave.current = true;
-          setState({ ...empty, ...(data.data as AppState) });
+          setState({ ...empty, ...(data.data as unknown as AppState) });
         } else {
           // First sign-in: push whatever the user has locally up to the cloud
           const local = loadLocal();
