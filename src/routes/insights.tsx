@@ -41,12 +41,6 @@ const HEALTH: Record<CategoryId, { hours: number; label: string }[]> = {
     { hours: 168,  label: "Liver fat begins reducing" },
     { hours: 720,  label: "Skin clearer, energy steadier" },
   ],
-  drinking: [
-    { hours: 24,   label: "Hydration and blood sugar stabilize" },
-    { hours: 72,   label: "Deeper sleep, sharper mornings" },
-    { hours: 168,  label: "Mood swings level out" },
-    { hours: 720,  label: "Weight, skin, and focus visibly improve" },
-  ],
   gambling: [
     { hours: 72,   label: "Dopamine baseline starts resetting" },
     { hours: 336,  label: "Impulse control improves" },
