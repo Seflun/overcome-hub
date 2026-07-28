@@ -1,294 +1,235 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, X } from "lucide-react";
-import { toast } from "sonner";
-
-import { AppShell } from "../components/app-shell";
-import { useStore, useCategoryMeta } from "../lib/store";
-import { useConfirm } from "../components/confirm-dialog";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import {
-  CATEGORIES,
-  daysBetween,
-  levelFromXp,
-  tasksForDay,
-  todayKey,
-} from "../lib/addiction-data";
+  ArrowRight,
+  Sparkles,
+  Flame,
+  Target,
+  Bot,
+  Compass,
+  ShieldCheck,
+  Quote,
+  Check,
+} from "lucide-react";
+
+import { useStore } from "../lib/store";
+import { CATEGORIES } from "../lib/addiction-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Today — Addiction Blocker" },
-      { name: "description", content: "Your daily plan to break the addiction loop." },
-      { property: "og:title", content: "Today — Addiction Blocker" },
-      { property: "og:description", content: "Daily tasks and streaks to help you quit." },
+      { title: "Addiction Blocker — Break the loop, rebuild yourself" },
+      {
+        name: "description",
+        content:
+          "A calm, structured recovery companion. Pick an addiction, follow a daily plan, and rebuild the version of you that's underneath. Free to start.",
+      },
+      { property: "og:title", content: "Addiction Blocker — Break the loop, rebuild yourself" },
+      {
+        property: "og:description",
+        content:
+          "Daily missions, streaks, XP and an AI Coach to help you quit nicotine, alcohol, gambling, drugs, porn, sugar, video games and social media.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Today,
+  component: Landing,
 });
 
-function Today() {
-  const { state, setActive, startJourney, removeJourney } = useStore();
-  const confirm = useConfirm();
+function Landing() {
+  const { userId, authChecked } = useStore();
+  const navigate = useNavigate();
 
-  if (state.journeys.length === 0) return <Onboarding onPick={startJourney} />;
-
-  const active =
-    state.journeys.find((j) => j.id === state.activeId) ?? state.journeys[0];
+  // If already signed in, land straight in the app
+  useEffect(() => {
+    if (authChecked && userId) navigate({ to: "/today" });
+  }, [authChecked, userId, navigate]);
 
   return (
-    <AppShell>
-      <div className="px-5 pt-8">
-        <Header />
-        <ActiveCard journeyId={active.id} />
-
-        <div className="mt-5">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Your journeys
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {state.journeys.map((j) => {
-              const meta = CATEGORIES.find((c) => c.id === j.category)!;
-              const isActive = j.id === active.id;
-              return (
-                <div
-                  key={j.id}
-                  className={`flex shrink-0 items-center gap-2 rounded-full border py-1.5 pl-3 pr-1.5 text-sm transition ${
-                    isActive
-                      ? "border-primary/60 bg-primary/10 text-foreground"
-                      : "border-border/60 bg-card/60 text-muted-foreground"
-                  }`}
-                >
-                  <button onClick={() => setActive(j.id)} className="flex items-center gap-2">
-                    <span>{meta.emoji}</span>
-                    <span className="font-medium">{meta.name}</span>
-                    <span className="text-xs opacity-70">{daysBetween(j.startedAt)}d</span>
-                  </button>
-                  <button
-                    aria-label={`Cancel ${meta.name} journey`}
-                    onClick={async () => {
-                      const ok = await confirm({
-                        title: `Cancel ${meta.name} journey?`,
-                        description: "Your streak and XP on this journey will be removed. This can't be undone.",
-                        confirmLabel: "Remove journey",
-                        tone: "destructive",
-                      });
-                      if (ok) {
-                        removeJourney(j.id);
-                        toast(`Journey removed: ${meta.name}`);
-                      }
-                    }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-background/60 text-muted-foreground hover:text-destructive"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              );
-            })}
-            <Link
-              to="/explore"
-              className="flex shrink-0 items-center gap-1 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-sm text-muted-foreground"
-            >
-              <Plus className="h-4 w-4" /> Add
-            </Link>
-          </div>
-        </div>
-
-
-        <TaskList journeyId={active.id} />
-      </div>
-    </AppShell>
-  );
-}
-
-function Header() {
-  const { totalXp, state } = useStore();
-  const { level } = levelFromXp(totalXp);
-  return (
-    <div className="mb-6 flex items-center justify-between">
-      <div>
-        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Addiction Blocker{state.isPremium && <span className="ml-1 text-primary">+</span>}
-        </div>
-        <h1 className="mt-1 text-3xl font-black tracking-tight">
-          Today's <span className="text-aurora">plan</span>
-        </h1>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="rounded-full border border-border/60 bg-card/70 px-3 py-1.5 text-xs font-semibold">
-          <span className="text-muted-foreground">LVL</span>{" "}
-          <span className="text-primary">{level}</span>
-        </div>
-      </div>
+    <div className="min-h-dvh bg-background">
+      <TopNav />
+      <Hero />
+      <Method />
+      <Categories />
+      <Testimonials />
+      <FinalCta />
+      <Footer />
     </div>
   );
 }
 
-function ActiveCard({ journeyId }: { journeyId: string }) {
-  const { state, resetStreak } = useStore();
-  const journey = state.journeys.find((j) => j.id === journeyId)!;
-  const meta = useCategoryMeta(journey.category)!;
-  const days = daysBetween(journey.startedAt);
-  const { level, into, needed, progress } = levelFromXp(journey.xp);
-
+function TopNav() {
   return (
-    <div
-      className="relative overflow-hidden rounded-3xl border border-border/50 bg-card-grad p-5 shadow-soft"
-      style={{ backgroundColor: "var(--card)" }}
-    >
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="grid h-8 w-8 place-items-center rounded-xl bg-aurora shadow-glow">
+            <Sparkles className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <span className="font-black tracking-tight">Addiction Blocker</span>
+        </Link>
+        <nav className="flex items-center gap-2">
+          <Link
+            to="/auth"
+            className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
+          >
+            Sign in
+          </Link>
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow"
+          >
+            Get started <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative overflow-hidden">
       <div
-        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-30 blur-3xl"
-        style={{ backgroundColor: meta.color }}
+        aria-hidden
+        className="pointer-events-none absolute -left-40 top-0 h-[36rem] w-[36rem] rounded-full opacity-30 blur-3xl"
+        style={{ background: "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.5), transparent))" }}
       />
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Quitting {meta.name}
-          </div>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-5xl font-black tracking-tight">{days}</span>
-            <span className="text-sm text-muted-foreground">days free</span>
-          </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-40 top-40 h-[32rem] w-[32rem] rounded-full opacity-20 blur-3xl"
+        style={{ background: "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.4), transparent))" }}
+      />
+
+      <div className="relative mx-auto max-w-6xl px-5 pt-16 pb-20 text-center md:px-8 md:pt-24 md:pb-28">
+        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <Flame className="h-3 w-3 text-primary" /> A calmer way to quit
         </div>
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background/40 text-3xl">
-          {meta.emoji}
+        <h1 className="mx-auto mt-6 max-w-4xl text-5xl font-black leading-[1.05] tracking-tight md:text-7xl">
+          Break the loop.
+          <br />
+          Rebuild the <span className="text-aurora">you</span> underneath.
+        </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          A structured recovery companion for the addictions that shape your day.
+          Pick one to work on, follow a small daily plan, and stack real wins —
+          without the shame, the lectures, or the toxic positivity.
+        </p>
+
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
+          >
+            Start free <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-6 py-3 text-sm font-semibold text-foreground hover:border-primary/40"
+          >
+            I already have an account
+          </Link>
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+          <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-primary" /> Free to start</span>
+          <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-primary" /> No credit card</span>
+          <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-primary" /> Private & synced</span>
         </div>
       </div>
-
-      <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-        <Sparkles className="h-3.5 w-3.5 text-primary" />
-        {meta.benefit}
-      </div>
-
-      <div className="mt-4">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Level {level}</span>
-          <span>{into} / {needed} XP</span>
-        </div>
-        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-background/60">
-          <div
-            className="h-full rounded-full bg-aurora transition-all"
-            style={{ width: `${Math.max(4, progress * 100)}%` }}
-          />
-        </div>
-      </div>
-
-      <button
-        onClick={() => {
-          resetStreak(journey.id);
-          toast("Streak reset. Day 0 — you're still here, that's what matters.");
-        }}
-        className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground/80 hover:text-foreground"
-      >
-        <RotateCcw className="h-3 w-3" /> Slipped? Reset gently
-      </button>
-    </div>
+    </section>
   );
 }
 
-function TaskList({ journeyId }: { journeyId: string }) {
-  const { state, toggleTask } = useStore();
-  const confirm = useConfirm();
-  const journey = state.journeys.find((j) => j.id === journeyId)!;
-  const key = todayKey();
-  const tasks = tasksForDay(journey.category, key);
-  const done = new Set(journey.completions[key] ?? []);
-  const completedCount = tasks.filter((t) => done.has(t.id)).length;
+const METHOD = [
+  {
+    icon: Target,
+    title: "1. Pick your addiction",
+    body: "Choose one thing to work on first — nicotine, alcohol, porn, drugs, sugar, gambling, video games, or social media. You can add more later.",
+  },
+  {
+    icon: Flame,
+    title: "2. Do the daily plan",
+    body: "Every day, five tiny missions: two targeted at your addiction, three that rebuild the you underneath — sleep, movement, focus, connection.",
+  },
+  {
+    icon: Sparkles,
+    title: "3. Stack XP and streaks",
+    body: "Every check-in earns XP and a level. Milestones from 24 hours to 1 year get unlocked as your body and brain recover.",
+  },
+  {
+    icon: Bot,
+    title: "4. Talk to Coach",
+    body: "An AI companion for the hard nights — cravings, slips, or spirals. Not a therapist. Just something between you and the next choice.",
+  },
+];
 
+function Method() {
   return (
-    <div className="mt-8">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-bold">Missions for today</h2>
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <Flame className="h-4 w-4 text-primary" />
-          {completedCount}/{tasks.length}
-        </div>
-      </div>
-
-      <ul className="space-y-2.5">
-        {tasks.map((t) => {
-          const isDone = done.has(t.id);
-          return (
-            <li key={t.id}>
-              <button
-                onClick={async () => {
-                  const ok = await confirm(
-                    isDone
-                      ? {
-                          title: `Uncheck "${t.title}"?`,
-                          description: `You'll lose ${t.xp} XP.`,
-                          confirmLabel: "Uncheck",
-                          tone: "destructive",
-                        }
-                      : {
-                          title: `Mark "${t.title}" done?`,
-                          description: `You'll earn +${t.xp} XP.`,
-                          confirmLabel: `Complete · +${t.xp} XP`,
-                        },
-                  );
-                  if (!ok) return;
-                  toggleTask(journey.id, t.id, t.xp);
-                  if (!isDone) toast.success(`+${t.xp} XP · ${t.title}`);
-                }}
-                className={`group flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
-                  isDone
-                    ? "border-primary/50 bg-primary/10"
-                    : "border-border/60 bg-card/70 hover:border-primary/40"
-                }`}
-              >
-                <div className="mt-0.5">
-                  {isDone ? (
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className={`font-semibold ${isDone ? "line-through opacity-70" : ""}`}>
-                      {t.title}
-                    </div>
-                    <div className="shrink-0 rounded-full bg-background/60 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                      +{t.xp}
-                    </div>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">{t.description}</p>
-                  <div className="mt-1.5 text-[11px] uppercase tracking-widest text-muted-foreground/80">
-                    {t.minutes} min · {t.category ? "targeted" : "universal"}
-                  </div>
-                </div>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function Onboarding({ onPick }: { onPick: (c: (typeof CATEGORIES)[number]["id"]) => void }) {
-  return (
-    <AppShell>
-      <div className="px-5 pt-10">
-        <div className="mb-8">
-          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-            Addiction Blocker
+    <section className="border-t border-border/40">
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <div className="max-w-2xl">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            The method
           </div>
-          <h1 className="mt-3 text-4xl font-black leading-tight tracking-tight">
-            What do you want to <span className="text-aurora">break free</span> from?
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Pick one to start. You'll get a daily plan, streaks, and XP. Add more journeys later — every win compounds.
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
+            Small daily wins.<br className="hidden md:block" /> Compounded into a new <span className="text-aurora">identity</span>.
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
+            Recovery isn't willpower — it's structure. Addiction Blocker gives you a
+            tiny, evidence-informed plan you can follow on your worst day, not just
+            your best one.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {METHOD.map((m) => {
+            const Icon = m.icon;
+            return (
+              <div
+                key={m.title}
+                className="rounded-3xl border border-border/60 bg-card/60 p-6 shadow-soft transition hover:border-primary/40"
+              >
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/15 text-primary">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-5 text-lg font-bold">{m.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {m.body}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Categories() {
+  return (
+    <section className="border-t border-border/40">
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            What we help with
+          </div>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
+            Eight loops.<br className="hidden md:block" /> One <span className="text-aurora">calm</span> way out.
+          </h2>
+          <p className="mt-4 text-sm text-muted-foreground md:text-base">
+            Each category has its own daily missions, health recovery timeline,
+            and craving toolkit — designed around what actually works for that
+            specific loop.
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
           {CATEGORIES.map((c) => (
-            <button
+            <div
               key={c.id}
-              onClick={() => {
-                onPick(c.id);
-                toast.success(`Journey started: quitting ${c.name}`);
-              }}
-              className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-4 text-left shadow-soft transition hover:border-primary/40"
+              className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 p-5 shadow-soft transition hover:border-primary/40"
             >
               <div
                 className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-30 blur-2xl transition group-hover:opacity-50"
@@ -296,11 +237,113 @@ function Onboarding({ onPick }: { onPick: (c: (typeof CATEGORIES)[number]["id"])
               />
               <div className="text-3xl">{c.emoji}</div>
               <div className="mt-3 font-bold">{c.name}</div>
-              <div className="mt-0.5 text-xs text-muted-foreground">{c.tagline}</div>
-            </button>
+              <div className="mt-1 text-xs text-muted-foreground">{c.tagline}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-5 py-2.5 text-sm font-semibold hover:border-primary/40"
+          >
+            <Compass className="h-4 w-4 text-primary" /> Pick your first journey
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "The tasks are small enough that I actually do them. Day 47 of no vape — first time I've made it past a week in three years.",
+    who: "M., 28 · quitting nicotine",
+  },
+  {
+    quote:
+      "Talking to Coach at 11pm when the urge hit is the whole reason I didn't drink last Friday. It didn't lecture me. It just helped.",
+    who: "R., 34 · quitting alcohol",
+  },
+  {
+    quote:
+      "The daily plan replaced doomscrolling with something that actually feels good. I sleep now.",
+    who: "A., 22 · quitting social media",
+  },
+];
+
+function Testimonials() {
+  return (
+    <section className="border-t border-border/40">
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <div className="max-w-2xl">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            From the people using it
+          </div>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
+            You're not the <span className="text-aurora">first</span> to try again.
+          </h2>
+        </div>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure
+              key={t.who}
+              className="flex h-full flex-col rounded-3xl border border-border/60 bg-card/60 p-6 shadow-soft"
+            >
+              <Quote className="h-6 w-6 text-primary/70" />
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-foreground/90">
+                "{t.quote}"
+              </blockquote>
+              <figcaption className="mt-6 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                {t.who}
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
-    </AppShell>
+    </section>
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="border-t border-border/40">
+      <div className="mx-auto max-w-4xl px-5 py-20 text-center md:px-8 md:py-28">
+        <h2 className="text-4xl font-black tracking-tight md:text-6xl">
+          The next choice is the <span className="text-aurora">only</span> one that matters.
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl text-sm text-muted-foreground md:text-base">
+          Create a free account. Start your first journey in under a minute.
+          Your progress syncs across every device you sign in on.
+        </p>
+        <Link
+          to="/auth"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-aurora px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-glow"
+        >
+          Create my free account <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border/40">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-xs text-muted-foreground md:flex-row md:px-8">
+        <div className="flex items-center gap-2">
+          <div className="grid h-5 w-5 place-items-center rounded-md bg-aurora">
+            <Sparkles className="h-3 w-3 text-primary-foreground" />
+          </div>
+          <span>Addiction Blocker © {new Date().getFullYear()}</span>
+        </div>
+        <div className="text-center md:text-right">
+          Not a therapist, doctor, or medical service. In a crisis, contact
+          local emergency services.
+        </div>
+      </div>
+    </footer>
   );
 }

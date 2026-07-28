@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TodayRouteImport } from './routes/today'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RemindersRouteImport } from './routes/reminders'
@@ -22,6 +23,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const TodayRoute = TodayRouteImport.update({
+  id: '/today',
+  path: '/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SosRoute = SosRouteImport.update({
   id: '/sos',
   path: '/sos',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/today'
     | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/today'
     | '/api/chat'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/today'
     | '/api/chat'
   fileRoutesById: FileRoutesById
 }
@@ -183,11 +195,19 @@ export interface RootRouteChildren {
   RemindersRoute: typeof RemindersRoute
   SettingsRoute: typeof SettingsRoute
   SosRoute: typeof SosRoute
+  TodayRoute: typeof TodayRoute
   ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/today': {
+      id: '/today'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof TodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sos': {
       id: '/sos'
       path: '/sos'
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   RemindersRoute: RemindersRoute,
   SettingsRoute: SettingsRoute,
   SosRoute: SosRoute,
+  TodayRoute: TodayRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport

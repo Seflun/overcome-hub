@@ -37,7 +37,7 @@ function Settings() {
   return (
     <AppShell>
       <div className="px-5 pt-6">
-        <Link to="/" className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground">
+        <Link to="/today" className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground">
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Link>
 

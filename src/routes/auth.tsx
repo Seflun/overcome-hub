@@ -27,7 +27,7 @@ function Auth() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/" });
+      if (data.user) navigate({ to: "/today" });
     });
   }, [navigate]);
 
@@ -48,7 +48,7 @@ function Auth() {
         if (error) throw error;
         toast.success("Welcome back.");
       }
-      navigate({ to: "/" });
+      navigate({ to: "/today" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -67,7 +67,7 @@ function Auth() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/today" });
   };
 
   return (
