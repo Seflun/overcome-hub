@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { BookHeart, Plus, TrendingDown, TrendingUp } from "lucide-react";
+import { BookHeart, Plus, TrendingDown, TrendingUp, Sparkles, Lock, Bot } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
+import { PremiumBadge } from "../components/premium-badge";
 
 export const Route = createFileRoute("/journal")({
   head: () => ({
@@ -49,8 +50,24 @@ function Journal() {
   );
 }
 
+async function requestAiReview(entry: { mood: number; trigger?: string; note?: string }): Promise<string> {
+  const moodLabel = MOODS.find((m) => m.v === entry.mood)?.label ?? "";
+  const prompt = `Please review my journal entry from today and give me kind, specific advice in 2–4 short paragraphs. Don't lecture.\n\nMood: ${entry.mood}/5 (${moodLabel})\nTrigger: ${entry.trigger || "(none)"}\nNote: ${entry.note || "(none)"}`;
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages: [{ role: "user", content: prompt }],
+      context: "The user just wrote a journal entry and enabled AI Review. Comment supportively on what they wrote and offer one concrete suggestion.",
+    }),
+  });
+  const data = (await res.json().catch(() => ({}))) as { reply?: string; error?: string };
+  if (!res.ok) throw new Error(data.error || "AI review unavailable");
+  return data.reply || "";
+}
+
 function JournalInner() {
-  const { state, addJournal } = useStore();
+  const { state, addJournal, updateJournalReview, setAiReviewEnabled } = useStore();
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [trigger, setTrigger] = useState("");
   const [note, setNote] = useState("");
@@ -73,6 +90,40 @@ function JournalInner() {
     const topTrigger = Object.entries(triggers).sort((a, b) => b[1] - a[1])[0];
     return { avg, worstDay, topTrigger, count: state.journal.length };
   }, [state.journal]);
+
+  const groupedByDay = useMemo(() => {
+    const map = new Map<string, typeof state.journal>();
+    for (const e of state.journal) {
+      const day = new Date(e.createdAt).toDateString();
+      const list = map.get(day);
+      if (list) list.push(e);
+      else map.set(day, [e]);
+    }
+    return Array.from(map.entries());
+  }, [state.journal]);
+
+  const aiReviewOn = state.aiReviewEnabled && state.isPremium;
+
+  async function save() {
+    const payload = {
+      mood,
+      trigger: trigger.trim() || undefined,
+      note: note.trim() || undefined,
+      journeyId: journeyId || undefined,
+      aiReviewStatus: aiReviewOn ? ("pending" as const) : undefined,
+    };
+    const id = addJournal(payload);
+    setTrigger(""); setNote(""); setMood(3);
+    toast.success("Logged.");
+    if (aiReviewOn) {
+      try {
+        const review = await requestAiReview(payload);
+        updateJournalReview(id, review, "done");
+      } catch (e) {
+        updateJournalReview(id, e instanceof Error ? e.message : "AI review failed", "error");
+      }
+    }
+  }
 
   return (
     <>
@@ -119,12 +170,42 @@ function JournalInner() {
           placeholder="What happened? What did you do instead?"
           className="mt-2 w-full resize-none rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-sm placeholder:text-muted-foreground/70"
         />
+
+        <div className="mt-3 flex items-center justify-between rounded-xl border border-border/60 bg-background/40 px-3 py-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <div>
+              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                AI review <PremiumBadge />
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                Let Coach read this entry and reply with advice.
+              </div>
+            </div>
+          </div>
+          {state.isPremium ? (
+            <button
+              onClick={() => setAiReviewEnabled(!state.aiReviewEnabled)}
+              className={`relative h-6 w-11 shrink-0 rounded-full transition ${
+                state.aiReviewEnabled ? "bg-primary" : "bg-muted"
+              }`}
+              aria-label="Toggle AI review"
+            >
+              <span
+                className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow transition ${
+                  state.aiReviewEnabled ? "left-[22px]" : "left-0.5"
+                }`}
+              />
+            </button>
+          ) : (
+            <a href="/plus" className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">
+              <Lock className="h-3 w-3" /> Plus
+            </a>
+          )}
+        </div>
+
         <button
-          onClick={() => {
-            addJournal({ mood, trigger: trigger.trim() || undefined, note: note.trim() || undefined, journeyId: journeyId || undefined });
-            setTrigger(""); setNote(""); setMood(3);
-            toast.success("Logged.");
-          }}
+          onClick={save}
           className="mt-3 inline-flex items-center gap-1 rounded-full bg-aurora px-4 py-2 text-xs font-bold text-primary-foreground shadow-glow"
         >
           <Plus className="h-3.5 w-3.5" /> Save entry
@@ -152,21 +233,48 @@ function JournalInner() {
         </div>
       )}
 
-      {state.journal.length > 0 && (
+      {groupedByDay.length > 0 && (
         <div className="mt-6">
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">Recent</h2>
-          <ul className="space-y-2">
-            {state.journal.slice(0, 20).map((e) => (
-              <li key={e.id} className="rounded-2xl border border-border/60 bg-card/60 p-3 text-sm">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{new Date(e.createdAt).toLocaleString()}</span>
-                  <span className="text-lg">{MOODS.find((m) => m.v === e.mood)?.emoji}</span>
+          <h2 className="mb-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">History</h2>
+          <div className="space-y-4">
+            {groupedByDay.map(([day, entries]) => (
+              <div key={day}>
+                <div className="mb-2 text-xs font-semibold text-muted-foreground">
+                  {new Date(day).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}
                 </div>
-                {e.trigger && <div className="mt-1 text-xs text-primary">#{e.trigger}</div>}
-                {e.note && <div className="mt-1">{e.note}</div>}
-              </li>
+                <ul className="space-y-2">
+                  {entries.map((e) => (
+                    <li key={e.id} className="rounded-2xl border border-border/60 bg-card/60 p-3 text-sm">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{new Date(e.createdAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</span>
+                        <span className="text-lg">{MOODS.find((m) => m.v === e.mood)?.emoji}</span>
+                      </div>
+                      {e.trigger && <div className="mt-1 text-xs text-primary">#{e.trigger}</div>}
+                      {e.note && <div className="mt-1">{e.note}</div>}
+                      {e.aiReviewStatus === "pending" && (
+                        <div className="mt-2 flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 p-2 text-xs text-muted-foreground">
+                          <Bot className="h-3.5 w-3.5 animate-pulse text-primary" /> Coach is reviewing…
+                        </div>
+                      )}
+                      {e.aiReview && e.aiReviewStatus === "done" && (
+                        <div className="mt-2 rounded-xl border border-primary/30 bg-primary/5 p-2.5">
+                          <div className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-primary">
+                            <Sparkles className="h-3 w-3" /> Coach review
+                          </div>
+                          <div className="whitespace-pre-wrap text-xs leading-relaxed">{e.aiReview}</div>
+                        </div>
+                      )}
+                      {e.aiReviewStatus === "error" && e.aiReview && (
+                        <div className="mt-2 rounded-xl border border-destructive/40 bg-destructive/10 p-2 text-[11px] text-destructive">
+                          {e.aiReview}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </>
