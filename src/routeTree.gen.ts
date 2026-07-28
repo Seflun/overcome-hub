@@ -10,10 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodayRouteImport } from './routes/today'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RemindersRouteImport } from './routes/reminders'
+import { Route as RefundRouteImport } from './routes/refund'
 import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlusRouteImport } from './routes/plus'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as InsightsRouteImport } from './routes/insights'
@@ -28,6 +32,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 const TodayRoute = TodayRouteImport.update({
   id: '/today',
   path: '/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SosRoute = SosRouteImport.update({
@@ -45,9 +54,24 @@ const RemindersRoute = RemindersRouteImport.update({
   path: '/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlusRoute = PlusRouteImport.update({
@@ -110,10 +134,14 @@ export interface FileRoutesByFullPath {
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/plus': typeof PlusRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
+  '/refund': typeof RefundRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -127,10 +155,14 @@ export interface FileRoutesByTo {
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/plus': typeof PlusRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
+  '/refund': typeof RefundRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -145,10 +177,14 @@ export interface FileRoutesById {
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/plus': typeof PlusRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
+  '/refund': typeof RefundRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -164,10 +200,14 @@ export interface FileRouteTypes {
     | '/insights'
     | '/journal'
     | '/plus'
+    | '/pricing'
+    | '/privacy'
     | '/progress'
+    | '/refund'
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/terms'
     | '/today'
     | '/api/chat'
     | '/checkout/success'
@@ -181,10 +221,14 @@ export interface FileRouteTypes {
     | '/insights'
     | '/journal'
     | '/plus'
+    | '/pricing'
+    | '/privacy'
     | '/progress'
+    | '/refund'
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/terms'
     | '/today'
     | '/api/chat'
     | '/checkout/success'
@@ -198,10 +242,14 @@ export interface FileRouteTypes {
     | '/insights'
     | '/journal'
     | '/plus'
+    | '/pricing'
+    | '/privacy'
     | '/progress'
+    | '/refund'
     | '/reminders'
     | '/settings'
     | '/sos'
+    | '/terms'
     | '/today'
     | '/api/chat'
     | '/checkout/success'
@@ -216,10 +264,14 @@ export interface RootRouteChildren {
   InsightsRoute: typeof InsightsRoute
   JournalRoute: typeof JournalRoute
   PlusRoute: typeof PlusRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProgressRoute: typeof ProgressRoute
+  RefundRoute: typeof RefundRoute
   RemindersRoute: typeof RemindersRoute
   SettingsRoute: typeof SettingsRoute
   SosRoute: typeof SosRoute
+  TermsRoute: typeof TermsRoute
   TodayRoute: typeof TodayRoute
   ApiChatRoute: typeof ApiChatRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
@@ -233,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/today'
       fullPath: '/today'
       preLoaderRoute: typeof TodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sos': {
@@ -256,11 +315,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progress': {
       id: '/progress'
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plus': {
@@ -344,10 +424,14 @@ const rootRouteChildren: RootRouteChildren = {
   InsightsRoute: InsightsRoute,
   JournalRoute: JournalRoute,
   PlusRoute: PlusRoute,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ProgressRoute: ProgressRoute,
+  RefundRoute: RefundRoute,
   RemindersRoute: RemindersRoute,
   SettingsRoute: SettingsRoute,
   SosRoute: SosRoute,
+  TermsRoute: TermsRoute,
   TodayRoute: TodayRoute,
   ApiChatRoute: ApiChatRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
