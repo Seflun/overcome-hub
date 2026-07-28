@@ -204,6 +204,10 @@ function TaskList({ journeyId }: { journeyId: string }) {
             <li key={t.id}>
               <button
                 onClick={() => {
+                  const msg = isDone
+                    ? `Mark "${t.title}" as not done? You'll lose ${t.xp} XP.`
+                    : `Confirm you completed "${t.title}"? You'll earn +${t.xp} XP.`;
+                  if (!window.confirm(msg)) return;
                   toggleTask(journey.id, t.id, t.xp);
                   if (!isDone) toast.success(`+${t.xp} XP · ${t.title}`);
                 }}
