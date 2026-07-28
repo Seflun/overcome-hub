@@ -52,16 +52,13 @@ const UNIVERSAL: Task[] = [
 ];
 
 const BY_CATEGORY: Record<CategoryId, Task[]> = {
-  vaping: [
-    { id: "v-1", category: "vaping", title: "Move your vape out of reach", description: "Give it to a friend or lock it away.", minutes: 2, xp: 25 },
-    { id: "v-2", category: "vaping", title: "Chew gum or mints instead", description: "Sub the oral fixation, not the nicotine.", minutes: 1, xp: 15 },
-    { id: "v-3", category: "vaping", title: "Track puff-count for one hour", description: "Awareness alone reduces use.", minutes: 60, xp: 30 },
-    { id: "v-4", category: "vaping", title: "Delay first vape by 20 min", description: "Push the window a little each day.", minutes: 20, xp: 30 },
-  ],
-  smoking: [
-    { id: "s-1", category: "smoking", title: "Throw out one pack", description: "Physical distance = mental distance.", minutes: 2, xp: 30 },
-    { id: "s-2", category: "smoking", title: "Brush teeth right after cravings", description: "Clean mouth kills the urge.", minutes: 3, xp: 15 },
-    { id: "s-3", category: "smoking", title: "Take a 5 min walk instead of a smoke break", description: "Same ritual, better outcome.", minutes: 5, xp: 25 },
+  nicotine: [
+    { id: "n-1", category: "nicotine", title: "Move your vape/pack out of reach", description: "Give it to a friend or lock it away.", minutes: 2, xp: 30 },
+    { id: "n-2", category: "nicotine", title: "Chew gum or mints instead", description: "Sub the oral fixation, not the nicotine.", minutes: 1, xp: 15 },
+    { id: "n-3", category: "nicotine", title: "Track puff/cig count for one hour", description: "Awareness alone reduces use.", minutes: 60, xp: 30 },
+    { id: "n-4", category: "nicotine", title: "Delay first hit by 20 min", description: "Push the window a little each day.", minutes: 20, xp: 30 },
+    { id: "n-5", category: "nicotine", title: "Brush teeth right after cravings", description: "Clean mouth kills the urge.", minutes: 3, xp: 15 },
+    { id: "n-6", category: "nicotine", title: "Take a 5 min walk instead of a smoke break", description: "Same ritual, better outcome.", minutes: 5, xp: 25 },
   ],
   alcohol: [
     { id: "a-1", category: "alcohol", title: "Pour a mocktail with soda + lime", description: "Ritual > substance.", minutes: 3, xp: 20 },
