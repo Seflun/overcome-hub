@@ -4,7 +4,6 @@ import { BookHeart, Plus, TrendingDown, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
-import { PremiumGate } from "../components/premium-badge";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 
