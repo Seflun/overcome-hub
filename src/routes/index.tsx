@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { useStore, useCategoryMeta } from "../lib/store";
+import { useConfirm } from "../components/confirm-dialog";
 import {
   CATEGORIES,
   daysBetween,
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Today() {
   const { state, setActive, startJourney, removeJourney } = useStore();
+  const confirm = useConfirm();
 
   if (state.journeys.length === 0) return <Onboarding onPick={startJourney} />;
 
@@ -62,8 +64,14 @@ function Today() {
                   </button>
                   <button
                     aria-label={`Cancel ${meta.name} journey`}
-                    onClick={() => {
-                      if (window.confirm(`Cancel your "${meta.name}" journey? Your progress on it will be removed.`)) {
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: `Cancel ${meta.name} journey?`,
+                        description: "Your streak and XP on this journey will be removed. This can't be undone.",
+                        confirmLabel: "Remove journey",
+                        tone: "destructive",
+                      });
+                      if (ok) {
                         removeJourney(j.id);
                         toast(`Journey removed: ${meta.name}`);
                       }
@@ -181,6 +189,7 @@ function ActiveCard({ journeyId }: { journeyId: string }) {
 
 function TaskList({ journeyId }: { journeyId: string }) {
   const { state, toggleTask } = useStore();
+  const confirm = useConfirm();
   const journey = state.journeys.find((j) => j.id === journeyId)!;
   const key = todayKey();
   const tasks = tasksForDay(journey.category, key);
@@ -203,11 +212,22 @@ function TaskList({ journeyId }: { journeyId: string }) {
           return (
             <li key={t.id}>
               <button
-                onClick={() => {
-                  const msg = isDone
-                    ? `Mark "${t.title}" as not done? You'll lose ${t.xp} XP.`
-                    : `Confirm you completed "${t.title}"? You'll earn +${t.xp} XP.`;
-                  if (!window.confirm(msg)) return;
+                onClick={async () => {
+                  const ok = await confirm(
+                    isDone
+                      ? {
+                          title: `Uncheck "${t.title}"?`,
+                          description: `You'll lose ${t.xp} XP.`,
+                          confirmLabel: "Uncheck",
+                          tone: "destructive",
+                        }
+                      : {
+                          title: `Mark "${t.title}" done?`,
+                          description: `You'll earn +${t.xp} XP.`,
+                          confirmLabel: `Complete · +${t.xp} XP`,
+                        },
+                  );
+                  if (!ok) return;
                   toggleTask(journey.id, t.id, t.xp);
                   if (!isDone) toast.success(`+${t.xp} XP · ${t.title}`);
                 }}

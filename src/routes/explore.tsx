@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AppShell } from "../components/app-shell";
 import { CATEGORIES } from "../lib/addiction-data";
 import { useStore, FREE_JOURNEY_LIMIT } from "../lib/store";
+import { useConfirm } from "../components/confirm-dialog";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/explore")({
 function Explore() {
   const { state, startJourney, removeJourney } = useStore();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const activeMap = new Map(state.journeys.map((j) => [j.category, j.id] as const));
   const atLimit = !state.isPremium && state.journeys.length >= FREE_JOURNEY_LIMIT;
 
@@ -95,9 +97,15 @@ function Explore() {
                 {isActive && activeJourneyId && (
                   <button
                     aria-label={`Cancel ${c.name} journey`}
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      if (window.confirm(`Cancel your "${c.name}" journey? Your progress on it will be removed.`)) {
+                      const ok = await confirm({
+                        title: `Cancel ${c.name} journey?`,
+                        description: "Your streak and XP on this journey will be removed. This can't be undone.",
+                        confirmLabel: "Remove journey",
+                        tone: "destructive",
+                      });
+                      if (ok) {
                         removeJourney(activeJourneyId);
                         toast(`Removed: ${c.name}`);
                       }
