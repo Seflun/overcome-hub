@@ -41,9 +41,12 @@ export interface AppState {
   journal: JournalEntry[];
   reminders: Reminder[];
   sos: SosSession[];
+  coachCredits: number;
 }
 
 const KEY = "reclaim.state.v2";
+
+export const FREE_COACH_CREDITS = 25;
 
 const empty: AppState = {
   journeys: [],
@@ -52,9 +55,10 @@ const empty: AppState = {
   journal: [],
   reminders: [],
   sos: [],
+  coachCredits: FREE_COACH_CREDITS,
 };
 
-export const FREE_JOURNEY_LIMIT = 1;
+export const FREE_JOURNEY_LIMIT = 2;
 
 interface Ctx {
   state: AppState;
