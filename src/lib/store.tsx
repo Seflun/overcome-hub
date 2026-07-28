@@ -1,19 +1,20 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATEGORIES, type CategoryId, todayKey } from "./addiction-data";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Journey {
   id: string;
   category: CategoryId;
-  startedAt: string; // ISO
+  startedAt: string;
   xp: number;
   completions: Record<string, string[]>;
   lastRelapse?: string;
-  costPerDay?: number; // for money-saved insights
+  costPerDay?: number;
 }
 
 export interface JournalEntry {
   id: string;
-  createdAt: string; // ISO
+  createdAt: string;
   journeyId?: string;
   mood: 1 | 2 | 3 | 4 | 5;
   trigger?: string;
@@ -22,7 +23,7 @@ export interface JournalEntry {
 
 export interface Reminder {
   id: string;
-  time: string; // "HH:MM"
+  time: string;
   label: string;
   enabled: boolean;
 }
@@ -62,6 +63,10 @@ export const FREE_JOURNEY_LIMIT = 2;
 
 interface Ctx {
   state: AppState;
+  userId: string | null;
+  userEmail: string | null;
+  syncing: boolean;
+  signOut: () => Promise<void>;
   startJourney: (category: CategoryId) => { id: string | null; blocked?: "premium" };
   setActive: (id: string) => void;
   removeJourney: (id: string) => void;
@@ -81,21 +86,16 @@ interface Ctx {
 
 const StoreCtx = createContext<Ctx | null>(null);
 
-function load(): AppState {
+function loadLocal(): AppState {
   if (typeof window === "undefined") return empty;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) {
-      // migrate v1
       const legacy = localStorage.getItem("reclaim.state.v1");
-      if (legacy) {
-        const p = JSON.parse(legacy);
-        return { ...empty, ...p };
-      }
+      if (legacy) return { ...empty, ...JSON.parse(legacy) };
       return empty;
     }
-    const parsed = JSON.parse(raw) as AppState;
-    return { ...empty, ...parsed };
+    return { ...empty, ...(JSON.parse(raw) as AppState) };
   } catch {
     return empty;
   }
@@ -104,19 +104,85 @@ function load(): AppState {
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(empty);
   const [hydrated, setHydrated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNextSave = useRef(false);
 
+  // Initial local load + auth listener
   useEffect(() => {
-    setState(load());
+    setState(loadLocal());
     setHydrated(true);
+
+    const applySession = async (uid: string | null, email: string | null) => {
+      setUserId(uid);
+      setUserEmail(email);
+      if (!uid) return;
+      setSyncing(true);
+      try {
+        const { data } = await supabase
+          .from("user_state")
+          .select("data")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (data?.data && Object.keys(data.data as object).length > 0) {
+          skipNextSave.current = true;
+          setState({ ...empty, ...(data.data as AppState) });
+        } else {
+          // First sign-in: push whatever the user has locally up to the cloud
+          const local = loadLocal();
+          await supabase.from("user_state").upsert({ user_id: uid, data: local as any });
+        }
+      } finally {
+        setSyncing(false);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data }) => {
+      applySession(data.session?.user.id ?? null, data.session?.user.email ?? null);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "USER_UPDATED") {
+        applySession(session?.user.id ?? null, session?.user.email ?? null);
+      } else if (event === "SIGNED_OUT") {
+        setUserId(null);
+        setUserEmail(null);
+      }
+    });
+
+    return () => sub.subscription.unsubscribe();
   }, []);
 
+  // Persist to localStorage + debounced cloud sync
   useEffect(() => {
     if (!hydrated) return;
     localStorage.setItem(KEY, JSON.stringify(state));
-  }, [state, hydrated]);
+    if (!userId) return;
+    if (skipNextSave.current) {
+      skipNextSave.current = false;
+      return;
+    }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      supabase
+        .from("user_state")
+        .upsert({ user_id: userId, data: state as any })
+        .then(() => {});
+    }, 600);
+  }, [state, hydrated, userId]);
 
   const value = useMemo<Ctx>(() => ({
     state,
+    userId,
+    userEmail,
+    syncing,
+    signOut: async () => {
+      await supabase.auth.signOut();
+      setUserId(null);
+      setUserEmail(null);
+    },
     startJourney: (category) => {
       const existing = state.journeys.find((j) => j.category === category);
       if (existing) {
@@ -212,7 +278,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       })),
     exportAll: () => JSON.stringify(state, null, 2),
     totalXp: state.journeys.reduce((acc, j) => acc + j.xp, 0),
-  }), [state]);
+  }), [state, userId, userEmail, syncing]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
