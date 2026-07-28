@@ -18,11 +18,10 @@ export const Route = createFileRoute("/plus")({
 });
 
 const FEATURES = [
-  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than one loop at once — vaping + gambling, alcohol + sugar, whatever you need." },
-  { icon: ShieldAlert,   title: "Craving SOS toolkit",    blurb: "Panic button, guided breathing, urge-surf timer, and a 3-minute science-backed protocol." },
-  { icon: BookHeart,     title: "Journaling & mood",      blurb: "Log cravings and mood — see patterns like 'you slip most on Friday evenings'." },
+  { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than 2 loops at once — vaping + gambling + alcohol, whatever you need." },
+  { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes 25 chats total." },
+  { icon: ShieldAlert,   title: "3-minute SOS protocol",  blurb: "Guided science-backed protocol: cold water → move → ground → reach out." },
   { icon: LineChart,     title: "Health & money insights", blurb: "Watch your lungs recover, dollars saved, and personal milestones stack up." },
-  { icon: Bell,          title: "Custom reminders",       blurb: "Smart nudges at your trigger times — not spammy, actually useful." },
   { icon: Download,      title: "Export your progress",   blurb: "For your therapist, doctor, or your own future self." },
 ];
 
