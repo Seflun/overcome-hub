@@ -188,27 +188,42 @@ function Coach() {
           )}
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            send(input);
-          }}
-          className="mt-3 flex items-center gap-2"
-        >
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Tell me what's going on…"
-            className="flex-1 rounded-full border border-border/60 bg-card/70 px-4 py-2.5 text-sm outline-none focus:border-primary/60"
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-50"
+        {outOfCredits ? (
+          <a
+            href="/plus"
+            className="mt-3 block rounded-full bg-aurora px-5 py-3 text-center text-sm font-bold text-primary-foreground shadow-glow"
           >
-            <Send className="h-4 w-4" />
-          </button>
-        </form>
+            Out of Coach credits — Unlock unlimited with Plus
+          </a>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              send(input);
+            }}
+            className="mt-3 flex items-center gap-2"
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Tell me what's going on…"
+              className="flex-1 rounded-full border border-border/60 bg-card/70 px-4 py-2.5 text-sm outline-none focus:border-primary/60"
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-50"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
+        )}
+        {!state.isPremium && !outOfCredits && creditsLeft !== Infinity && state.coachCredits <= 5 && (
+          <div className="mt-2 text-center text-[11px] text-muted-foreground">
+            {state.coachCredits} free Coach credits left ·{" "}
+            <a href="/plus" className="text-primary underline">Go unlimited</a>
+          </div>
+        )}
       </div>
     </AppShell>
   );
