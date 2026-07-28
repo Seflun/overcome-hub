@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings } from "lucide-react";
+import { Flame, Plus, Sparkles, CheckCircle2, Circle, RotateCcw, Settings, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
