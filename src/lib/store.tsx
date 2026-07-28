@@ -138,6 +138,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return { id };
     },
     setActive: (id) => setState((s) => ({ ...s, activeId: id })),
+    removeJourney: (id) =>
+      setState((s) => {
+        const journeys = s.journeys.filter((j) => j.id !== id);
+        const activeId = s.activeId === id ? (journeys[0]?.id ?? null) : s.activeId;
+        return { ...s, journeys, activeId };
+      }),
+    useCoachCredit: () => {
+      if (state.isPremium) return true;
+      if (state.coachCredits <= 0) return false;
+      setState((s) => ({ ...s, coachCredits: Math.max(0, s.coachCredits - 1) }));
+      return true;
+    },
     toggleTask: (journeyId, taskId, xp) => {
       setState((s) => {
         const key = todayKey();
