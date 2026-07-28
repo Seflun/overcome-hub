@@ -80,7 +80,7 @@ function Sos() {
             className="mt-6 block rounded-2xl border border-primary/40 bg-aurora/10 p-4 text-center"
           >
             <div className="text-xs font-bold uppercase tracking-widest text-primary">Unlock the full toolkit</div>
-            <div className="mt-1 text-sm font-semibold">Urge surf timer + guided SOS protocol</div>
+            <div className="mt-1 text-sm font-semibold">Guided 3-minute SOS protocol</div>
             <div className="mt-0.5 text-xs text-muted-foreground">With Addiction Blocker+</div>
           </Link>
         )}
