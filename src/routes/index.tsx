@@ -64,8 +64,14 @@ function Today() {
                   </button>
                   <button
                     aria-label={`Cancel ${meta.name} journey`}
-                    onClick={() => {
-                      if (window.confirm(`Cancel your "${meta.name}" journey? Your progress on it will be removed.`)) {
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: `Cancel ${meta.name} journey?`,
+                        description: "Your streak and XP on this journey will be removed. This can't be undone.",
+                        confirmLabel: "Remove journey",
+                        tone: "destructive",
+                      });
+                      if (ok) {
                         removeJourney(j.id);
                         toast(`Journey removed: ${meta.name}`);
                       }
