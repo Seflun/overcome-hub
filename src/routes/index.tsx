@@ -189,6 +189,7 @@ function ActiveCard({ journeyId }: { journeyId: string }) {
 
 function TaskList({ journeyId }: { journeyId: string }) {
   const { state, toggleTask } = useStore();
+  const confirm = useConfirm();
   const journey = state.journeys.find((j) => j.id === journeyId)!;
   const key = todayKey();
   const tasks = tasksForDay(journey.category, key);
@@ -211,11 +212,22 @@ function TaskList({ journeyId }: { journeyId: string }) {
           return (
             <li key={t.id}>
               <button
-                onClick={() => {
-                  const msg = isDone
-                    ? `Mark "${t.title}" as not done? You'll lose ${t.xp} XP.`
-                    : `Confirm you completed "${t.title}"? You'll earn +${t.xp} XP.`;
-                  if (!window.confirm(msg)) return;
+                onClick={async () => {
+                  const ok = await confirm(
+                    isDone
+                      ? {
+                          title: `Uncheck "${t.title}"?`,
+                          description: `You'll lose ${t.xp} XP.`,
+                          confirmLabel: "Uncheck",
+                          tone: "destructive",
+                        }
+                      : {
+                          title: `Mark "${t.title}" done?`,
+                          description: `You'll earn +${t.xp} XP.`,
+                          confirmLabel: `Complete · +${t.xp} XP`,
+                        },
+                  );
+                  if (!ok) return;
                   toggleTask(journey.id, t.id, t.xp);
                   if (!isDone) toast.success(`+${t.xp} XP · ${t.title}`);
                 }}
