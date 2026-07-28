@@ -31,9 +31,9 @@ function renderInlineMarkdown(text: string): React.ReactNode {
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
-      { title: "Coach — Reclaim" },
+      { title: "Coach — Addiction Blocker" },
       { name: "description", content: "Talk to an AI companion trained to help you ride out cravings and rebuild habits. Not a therapist." },
-      { property: "og:title", content: "Coach — Reclaim" },
+      { property: "og:title", content: "Coach — Addiction Blocker" },
       { property: "og:description", content: "An AI companion for the tough moments in recovery." },
     ],
   }),

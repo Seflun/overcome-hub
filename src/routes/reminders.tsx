@@ -10,9 +10,9 @@ import { useStore } from "../lib/store";
 export const Route = createFileRoute("/reminders")({
   head: () => ({
     meta: [
-      { title: "Reminders — Reclaim" },
+      { title: "Reminders — Addiction Blocker" },
       { name: "description", content: "Smart nudges at your trigger times." },
-      { property: "og:title", content: "Reminders — Reclaim" },
+      { property: "og:title", content: "Reminders — Addiction Blocker" },
       { property: "og:description", content: "Set custom recovery reminders at the times you need them." },
     ],
   }),

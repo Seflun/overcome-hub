@@ -9,9 +9,9 @@ import { useStore, FREE_JOURNEY_LIMIT } from "../lib/store";
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore — Reclaim" },
+      { title: "Explore — Addiction Blocker" },
       { name: "description", content: "Start a new journey and stack XP across every addiction you break." },
-      { property: "og:title", content: "Explore — Reclaim" },
+      { property: "og:title", content: "Explore — Addiction Blocker" },
       { property: "og:description", content: "Start a new recovery journey. Stack XP as you break each loop." },
     ],
   }),

@@ -8,9 +8,9 @@ import { useStore } from "../lib/store";
 export const Route = createFileRoute("/plus")({
   head: () => ({
     meta: [
-      { title: "Reclaim+ — Go deeper" },
+      { title: "Addiction Blocker+ — Go deeper" },
       { name: "description", content: "Unlock unlimited journeys, the craving SOS toolkit, journaling, insights and custom reminders." },
-      { property: "og:title", content: "Reclaim+ — Go deeper" },
+      { property: "og:title", content: "Addiction Blocker+ — Go deeper" },
       { property: "og:description", content: "Deeper recovery tools: SOS toolkit, journaling, insights, reminders." },
     ],
   }),
@@ -44,13 +44,13 @@ function Plus() {
 
         <div className="rounded-3xl border border-primary/40 bg-card-grad p-6 shadow-glow">
           <div className="inline-flex items-center gap-1 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-            <Sparkles className="h-3 w-3" /> Reclaim+
+            <Sparkles className="h-3 w-3" /> Addiction Blocker+
           </div>
           <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight">
             Go <span className="text-aurora">deeper</span> into your recovery.
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Reclaim's core — streaks, XP, daily missions, slip resets — stays free forever. Reclaim+ adds the tools that make the hard moments survivable.
+            Addiction Blocker's core — streaks, XP, daily missions, slip resets — stays free forever. Addiction Blocker+ adds the tools that make the hard moments survivable.
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
@@ -79,10 +79,10 @@ function Plus() {
             onClick={() => {
               if (isPremium) {
                 setPremium(false);
-                toast("Reclaim+ turned off. Core stays free.");
+                toast("Addiction Blocker+ turned off. Core stays free.");
               } else {
                 setPremium(true);
-                toast.success("Welcome to Reclaim+ 🎉");
+                toast.success("Welcome to Addiction Blocker+ 🎉");
                 navigate({ to: "/" });
               }
             }}
