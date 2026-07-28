@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Today() {
   const { state, setActive, startJourney, removeJourney } = useStore();
+  const confirm = useConfirm();
 
   if (state.journeys.length === 0) return <Onboarding onPick={startJourney} />;
 
