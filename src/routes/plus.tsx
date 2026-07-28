@@ -90,7 +90,7 @@ function Plus() {
               <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
                   onClick={() => buy("monthly")}
-                  disabled={loading || busy !== null}
+                  disabled={busy !== null}
                   className="rounded-2xl border border-primary/40 bg-primary/10 p-3 text-left transition hover:bg-primary/15 disabled:opacity-60"
                 >
                   <div className="text-xs text-muted-foreground">Monthly</div>
@@ -104,7 +104,7 @@ function Plus() {
                 </button>
                 <button
                   onClick={() => buy("yearly")}
-                  disabled={loading || busy !== null}
+                  disabled={busy !== null}
                   className="relative rounded-2xl border border-primary/60 bg-aurora/10 p-3 text-left transition hover:bg-aurora/15 disabled:opacity-60"
                 >
                   <div className="absolute -top-2 right-2 rounded-full bg-aurora px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary-foreground">
@@ -123,7 +123,7 @@ function Plus() {
 
               <button
                 onClick={() => buy("yearly")}
-                disabled={loading || busy !== null}
+                disabled={busy !== null}
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy ? "Opening secure checkout…" : "Get Addiction Blocker+"}
