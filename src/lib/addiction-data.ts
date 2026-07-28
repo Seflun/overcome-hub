@@ -2,11 +2,13 @@ export type CategoryId =
   | "vaping"
   | "smoking"
   | "alcohol"
+  | "drinking"
   | "gambling"
   | "sugar"
   | "cannabis"
   | "porn"
   | "social";
+
 
 export interface Category {
   id: CategoryId;
@@ -21,6 +23,7 @@ export const CATEGORIES: Category[] = [
   { id: "vaping",   name: "Vaping",         emoji: "💨", tagline: "Reclaim your lungs and focus", color: "oklch(0.75 0.15 210)", benefit: "Lung capacity improves in 72 hours" },
   { id: "smoking",  name: "Smoking",        emoji: "🚭", tagline: "One breath at a time",         color: "oklch(0.7 0.18 30)",   benefit: "Circulation improves in 2 weeks" },
   { id: "alcohol",  name: "Alcohol",        emoji: "🍺", tagline: "Wake up clear again",          color: "oklch(0.78 0.17 80)",  benefit: "Sleep quality up 30% in a week" },
+  { id: "drinking", name: "Drinking",       emoji: "🍸", tagline: "Rewrite the ritual",           color: "oklch(0.72 0.16 60)",  benefit: "Sharper mornings within a week" },
   { id: "gambling", name: "Gambling",       emoji: "🎰", tagline: "Win back your peace",          color: "oklch(0.7 0.2 340)",   benefit: "Anxiety drops sharply after 21 days" },
   { id: "sugar",    name: "Sugar",          emoji: "🍬", tagline: "Steady energy, clearer skin",  color: "oklch(0.78 0.14 20)",  benefit: "Cravings fade in ~10 days" },
   { id: "cannabis", name: "Cannabis",       emoji: "🌿", tagline: "Sharpen your mind",            color: "oklch(0.78 0.16 155)", benefit: "Dreams & memory return in ~2 weeks" },
@@ -66,6 +69,12 @@ const BY_CATEGORY: Record<CategoryId, Task[]> = {
     { id: "a-1", category: "alcohol", title: "Pour a mocktail with soda + lime", description: "Ritual > substance.", minutes: 3, xp: 20 },
     { id: "a-2", category: "alcohol", title: "Remove alcohol from eye-level", description: "Out of sight, out of mind.", minutes: 3, xp: 20 },
     { id: "a-3", category: "alcohol", title: "Text a sober buddy", description: "Accountability is a superpower.", minutes: 2, xp: 20 },
+  ],
+  drinking: [
+    { id: "d-1", category: "drinking", title: "Set tonight's drink limit — in writing", description: "A number decided sober is worth 10 in the moment.", minutes: 2, xp: 20 },
+    { id: "d-2", category: "drinking", title: "Alternate every drink with water", description: "Slows pace, softens tomorrow.", minutes: 1, xp: 15 },
+    { id: "d-3", category: "drinking", title: "Plan one alcohol-free evening this week", description: "Pick the night now, protect it.", minutes: 3, xp: 25 },
+    { id: "d-4", category: "drinking", title: "Track what you drank yesterday", description: "Awareness quietly cuts intake.", minutes: 3, xp: 20 },
   ],
   gambling: [
     { id: "g-1", category: "gambling", title: "Delete one gambling app", description: "Friction saves money.", minutes: 2, xp: 40 },

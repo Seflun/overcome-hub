@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Compass, Trophy, ShieldAlert, BookHeart, type LucideIcon } from "lucide-react";
+import { Home, Compass, Trophy, ShieldAlert, Sparkles, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface NavItem {
@@ -10,7 +10,7 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { to: "/", label: "Today", icon: Home },
-  { to: "/journal", label: "Journal", icon: BookHeart },
+  { to: "/coach", label: "Coach", icon: Sparkles },
   { to: "/sos", label: "SOS", icon: ShieldAlert },
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/progress", label: "Progress", icon: Trophy },
