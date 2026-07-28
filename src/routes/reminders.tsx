@@ -40,9 +40,7 @@ function Reminders() {
           Set your own recovery reminders. Simple and quiet.
         </p>
         <div className="mt-6">
-          <PremiumGate title="Reminders are a Plus feature" blurb="Set custom check-ins at your trigger times.">
-            <RemindersInner />
-          </PremiumGate>
+          <RemindersInner />
         </div>
       </div>
     </AppShell>
