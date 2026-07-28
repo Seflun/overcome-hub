@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { useStore, useCategoryMeta } from "../lib/store";
+import { useConfirm } from "../components/confirm-dialog";
 import {
   CATEGORIES,
   daysBetween,
