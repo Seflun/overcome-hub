@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Compass, Trophy, ShieldAlert, Sparkles, type LucideIcon } from "lucide-react";
+import { Home, Compass, Trophy, ShieldAlert, Sparkles, Settings, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface NavItem {
@@ -20,6 +20,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">
+      {pathname !== "/settings" && (
+        <Link
+          to="/settings"
+          aria-label="Settings"
+          className="fixed right-4 top-4 z-50 rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground"
+        >
+          <Settings className="h-4 w-4" />
+        </Link>
+      )}
       <main className="flex-1 pb-28">{children}</main>
       <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md px-3 pb-4">
         <div className="flex items-center justify-around rounded-full border border-border/60 bg-card/80 px-1.5 py-2 shadow-soft backdrop-blur-xl">
