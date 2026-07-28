@@ -158,7 +158,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
 
     const applySession = async (uid: string | null, email: string | null) => {
-      setUserId(uid);
+      setUserId((prev) => {
+        // Account switch or sign-out: never carry state across identities.
+        if (prev !== uid) {
+          skipNextSave.current = true;
+          setState(applyDailyCoachRefill(empty));
+          try { localStorage.removeItem(KEY); } catch {}
+        }
+        return uid;
+      });
       setUserEmail(email);
       if (!uid) return;
       setSyncing(true);
@@ -172,8 +180,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           skipNextSave.current = true;
           setState(applyDailyCoachRefill(migrate({ ...empty, ...(data.data as unknown as AppState) })));
         } else {
-          const local = loadLocal();
-          await supabase.from("user_state").upsert({ user_id: uid, data: local as any });
+          // Brand-new account — start fresh, never seed from another account's local cache.
+          skipNextSave.current = true;
+          const fresh = applyDailyCoachRefill(empty);
+          setState(fresh);
+          await supabase.from("user_state").upsert({ user_id: uid, data: fresh as any });
         }
       } finally {
         setSyncing(false);
@@ -181,14 +192,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
 
     supabase.auth.getSession().then(({ data }) => {
-      applySession(data.session?.user.id ?? null, data.session?.user.email ?? null);
+      const uid = data.session?.user.id ?? null;
+      if (uid) {
+        // Signed-in visit: cloud is source of truth; don't hydrate from local.
+        skipNextSave.current = true;
+        setState(applyDailyCoachRefill(empty));
+        applySession(uid, data.session?.user.email ?? null);
+      } else {
+        // Signed-out visit: local cache is fine (used until they sign in).
+        setState(applyDailyCoachRefill(loadLocal()));
+      }
       setAuthChecked(true);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "USER_UPDATED") {
+      if (event === "SIGNED_IN" || event === "USER_UPDATED") {
         applySession(session?.user.id ?? null, session?.user.email ?? null);
       } else if (event === "SIGNED_OUT") {
+        skipNextSave.current = true;
+        setState(applyDailyCoachRefill(empty));
+        try { localStorage.removeItem(KEY); } catch {}
         setUserId(null);
         setUserEmail(null);
       }
@@ -232,6 +255,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         } catch {}
       }
       await supabase.auth.signOut();
+      skipNextSave.current = true;
+      try { localStorage.removeItem(KEY); } catch {}
+      setState(applyDailyCoachRefill(empty));
       setUserId(null);
       setUserEmail(null);
     },
