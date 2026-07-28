@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Download, Bell, LineChart, ShieldAlert, BookHeart, ArrowLeft } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Sparkles, Download, Bell, LineChart, ShieldAlert, BookHeart, ArrowLeft, LogIn, LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
@@ -10,16 +10,17 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Settings — Addiction Blocker" },
-      { name: "description", content: "Manage your plan, reminders, insights and data export." },
+      { name: "description", content: "Manage your account, plan, reminders, insights and data export." },
       { property: "og:title", content: "Settings — Addiction Blocker" },
-      { property: "og:description", content: "Manage your plan and data." },
+      { property: "og:description", content: "Manage your account and data." },
     ],
   }),
   component: Settings,
 });
 
 function Settings() {
-  const { state, exportAll, setPremium } = useStore();
+  const { state, exportAll, setPremium, userId, userEmail, signOut, syncing } = useStore();
+  const navigate = useNavigate();
 
   const download = () => {
     if (!state.isPremium) return;
