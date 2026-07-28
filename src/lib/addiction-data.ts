@@ -2,7 +2,6 @@ export type CategoryId =
   | "vaping"
   | "smoking"
   | "alcohol"
-  | "drinking"
   | "gambling"
   | "sugar"
   | "cannabis"
