@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Today() {
-  const { state, setActive, startJourney } = useStore();
+  const { state, setActive, startJourney, removeJourney } = useStore();
 
   if (state.journeys.length === 0) return <Onboarding onPick={startJourney} />;
 
@@ -38,40 +38,52 @@ function Today() {
         <Header />
         <ActiveCard journeyId={active.id} />
 
-        {state.journeys.length > 1 && (
-          <div className="mt-5">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Your journeys
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {state.journeys.map((j) => {
-                const meta = CATEGORIES.find((c) => c.id === j.category)!;
-                const isActive = j.id === active.id;
-                return (
-                  <button
-                    key={j.id}
-                    onClick={() => setActive(j.id)}
-                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${
-                      isActive
-                        ? "border-primary/60 bg-primary/10 text-foreground"
-                        : "border-border/60 bg-card/60 text-muted-foreground"
-                    }`}
-                  >
+        <div className="mt-5">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Your journeys
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {state.journeys.map((j) => {
+              const meta = CATEGORIES.find((c) => c.id === j.category)!;
+              const isActive = j.id === active.id;
+              return (
+                <div
+                  key={j.id}
+                  className={`flex shrink-0 items-center gap-2 rounded-full border py-1.5 pl-3 pr-1.5 text-sm transition ${
+                    isActive
+                      ? "border-primary/60 bg-primary/10 text-foreground"
+                      : "border-border/60 bg-card/60 text-muted-foreground"
+                  }`}
+                >
+                  <button onClick={() => setActive(j.id)} className="flex items-center gap-2">
                     <span>{meta.emoji}</span>
                     <span className="font-medium">{meta.name}</span>
                     <span className="text-xs opacity-70">{daysBetween(j.startedAt)}d</span>
                   </button>
-                );
-              })}
-              <Link
-                to="/explore"
-                className="flex shrink-0 items-center gap-1 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-sm text-muted-foreground"
-              >
-                <Plus className="h-4 w-4" /> Add
-              </Link>
-            </div>
+                  <button
+                    aria-label={`Cancel ${meta.name} journey`}
+                    onClick={() => {
+                      if (window.confirm(`Cancel your "${meta.name}" journey? Your progress on it will be removed.`)) {
+                        removeJourney(j.id);
+                        toast(`Journey removed: ${meta.name}`);
+                      }
+                    }}
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-background/60 text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              );
+            })}
+            <Link
+              to="/explore"
+              className="flex shrink-0 items-center gap-1 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-sm text-muted-foreground"
+            >
+              <Plus className="h-4 w-4" /> Add
+            </Link>
           </div>
-        )}
+        </div>
+
 
         <TaskList journeyId={active.id} />
       </div>
