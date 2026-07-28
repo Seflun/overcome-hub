@@ -75,6 +75,7 @@ interface Ctx {
   state: AppState;
   userId: string | null;
   userEmail: string | null;
+  authChecked: boolean;
   syncing: boolean;
   signOut: () => Promise<void>;
   startJourney: (category: CategoryId) => { id: string | null; blocked?: "premium" };
@@ -146,6 +147,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipNextSave = useRef(false);
@@ -180,6 +182,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(({ data }) => {
       applySession(data.session?.user.id ?? null, data.session?.user.email ?? null);
+      setAuthChecked(true);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
@@ -216,6 +219,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     state,
     userId,
     userEmail,
+    authChecked,
     syncing,
     signOut: async () => {
       if (saveTimer.current) {
@@ -345,7 +349,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       })),
     exportAll: () => JSON.stringify(state, null, 2),
     totalXp: state.journeys.reduce((acc, j) => acc + j.xp, 0),
-  }), [state, userId, userEmail, syncing]);
+  }), [state, userId, userEmail, authChecked, syncing]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
