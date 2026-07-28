@@ -1,17 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
+import { usePaddleCheckout } from "../hooks/usePaddleCheckout";
 
 export const Route = createFileRoute("/plus")({
   head: () => ({
     meta: [
       { title: "Addiction Blocker+ — Go deeper" },
-      { name: "description", content: "Unlock unlimited journeys, the craving SOS toolkit, journaling, insights and custom reminders." },
+      { name: "description", content: "Unlock unlimited journeys, the craving SOS toolkit, insights, unlimited AI Coach and export." },
       { property: "og:title", content: "Addiction Blocker+ — Go deeper" },
-      { property: "og:description", content: "Deeper recovery tools: SOS toolkit, journaling, insights, reminders." },
+      { property: "og:description", content: "Deeper recovery tools: SOS toolkit, unlimited AI Coach, insights, export." },
     ],
   }),
   component: Plus,
@@ -19,23 +21,47 @@ export const Route = createFileRoute("/plus")({
 
 const FEATURES = [
   { icon: Layers,        title: "Unlimited journeys",     blurb: "Break more than 2 loops at once — nicotine + gambling + alcohol, whatever you need." },
-  { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes 25 chats total." },
+  { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes a daily streak allowance." },
   { icon: ShieldAlert,   title: "3-minute SOS protocol",  blurb: "Guided science-backed protocol: cold water → move → ground → reach out." },
-  { icon: LineChart,     title: "Health & money insights", blurb: "Watch your lungs recover, dollars saved, and personal milestones stack up." },
+  { icon: LineChart,     title: "Health & money insights", blurb: "Watch your body recover, dollars saved, and personal milestones stack up." },
   { icon: Download,      title: "Export your progress",   blurb: "For your therapist, doctor, or your own future self." },
 ];
 
 function Plus() {
-  const { state, setPremium } = useStore();
+  const { state, userId, userEmail } = useStore();
   const navigate = useNavigate();
+  const { openCheckout, loading } = usePaddleCheckout();
+  const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
 
   const isPremium = state.isPremium;
+
+  const buy = async (plan: "monthly" | "yearly") => {
+    if (!userId) {
+      toast("Sign in to subscribe");
+      navigate({ to: "/auth" });
+      return;
+    }
+    setBusy(plan);
+    try {
+      await openCheckout({
+        priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
+        customerEmail: userEmail ?? undefined,
+        customData: { userId },
+        successUrl: `${window.location.origin}/checkout/success`,
+      });
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Checkout couldn't open. Try again in a moment.");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   return (
     <AppShell>
       <div className="px-5 pb-8 pt-6">
         <button
-          onClick={() => navigate({ to: "/" })}
+          onClick={() => navigate({ to: "/today" })}
           className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back
@@ -52,50 +78,61 @@ function Plus() {
             Addiction Blocker's core — streaks, XP, daily missions, slip resets — stays free forever. Addiction Blocker+ adds the tools that make the hard moments survivable.
           </p>
 
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            <div className="rounded-2xl border border-primary/40 bg-primary/10 p-3">
-              <div className="text-xs text-muted-foreground">Monthly</div>
-              <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-2xl font-black">$4.99</span>
-                <span className="text-xs text-muted-foreground">/mo</span>
+          {isPremium ? (
+            <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-center">
+              <div className="text-sm font-semibold">You're on Addiction Blocker+</div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                Thanks for supporting recovery. Manage your subscription from your email receipt.
               </div>
-              <div className="mt-1 text-[10px] text-muted-foreground">Less than 2 packs of gum</div>
             </div>
-            <div className="relative rounded-2xl border border-primary/60 bg-aurora/10 p-3">
-              <div className="absolute -top-2 right-2 rounded-full bg-aurora px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary-foreground">
-                Save 50%
+          ) : (
+            <>
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => buy("monthly")}
+                  disabled={loading || busy !== null}
+                  className="rounded-2xl border border-primary/40 bg-primary/10 p-3 text-left transition hover:bg-primary/15 disabled:opacity-60"
+                >
+                  <div className="text-xs text-muted-foreground">Monthly</div>
+                  <div className="mt-1 flex items-baseline gap-1">
+                    <span className="text-2xl font-black">$4.99</span>
+                    <span className="text-xs text-muted-foreground">/mo</span>
+                  </div>
+                  <div className="mt-1 text-[10px] text-muted-foreground">
+                    {busy === "monthly" ? "Opening checkout…" : "Cancel anytime"}
+                  </div>
+                </button>
+                <button
+                  onClick={() => buy("yearly")}
+                  disabled={loading || busy !== null}
+                  className="relative rounded-2xl border border-primary/60 bg-aurora/10 p-3 text-left transition hover:bg-aurora/15 disabled:opacity-60"
+                >
+                  <div className="absolute -top-2 right-2 rounded-full bg-aurora px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary-foreground">
+                    Save 50%
+                  </div>
+                  <div className="text-xs text-muted-foreground">Yearly</div>
+                  <div className="mt-1 flex items-baseline gap-1">
+                    <span className="text-2xl font-black">$29</span>
+                    <span className="text-xs text-muted-foreground">/yr</span>
+                  </div>
+                  <div className="mt-1 text-[10px] text-muted-foreground">
+                    {busy === "yearly" ? "Opening checkout…" : "$2.42/mo"}
+                  </div>
+                </button>
               </div>
-              <div className="text-xs text-muted-foreground">Yearly</div>
-              <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-2xl font-black">$29</span>
-                <span className="text-xs text-muted-foreground">/yr</span>
-              </div>
-              <div className="mt-1 text-[10px] text-muted-foreground">$2.42/mo · 7-day free trial</div>
-            </div>
-          </div>
 
-          <button
-            onClick={() => {
-              if (isPremium) {
-                setPremium(false);
-                toast("Addiction Blocker+ turned off. Core stays free.");
-              } else {
-                setPremium(true);
-                toast.success("Welcome to Addiction Blocker+ 🎉");
-                navigate({ to: "/" });
-              }
-            }}
-            className={`mt-4 w-full rounded-full px-5 py-3 text-sm font-bold shadow-glow transition ${
-              isPremium
-                ? "bg-card border border-border/60 text-foreground"
-                : "bg-aurora text-primary-foreground"
-            }`}
-          >
-            {isPremium ? "Turn off Plus (demo)" : "Start 7-day free trial"}
-          </button>
-          <div className="mt-2 text-center text-[11px] text-muted-foreground">
-            Cancel anytime · No card until trial ends
-          </div>
+              <button
+                onClick={() => buy("yearly")}
+                disabled={loading || busy !== null}
+                className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
+              >
+                {busy ? "Opening secure checkout…" : "Get Addiction Blocker+"}
+              </button>
+              <div className="mt-2 text-center text-[11px] text-muted-foreground">
+                Secure checkout · Cancel anytime
+              </div>
+            </>
+          )}
         </div>
 
         <div className="mt-6 space-y-2.5">
