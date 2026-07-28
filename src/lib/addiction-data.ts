@@ -24,7 +24,7 @@ export const CATEGORIES: Category[] = [
   { id: "alcohol",  name: "Alcohol",        emoji: "🍺", tagline: "Wake up clear again",          color: "oklch(0.78 0.17 80)",  benefit: "Sleep quality up 30% in a week" },
   { id: "gambling", name: "Gambling",       emoji: "🎰", tagline: "Win back your peace",          color: "oklch(0.7 0.2 340)",   benefit: "Anxiety drops sharply after 21 days" },
   { id: "sugar",    name: "Sugar",          emoji: "🍬", tagline: "Steady energy, clearer skin",  color: "oklch(0.78 0.14 20)",  benefit: "Cravings fade in ~10 days" },
-  { id: "cannabis", name: "Cannabis",       emoji: "🌿", tagline: "Sharpen your mind",            color: "oklch(0.78 0.16 155)", benefit: "Dreams & memory return in ~2 weeks" },
+  { id: "cannabis", name: "Drugs",          emoji: "💊", tagline: "Sharpen your mind",            color: "oklch(0.78 0.16 155)", benefit: "Dreams & memory return in ~2 weeks" },
   { id: "porn",     name: "Porn",           emoji: "🧠", tagline: "Rewire, refocus, reconnect",   color: "oklch(0.68 0.18 285)", benefit: "Motivation & confidence climb" },
   { id: "social",   name: "Social Media",   emoji: "📱", tagline: "Reclaim your attention",       color: "oklch(0.75 0.15 250)", benefit: "Focus & mood improve in days" },
 ];
