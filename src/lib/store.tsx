@@ -255,6 +255,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         } catch {}
       }
       await supabase.auth.signOut();
+      skipNextSave.current = true;
+      try { localStorage.removeItem(KEY); } catch {}
+      setState(applyDailyCoachRefill(empty));
       setUserId(null);
       setUserEmail(null);
     },
