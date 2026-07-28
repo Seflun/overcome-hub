@@ -2,11 +2,13 @@ export type CategoryId =
   | "vaping"
   | "smoking"
   | "alcohol"
+  | "drinking"
   | "gambling"
   | "sugar"
   | "cannabis"
   | "porn"
   | "social";
+
 
 export interface Category {
   id: CategoryId;
