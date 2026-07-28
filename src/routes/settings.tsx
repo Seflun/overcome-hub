@@ -19,7 +19,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function Settings() {
-  const { state, exportAll, setPremium, userId, userEmail, signOut, syncing } = useStore();
+  const { state, exportAll, userId, userEmail, signOut, syncing } = useStore();
   const navigate = useNavigate();
 
   const download = () => {
