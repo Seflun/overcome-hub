@@ -48,7 +48,7 @@ const STARTERS = [
 ];
 
 function Coach() {
-  const { state } = useStore();
+  const { state, useCoachCredit } = useStore();
   const active = state.journeys.find((j) => j.id === state.activeId) ?? state.journeys[0];
   const meta = useCategoryMeta(active?.category);
   const days = active ? daysBetween(active.startedAt) : 0;
@@ -59,6 +59,9 @@ function Coach() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const creditsLeft = state.isPremium ? Infinity : state.coachCredits;
+  const outOfCredits = !state.isPremium && state.coachCredits <= 0;
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
@@ -66,6 +69,10 @@ function Coach() {
   async function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
+    if (!useCoachCredit()) {
+      setError("You're out of free Coach credits. Upgrade to Addiction Blocker+ for unlimited chats.");
+      return;
+    }
     setError(null);
     const next: Msg[] = [...messages, { role: "user", content: trimmed }];
     setMessages(next);
