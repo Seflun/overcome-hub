@@ -81,7 +81,7 @@ function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold">9. Cookies</h2>
-            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. Payment provider checkout may set its own cookies, described in Paddle's privacy notice.</p>
+            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. Stripe's embedded checkout may set its own cookies, described in Stripe's privacy notice.</p>
           </section>
 
           <section>
