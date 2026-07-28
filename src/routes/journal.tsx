@@ -7,6 +7,7 @@ import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 import { PremiumBadge } from "../components/premium-badge";
+import { AiMessage } from "../lib/markdown";
 
 export const Route = createFileRoute("/journal")({
   head: () => ({
