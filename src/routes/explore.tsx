@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AppShell } from "../components/app-shell";
 import { CATEGORIES } from "../lib/addiction-data";
 import { useStore, FREE_JOURNEY_LIMIT } from "../lib/store";
+import { useConfirm } from "../components/confirm-dialog";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
