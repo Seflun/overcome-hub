@@ -70,6 +70,12 @@ const BY_CATEGORY: Record<CategoryId, Task[]> = {
     { id: "a-2", category: "alcohol", title: "Remove alcohol from eye-level", description: "Out of sight, out of mind.", minutes: 3, xp: 20 },
     { id: "a-3", category: "alcohol", title: "Text a sober buddy", description: "Accountability is a superpower.", minutes: 2, xp: 20 },
   ],
+  drinking: [
+    { id: "d-1", category: "drinking", title: "Set tonight's drink limit — in writing", description: "A number decided sober is worth 10 in the moment.", minutes: 2, xp: 20 },
+    { id: "d-2", category: "drinking", title: "Alternate every drink with water", description: "Slows pace, softens tomorrow.", minutes: 1, xp: 15 },
+    { id: "d-3", category: "drinking", title: "Plan one alcohol-free evening this week", description: "Pick the night now, protect it.", minutes: 3, xp: 25 },
+    { id: "d-4", category: "drinking", title: "Track what you drank yesterday", description: "Awareness quietly cuts intake.", minutes: 3, xp: 20 },
+  ],
   gambling: [
     { id: "g-1", category: "gambling", title: "Delete one gambling app", description: "Friction saves money.", minutes: 2, xp: 40 },
     { id: "g-2", category: "gambling", title: "Set a bank block on gambling merchants", description: "Most banks support this in-app.", minutes: 5, xp: 40 },
