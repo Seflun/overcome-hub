@@ -86,16 +86,27 @@ interface Ctx {
 
 const StoreCtx = createContext<Ctx | null>(null);
 
+function migrate(s: AppState): AppState {
+  const journeys = s.journeys.map((j) => {
+    const cat = j.category as string;
+    if (cat === "smoking" || cat === "vaping") {
+      return { ...j, category: "nicotine" as CategoryId };
+    }
+    return j;
+  });
+  return { ...s, journeys };
+}
+
 function loadLocal(): AppState {
   if (typeof window === "undefined") return empty;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) {
       const legacy = localStorage.getItem("reclaim.state.v1");
-      if (legacy) return { ...empty, ...JSON.parse(legacy) };
+      if (legacy) return migrate({ ...empty, ...JSON.parse(legacy) });
       return empty;
     }
-    return { ...empty, ...(JSON.parse(raw) as AppState) };
+    return migrate({ ...empty, ...(JSON.parse(raw) as AppState) });
   } catch {
     return empty;
   }
