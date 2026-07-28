@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
+import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download, X } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
-import { usePaddleCheckout } from "../hooks/usePaddleCheckout";
+import { useStripeCheckout } from "../hooks/useStripeCheckout";
 
 export const Route = createFileRoute("/plus")({
   head: () => ({
@@ -30,12 +30,12 @@ const FEATURES = [
 function Plus() {
   const { state, userId, userEmail } = useStore();
   const navigate = useNavigate();
-  const { openCheckout, loading } = usePaddleCheckout();
+  const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
 
   const isPremium = state.isPremium;
 
-  const buy = async (plan: "monthly" | "yearly") => {
+  const buy = (plan: "monthly" | "yearly") => {
     if (!userId) {
       toast("Sign in to subscribe");
       navigate({ to: "/auth" });
@@ -43,11 +43,11 @@ function Plus() {
     }
     setBusy(plan);
     try {
-      await openCheckout({
+      openCheckout({
         priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
         customerEmail: userEmail ?? undefined,
-        customData: { userId },
-        successUrl: `${window.location.origin}/checkout/success`,
+        userId,
+        returnUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       });
     } catch (e: any) {
       console.error(e);
@@ -90,7 +90,7 @@ function Plus() {
               <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
                   onClick={() => buy("monthly")}
-                  disabled={loading || busy !== null}
+                  disabled={busy !== null}
                   className="rounded-2xl border border-primary/40 bg-primary/10 p-3 text-left transition hover:bg-primary/15 disabled:opacity-60"
                 >
                   <div className="text-xs text-muted-foreground">Monthly</div>
@@ -104,7 +104,7 @@ function Plus() {
                 </button>
                 <button
                   onClick={() => buy("yearly")}
-                  disabled={loading || busy !== null}
+                  disabled={busy !== null}
                   className="relative rounded-2xl border border-primary/60 bg-aurora/10 p-3 text-left transition hover:bg-aurora/15 disabled:opacity-60"
                 >
                   <div className="absolute -top-2 right-2 rounded-full bg-aurora px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary-foreground">
@@ -123,7 +123,7 @@ function Plus() {
 
               <button
                 onClick={() => buy("yearly")}
-                disabled={loading || busy !== null}
+                disabled={busy !== null}
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy ? "Opening secure checkout…" : "Get Addiction Blocker+"}
@@ -165,6 +165,21 @@ function Plus() {
           </ul>
         </div>
       </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 backdrop-blur-sm p-4">
+          <div className="relative my-6 w-full max-w-2xl rounded-2xl border border-border/60 bg-card shadow-2xl">
+            <button
+              onClick={closeCheckout}
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
+              aria-label="Close checkout"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="p-4 pt-10">{checkoutElement}</div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

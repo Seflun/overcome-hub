@@ -28,21 +28,17 @@ function RefundPage() {
 
           <section>
             <h2 className="text-xl font-bold">How to request a refund</h2>
-            <p>Refunds are processed by our payment provider and Merchant of Record, Paddle. To request a refund:</p>
-            <ol className="list-decimal pl-6">
-              <li>Visit <a className="underline" href="https://paddle.net" target="_blank" rel="noreferrer">paddle.net</a> and look up your order using the email you purchased with.</li>
-              <li>Or contact our support team through the app and we'll help you initiate the refund with Paddle.</li>
-            </ol>
+            <p>To request a refund, contact our support team from within the app or reply to your purchase receipt. We'll process eligible refunds through our payment processor (Stripe) back to the original payment method — typically within 5–10 business days.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold">Cancelling your subscription</h2>
-            <p>You can cancel your subscription at any time from paddle.net or from your account page. Cancellation stops future billing; you retain access to Addiction Blocker+ features until the end of the current billing period.</p>
+            <p>You can cancel your subscription at any time from your account page. Cancellation stops future billing; you retain access to Addiction Blocker+ features until the end of the current billing period.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold">Merchant of Record</h2>
-            <p>Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns. For full mechanics, see Paddle's <a className="underline" href="https://www.paddle.com/legal/refund-policy" target="_blank" rel="noreferrer">Refund Policy</a>.</p>
+            <h2 className="text-xl font-bold">Payment processing</h2>
+            <p>Payments for Addiction Blocker+ are processed securely by Stripe. Applicable taxes are calculated and collected at checkout. Refunds are issued back to the original payment method.</p>
           </section>
         </div>
       </div>

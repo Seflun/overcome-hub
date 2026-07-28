@@ -53,7 +53,7 @@ function PrivacyPage() {
             <ul className="list-disc pl-6">
               <li><strong>Hosting & database providers</strong> that store your account and app content.</li>
               <li><strong>AI model providers</strong> that process your Coach and journal-review prompts to generate responses.</li>
-              <li><strong>Paddle.com Market Ltd</strong>, our Merchant of Record, for sale of subscriptions, payments, tax compliance, invoicing, refunds, and subscription management.</li>
+              <li><strong>Stripe</strong>, our payment processor, for checkout, subscription billing, tax calculation, invoicing, and refunds.</li>
               <li><strong>Professional advisers</strong> (legal, accounting) where necessary.</li>
               <li><strong>Authorities</strong> where required by law.</li>
             </ul>
@@ -81,7 +81,7 @@ function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold">9. Cookies</h2>
-            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. Payment provider checkout may set its own cookies, described in Paddle's privacy notice.</p>
+            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. Stripe's embedded checkout may set its own cookies, described in Stripe's privacy notice.</p>
           </section>
 
           <section>
