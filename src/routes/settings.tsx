@@ -43,6 +43,43 @@ function Settings() {
 
         <h1 className="text-3xl font-black tracking-tight">Settings</h1>
 
+        <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <User className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-semibold">
+                {userId ? userEmail ?? "Signed in" : "Not signed in"}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {userId
+                  ? syncing ? "Syncing…" : "Progress syncs across devices"
+                  : "Sign in to sync across devices"}
+              </div>
+            </div>
+            {userId ? (
+              <button
+                onClick={async () => {
+                  await signOut();
+                  toast("Signed out");
+                }}
+                className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-3 py-1.5 text-xs font-semibold"
+              >
+                <LogOut className="h-3.5 w-3.5" /> Sign out
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate({ to: "/auth" })}
+                className="inline-flex items-center gap-1 rounded-full bg-aurora px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-glow"
+              >
+                <LogIn className="h-3.5 w-3.5" /> Sign in
+              </button>
+            )}
+          </div>
+        </div>
+
+
         <div className="mt-5 rounded-3xl border border-primary/40 bg-card-grad p-5 shadow-soft">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
