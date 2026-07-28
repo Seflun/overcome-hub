@@ -56,9 +56,8 @@ function Sos() {
             active={tool === "urge"}
             onClick={() => setTool(tool === "urge" ? null : "urge")}
             icon={Waves}
-            premium={!state.isPremium}
           />
-          {tool === "urge" && state.isPremium && (
+          {tool === "urge" && (
             <UrgeSurf onDone={() => logSos("urge", true)} />
           )}
 
