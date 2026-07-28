@@ -33,7 +33,7 @@ function Success() {
   useEffect(() => {
     if (!userId || confirmed) return;
     let cancelled = false;
-    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("test_")
+    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("pk_test_")
       ? "sandbox"
       : "live";
     let attempts = 0;

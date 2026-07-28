@@ -242,7 +242,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("test_")
+    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("pk_test_")
       ? "sandbox"
       : "live";
     const check = async () => {
