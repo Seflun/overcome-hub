@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export type SubscriptionRow = {
   id: string;
-  paddle_subscription_id: string;
+  stripe_subscription_id: string | null;
   product_id: string;
   price_id: string;
   status: string;
@@ -24,7 +24,7 @@ export function useSubscription(userId: string | null | undefined) {
       return;
     }
     let cancelled = false;
-    const env = getPaddleEnvironment();
+    const env = getStripeEnvironment();
 
     const fetchSub = async () => {
       const { data } = await supabase
@@ -46,8 +46,13 @@ export function useSubscription(userId: string | null | undefined) {
       .channel(`subscriptions:${userId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${userId}` },
-        () => fetchSub()
+        {
+          event: "*",
+          schema: "public",
+          table: "subscriptions",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => fetchSub(),
       )
       .subscribe();
 
@@ -59,13 +64,12 @@ export function useSubscription(userId: string | null | undefined) {
 
   const isActive =
     !!subscription &&
-    (
-      (["active", "trialing", "past_due"].includes(subscription.status) &&
-        (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date())) ||
+    ((["active", "trialing", "past_due"].includes(subscription.status) &&
+      (!subscription.current_period_end ||
+        new Date(subscription.current_period_end) > new Date())) ||
       (subscription.status === "canceled" &&
         !!subscription.current_period_end &&
-        new Date(subscription.current_period_end) > new Date())
-    );
+        new Date(subscription.current_period_end) > new Date()));
 
   return { subscription, isActive, loading };
 }
