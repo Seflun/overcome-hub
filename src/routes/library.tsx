@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, BookOpen, Clock, X } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { LibraryAi } from "../components/library-ai";
 import { LIBRARY, type Article } from "../lib/recovery-data";
 
 export const Route = createFileRoute("/library")({
