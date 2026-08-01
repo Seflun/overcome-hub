@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import Stripe from "stripe";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   type StripeEnv,
   createStripeClient,
   getStripeErrorMessage,
 } from "@/lib/stripe.server";
+
 
 const checkoutInput = z.object({
   priceId: z
@@ -93,3 +95,66 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
+// Confirms a checkout session straight from Stripe and syncs the subscription
+// row, so the success page never has to wait on webhook delivery.
+type ConfirmResult = { active: boolean } | { error: string };
+
+export const confirmCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        sessionId: z.string().min(1).regex(/^cs_[a-zA-Z0-9_]+$/, "Invalid sessionId"),
+        environment: z.enum(["sandbox", "live"]),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }): Promise<ConfirmResult> => {
+    try {
+      const stripe = createStripeClient(data.environment as StripeEnv);
+      const session = await stripe.checkout.sessions.retrieve(data.sessionId, {
+        expand: ["subscription", "subscription.items.data.price"],
+      });
+
+      if (session.payment_status === "unpaid") return { active: false };
+
+      const sub = session.subscription as Stripe.Subscription | null;
+      if (!sub || typeof sub === "string") return { active: false };
+
+      const userId = (sub.metadata?.userId as string | undefined) ?? context.userId;
+      if (userId !== context.userId) return { error: "Session does not belong to this user" };
+
+      const item: any = sub.items?.data?.[0];
+      const priceId =
+        item?.price?.lookup_key || item?.price?.metadata?.lovable_external_id || item?.price?.id;
+      const productId =
+        typeof item?.price?.product === "string" ? item.price.product : item?.price?.product?.id;
+      const periodStart = item?.current_period_start ?? (sub as any).current_period_start;
+      const periodEnd = item?.current_period_end ?? (sub as any).current_period_end;
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("subscriptions").upsert(
+        {
+          user_id: context.userId,
+          stripe_subscription_id: sub.id,
+          stripe_customer_id: String(sub.customer),
+          product_id: productId,
+          price_id: priceId,
+          status: sub.status,
+          current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
+          current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+          cancel_at_period_end: sub.cancel_at_period_end ?? false,
+          environment: data.environment,
+          updated_at: new Date().toISOString(),
+        } as any,
+        { onConflict: "stripe_subscription_id" },
+      );
+
+      const active = ["active", "trialing", "past_due"].includes(sub.status);
+      return { active };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
