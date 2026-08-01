@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download, X } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
@@ -35,6 +35,10 @@ function Plus() {
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
   const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
   const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
+
+  useEffect(() => {
+    if (userEmail) setBillingEmail((prev) => prev || userEmail);
+  }, [userEmail]);
 
   const isPremium = state.isPremium;
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(billingEmail.trim());

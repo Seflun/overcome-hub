@@ -81,6 +81,7 @@ function Coach() {
         recentCheckin
           ? `Latest check-in: mood ${recentCheckin.mood}/5, stress ${recentCheckin.stress}/10, energy ${recentCheckin.energy}/10, sleep ${recentCheckin.sleep}/10.`
           : "",
+        `Reply in ${languageName(state.profile.language)}.`,
       ]
         .filter(Boolean)
         .join(" ");

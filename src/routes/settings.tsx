@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
+import { LANGUAGES } from "../lib/languages";
 import { useStore } from "../lib/store";
 import { useConfirm } from "../components/confirm-dialog";
 import { PremiumBadge } from "../components/premium-badge";
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function Settings() {
-  const { state, exportAll, userId, userEmail, signOut, syncing, setTheme, deleteAccountData } = useStore();
+  const { state, exportAll, userId, userEmail, signOut, syncing, setTheme, updateProfile, deleteAccountData } = useStore();
   const confirm = useConfirm();
   const navigate = useNavigate();
 
@@ -154,6 +155,25 @@ function Settings() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
+          <div className="font-semibold">Language</div>
+          <div className="text-xs text-muted-foreground">
+            The app and the Coach speak this language.
+          </div>
+          <select
+            value={state.profile.language || "en"}
+            onChange={(e) => updateProfile({ language: e.target.value })}
+            data-no-translate
+            className="mt-3 w-full rounded-xl border border-border/60 bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary/60"
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.label}
+              </option>
+            ))}
+          </select>
         </div>
 
 
