@@ -1,11 +1,13 @@
 /**
  * Addiblock sound engine.
  *
- * Every sound in the app is synthesised live in the browser with the Web Audio
- * API — there are no recordings, samples or third-party tracks involved, so the
- * ambience and the UI sound effects are original, uncopyrighted and royalty
- * free by construction.
+ * UI sound effects are synthesised live in the browser with the Web Audio API.
+ * The background ambience is a looped audio track supplied by the project owner.
  */
+
+import ambientLoop from "@/assets/ambient-loop.mp3.asset.json";
+
+
 
 type SfxName =
   | "click"
