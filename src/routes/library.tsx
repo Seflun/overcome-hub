@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, BookOpen, Clock, X } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { LibraryAi } from "../components/library-ai";
 import { LIBRARY, type Article } from "../lib/recovery-data";
 
 export const Route = createFileRoute("/library")({
@@ -35,6 +36,10 @@ function Library() {
         <p className="mt-2 text-sm text-muted-foreground">
           Knowing why an urge behaves the way it does makes it far easier to ride out.
         </p>
+
+        <div className="mt-6">
+          <LibraryAi />
+        </div>
 
         <div className="mt-6 space-y-6">
           {categories.map((cat) => (
