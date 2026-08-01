@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, AlertTriangle } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { supabase } from "../integrations/supabase/client";
+import { confirmCheckoutSession } from "../utils/payments.functions";
 
 export const Route = createFileRoute("/checkout/success")({
   head: () => ({
@@ -14,76 +15,118 @@ export const Route = createFileRoute("/checkout/success")({
       { property: "og:description", content: "Your Addiblock+ subscription is active." },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
+    session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+  }),
   component: Success,
 });
 
+const ENV = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith(
+  "pk_test_",
+)
+  ? ("sandbox" as const)
+  : ("live" as const);
+
 function Success() {
   const navigate = useNavigate();
+  const { session_id: sessionId } = Route.useSearch();
   const { userId, state } = useStore();
   const [confirmed, setConfirmed] = useState(state.isPremium);
+  const [stalled, setStalled] = useState(false);
 
   useEffect(() => {
-    if (state.isPremium) {
-      setConfirmed(true);
-    }
+    if (state.isPremium) setConfirmed(true);
   }, [state.isPremium]);
 
-  // Poll the subscriptions table for up to ~30s so users see Plus activate
-  // immediately after the webhook lands, instead of waiting on realtime.
   useEffect(() => {
     if (!userId || confirmed) return;
     let cancelled = false;
-    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("pk_test_")
-      ? "sandbox"
-      : "live";
     let attempts = 0;
-    const tick = async () => {
-      if (cancelled) return;
-      attempts++;
+
+    const readRow = async () => {
       const { data } = await supabase
         .from("subscriptions")
         .select("status, current_period_end")
         .eq("user_id", userId)
-        .eq("environment", env)
+        .eq("environment", ENV)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       const s: any = data;
-      const active =
+      return (
         !!s &&
         ((["active", "trialing", "past_due"].includes(s.status) &&
           (!s.current_period_end || new Date(s.current_period_end) > new Date())) ||
-          (s.status === "canceled" && !!s.current_period_end && new Date(s.current_period_end) > new Date()));
-      if (active) {
-        setConfirmed(true);
-      } else if (attempts < 20) {
-        setTimeout(tick, 1500);
+          (s.status === "canceled" &&
+            !!s.current_period_end &&
+            new Date(s.current_period_end) > new Date()))
+      );
+    };
+
+    const tick = async () => {
+      if (cancelled) return;
+      attempts++;
+
+      // Ask Stripe directly (and sync the row) instead of waiting on the webhook.
+      if (sessionId) {
+        try {
+          const result = await confirmCheckoutSession({
+            data: { sessionId, environment: ENV },
+          });
+          if (!cancelled && "active" in result && result.active) {
+            setConfirmed(true);
+            return;
+          }
+        } catch {
+          // fall through to the table read
+        }
+      }
+
+      if (await readRow()) {
+        if (!cancelled) setConfirmed(true);
+        return;
+      }
+      if (cancelled) return;
+      if (attempts < 5) {
+        setTimeout(tick, 2000);
+      } else {
+        setStalled(true);
       }
     };
+
     tick();
     return () => {
       cancelled = true;
     };
-  }, [userId, confirmed]);
+  }, [userId, confirmed, sessionId]);
+
+  const icon = confirmed ? (
+    <Sparkles className="h-8 w-8" />
+  ) : stalled ? (
+    <AlertTriangle className="h-8 w-8" />
+  ) : (
+    <Loader2 className="h-8 w-8 animate-spin" />
+  );
 
   return (
     <AppShell>
       <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-aurora text-primary-foreground shadow-glow">
-          {confirmed ? <Sparkles className="h-8 w-8" /> : <Loader2 className="h-8 w-8 animate-spin" />}
+          {icon}
         </div>
         <h1 className="mt-5 text-3xl font-black tracking-tight">
-          {confirmed ? "You're in." : "Finishing up…"}
+          {confirmed ? "You're in." : stalled ? "Still processing" : "Finishing up…"}
         </h1>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
           {confirmed
             ? "Addiblock+ is active. Your subscription unlocks unlimited journeys, unlimited AI Coach, and the full toolkit."
-            : "We're confirming your payment. This usually takes a couple seconds."}
+            : stalled
+              ? "Your payment went through, but activation is taking longer than usual. Open the app and it'll unlock automatically once it lands — or reload this page to check again."
+              : "We're confirming your payment. This usually takes a couple seconds."}
         </p>
         <button
           onClick={() => navigate({ to: "/today" })}
-          disabled={!confirmed}
-          className="mt-6 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-50"
+          className="mt-6 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
         >
           Go to Today
         </button>
@@ -91,3 +134,4 @@ function Success() {
     </AppShell>
   );
 }
+
