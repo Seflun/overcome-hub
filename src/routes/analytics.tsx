@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { PatternSpotlight } from "../components/pattern-spotlight";
+import { recoveryContext } from "../lib/ai-context";
 import { useStore } from "../lib/store";
 import { todayKey } from "../lib/addiction-data";
 import { levelFromRp } from "../lib/recovery-data";
@@ -140,6 +143,24 @@ function Analytics() {
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-4 space-y-3">
+          <PatternSpotlight />
+          <AiInsightCard
+            title="Explain my data"
+            blurb="The coach reads your trends, triggers and check-ins and tells you what's actually going on."
+            lockedBlurb="Addiblock+ turns these charts into plain-English insight: what's improving, what's driving your urges, and what to change this week."
+            summarizeLabel="Summarize my recovery"
+            summarizePrompt="Look at my data and summarize what's going well, what's slipping, and the two most useful changes I could make this week."
+            suggestions={[
+              "What's my biggest risk pattern?",
+              "What should I focus on this week?",
+              "Is my mood actually improving?",
+            ]}
+            placeholder="Ask about your numbers…"
+            buildContext={() => recoveryContext(state)}
+          />
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">

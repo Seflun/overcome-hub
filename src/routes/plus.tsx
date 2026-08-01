@@ -24,6 +24,7 @@ const FEATURES = [
   { icon: Bot,           title: "Unlimited AI Coach",     blurb: "Chat with the AI Coach as often as you need. Free plan includes a daily streak allowance." },
   { icon: ShieldAlert,   title: "3-minute SOS protocol",  blurb: "Guided science-backed protocol: cold water → move → ground → reach out." },
   { icon: LineChart,     title: "Health & money insights", blurb: "Watch your body recover, dollars saved, and personal milestones stack up." },
+  { icon: Sparkles,      title: "AI helpers everywhere",  blurb: "Summaries and answers inside Analytics, Journal, Progress, Explore and the Library — built from your own data." },
   { icon: Download,      title: "Export your progress",   blurb: "For your therapist, doctor, or your own future self." },
 ];
 

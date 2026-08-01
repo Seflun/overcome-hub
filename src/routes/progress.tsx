@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lock, Trophy, LineChart } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { recoveryContext } from "../lib/ai-context";
 import { CATEGORIES, daysBetween } from "../lib/addiction-data";
 import { ACHIEVEMENTS, TIMELINE, levelFromRp } from "../lib/recovery-data";
 import { useStore } from "../lib/store";
@@ -110,6 +112,19 @@ function Progress() {
           </div>
           <span className="shrink-0 text-xs font-bold text-primary">Open →</span>
         </Link>
+
+        <div className="mt-3">
+          <AiInsightCard
+            title="Your next milestone plan"
+            blurb="The coach builds a concrete plan for the days between you and your next milestone."
+            lockedBlurb="Addiblock+ turns your streaks and stats into a personal plan for the next milestone — what to expect and how to get through it."
+            summarizeLabel="Plan my next milestone"
+            summarizePrompt="Based on my progress, tell me what my next milestone is, what my body and brain are likely doing, and give me a simple 3-step plan to reach it."
+            suggestions={["What changes next in my body?", "How do I protect this streak?", "Celebrate what I've done"]}
+            placeholder="Ask about your progress…"
+            buildContext={() => recoveryContext(state, "The user is on the Progress page looking at streaks, RP and milestones.")}
+          />
+        </div>
 
 
         <div className="mt-6">
