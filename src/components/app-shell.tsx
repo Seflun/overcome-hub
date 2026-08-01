@@ -17,6 +17,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { LOGO_URL as logo } from "@/lib/brand";
+import { SoundControls } from "./sound-controls";
 import { useStore } from "../lib/store";
 
 interface NavItem {
