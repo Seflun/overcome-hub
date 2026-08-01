@@ -36,6 +36,10 @@ function Library() {
           Knowing why an urge behaves the way it does makes it far easier to ride out.
         </p>
 
+        <div className="mt-6">
+          <LibraryAi />
+        </div>
+
         <div className="mt-6 space-y-6">
           {categories.map((cat) => (
             <div key={cat}>
