@@ -164,15 +164,14 @@ class SoundEngine {
         const src = ctx.createMediaElementSource(el);
         src.connect(this.musicGain!);
       } catch {
-        // Fallback: element plays directly at a soft level.
-        el.volume = 0.28;
+        // Fallback: element plays directly at the chosen level.
+        el.volume = this.musicVolume;
       }
     }
 
     this.musicGain!.gain.cancelScheduledValues(ctx.currentTime);
     this.musicGain!.gain.setValueAtTime(this.musicGain!.gain.value, ctx.currentTime);
-    // Present in the room without competing with the interface.
-    this.musicGain!.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 3);
+    this.musicGain!.gain.linearRampToValueAtTime(this.musicVolume, ctx.currentTime + 3);
     void this.trackEl.play().catch(() => {});
   }
 
@@ -189,6 +188,25 @@ class SoundEngine {
     this.timers.forEach((t) => window.clearInterval(t));
     this.timers = [];
   }
+
+  /** Live volume for the ambience, 0–1. */
+  setMusicVolume(value: number) {
+    const v = Math.min(1, Math.max(0, value));
+    this.musicVolume = v;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(MUSIC_VOL_KEY, String(v));
+    }
+    if (this.trackEl) this.trackEl.volume = 1;
+    if (this.ctx && this.musicGain && this.running) {
+      const now = this.ctx.currentTime;
+      this.musicGain.gain.cancelScheduledValues(now);
+      this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
+      this.musicGain.gain.linearRampToValueAtTime(v, now + 0.15);
+    }
+    this.emit();
+  }
+
+
 
 
   setMusic(on: boolean) {
