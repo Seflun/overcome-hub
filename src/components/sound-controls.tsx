@@ -1,7 +1,7 @@
 import { Music, Music2, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { sound } from "@/lib/audio";
+import { sound, sliderToVolume, volumeToSlider } from "@/lib/audio";
 
 /**
  * Mounts the app-wide sound layer: restores preferences, unlocks audio on the
