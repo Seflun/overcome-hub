@@ -23,15 +23,18 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   const confirm = useCallback(
     (opts: ConfirmOptions) =>
       new Promise<boolean>((resolve) => {
+        playSound("open");
         setPending({ ...opts, resolve });
       }),
     [],
   );
 
   const close = (v: boolean) => {
+    playSound(v ? "complete" : "close");
     pending?.resolve(v);
     setPending(null);
   };
+
 
   useEffect(() => {
     if (!pending) return;
