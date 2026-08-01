@@ -23,7 +23,7 @@ export const Route = createFileRoute("/profile")({
 const AVATARS = ["🌱", "🔥", "🛡️", "🦉", "🌊", "⛰️", "🧭", "🌟", "🐺", "☀️"];
 
 function ProfilePage() {
-  const { state, userEmail, updateProfile, totalRp } = useStore();
+  const { state, updateProfile, totalRp } = useStore();
   const [editing, setEditing] = useState(false);
   const [username, setUsername] = useState(state.profile.username);
   const [bio, setBio] = useState(state.profile.bio);
