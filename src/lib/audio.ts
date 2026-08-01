@@ -20,14 +20,17 @@ type SfxName =
 const MUSIC_KEY = "addiblock.sound.music";
 const SFX_KEY = "addiblock.sound.sfx";
 
-// A gentle F-major-ish pentatonic world: calm, no dissonance, no urgency.
+// A slow, airy D-major-ish drift: low sustained pads with long crossfades so it
+// sits far behind the interface instead of feeling like a song being played.
 const CHORDS: number[][] = [
-  [174.61, 261.63, 349.23], // F3 C4 F4
-  [196.0, 293.66, 392.0], // G3 D4 G4
-  [220.0, 329.63, 440.0], // A3 E4 A4
-  [130.81, 196.0, 261.63], // C3 G3 C4
+  [146.83, 220.0, 293.66], // D3 A3 D4
+  [164.81, 246.94, 329.63], // E3 B3 E4
+  [110.0, 164.81, 220.0], // A2 E3 A3
+  [123.47, 185.0, 246.94], // B2 F#3 B3
 ];
-const BELLS = [523.25, 587.33, 698.46, 783.99, 880.0, 1046.5];
+// Sparse, very soft high notes that just colour the air.
+const BELLS = [587.33, 659.25, 880.0, 987.77];
+
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
