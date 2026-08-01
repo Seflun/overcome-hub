@@ -15,6 +15,7 @@ import {
 import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
+import { SoundControls } from "../components/sound-controls";
 
 export const Route = createFileRoute("/")({
   head: () => ({
