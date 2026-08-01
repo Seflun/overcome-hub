@@ -145,16 +145,20 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Main content column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile settings button (floating, top-right) */}
-        {!isOnSettings && (
-          <Link
-            to="/settings"
-            aria-label="Settings"
-            className="fixed right-4 top-4 z-50 rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground lg:hidden"
-          >
-            <Settings className="h-4 w-4" />
-          </Link>
-        )}
+        {/* Floating sound controls + settings shortcut (top-right) */}
+        <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
+          <SoundControls />
+          {!isOnSettings && (
+            <Link
+              to="/settings"
+              aria-label="Settings"
+              className="rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground lg:hidden"
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
+          )}
+        </div>
+
 
         <main className="flex-1 pb-28 lg:pb-12">
           <div className="mx-auto w-full max-w-md lg:max-w-3xl xl:max-w-4xl">
