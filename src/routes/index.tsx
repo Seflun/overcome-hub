@@ -15,6 +15,7 @@ import {
 import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
+import { SoundControls } from "../components/sound-controls";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,6 +71,7 @@ function TopNav() {
         </Link>
 
         <nav className="flex items-center gap-2">
+          <SoundControls className="mr-1" />
           <Link
             to="/auth"
             className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
@@ -258,12 +260,12 @@ function Categories() {
 const TESTIMONIALS = [
   {
     quote:
-      "The tasks are small enough that I actually do them. Day 47 of no vape — first time I've made it past a week in three years.",
+      "The tasks are small enough that I actually do them. Today is day 47 of no vape and it's the first time I've made it past a week in three years.",
     who: "M., 28 · quitting nicotine",
   },
   {
     quote:
-      "Talking to Coach at 11pm when the urge hit is the whole reason I didn't drink last Friday. It didn't lecture me. It just helped.",
+      "Talking to Coach at 11pm when the urge hit is the whole reason I didn't drink last Friday. This AI doesn't lecture you, it actually gives real advice.",
     who: "R., 34 · quitting alcohol",
   },
   {

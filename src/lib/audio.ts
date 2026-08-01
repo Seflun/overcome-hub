@@ -21,8 +21,8 @@ type SfxName =
 
 const MUSIC_KEY = "addiblock.sound.music";
 const MUSIC_VOL_KEY = "addiblock.sound.musicVolume";
-/** Soft default: clearly audible, still behind the interface. */
-const DEFAULT_MUSIC_VOLUME = 0.28;
+/** Soft default: sits behind the interface, still audible. */
+const DEFAULT_MUSIC_VOLUME = 0.12;
 const SFX_KEY = "addiblock.sound.sfx";
 
 // A slow, airy D-major-ish drift: low sustained pads with long crossfades so it

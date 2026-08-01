@@ -119,7 +119,7 @@ function Success() {
         </h1>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
           {confirmed
-            ? "Addiblock+ is active. Your subscription unlocks unlimited journeys, unlimited AI Coach, and the full toolkit."
+            ? "Addiblock+ is active. Your subscription unlocks unlimited journeys, unlimited AI Coach, and the full toolkit. If you don't see your Plus badge yet, refresh the page once and it'll show up."
             : stalled
               ? "Your payment went through, but activation is taking longer than usual. Open the app and it'll unlock automatically once it lands — or reload this page to check again."
               : "We're confirming your payment. This usually takes a couple seconds."}
