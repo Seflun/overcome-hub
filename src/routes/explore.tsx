@@ -3,6 +3,8 @@ import { Check, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { recoveryContext } from "../lib/ai-context";
 import { CATEGORIES } from "../lib/addiction-data";
 import { useStore, FREE_JOURNEY_LIMIT } from "../lib/store";
 import { useConfirm } from "../components/confirm-dialog";
