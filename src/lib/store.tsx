@@ -259,7 +259,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setState(applyDailyCoachRefill(loadLocal()));
     setHydrated(true);
 
-    const applySession = async (uid: string | null, email: string | null) => {
+    const applySession = async (
+      uid: string | null,
+      email: string | null,
+      meta?: Record<string, any> | null,
+    ) => {
       setUserId((prev) => {
         // Account switch or sign-out: never carry state across identities.
         if (prev !== uid) {
@@ -271,6 +275,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       setUserEmail(email);
       if (!uid) return;
+
+      // Sign-up choices (username / date of birth / language) live on the auth
+      // user, so they follow the account onto any device.
+      const seedProfile = (p: Profile): Profile => ({
+        ...p,
+        username: p.username || (meta?.["display_name"] as string) || (meta?.["username"] as string) || "",
+        dob: p.dob || ((meta?.["dob"] as string) || undefined),
+        language: p.language && p.language !== "en" ? p.language : ((meta?.["language"] as string) || p.language || "en"),
+      });
+
       setSyncing(true);
       try {
         const { data } = await supabase
@@ -280,11 +294,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (data?.data && Object.keys(data.data as object).length > 0) {
           skipNextSave.current = true;
-          setState(applyDailyCoachRefill(migrate({ ...empty, ...(data.data as unknown as AppState) })));
+          const loaded = applyDailyCoachRefill(migrate({ ...empty, ...(data.data as unknown as AppState) }));
+          setState({ ...loaded, profile: seedProfile(loaded.profile) });
         } else {
           // Brand-new account — start fresh, never seed from another account's local cache.
           skipNextSave.current = true;
-          const fresh = applyDailyCoachRefill(empty);
+          const base = applyDailyCoachRefill(empty);
+          const fresh = { ...base, profile: seedProfile(base.profile) };
           setState(fresh);
           await supabase.from("user_state").upsert({ user_id: uid, data: fresh as any });
         }
@@ -299,7 +315,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         // Signed-in visit: cloud is source of truth; don't hydrate from local.
         skipNextSave.current = true;
         setState(applyDailyCoachRefill(empty));
-        applySession(uid, data.session?.user.email ?? null);
+        applySession(
+          uid,
+          data.session?.user.email ?? null,
+          data.session?.user.user_metadata ?? null,
+        );
       } else {
         // Signed-out visit: local cache is fine (used until they sign in).
         setState(applyDailyCoachRefill(loadLocal()));
@@ -309,7 +329,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" || event === "USER_UPDATED") {
-        applySession(session?.user.id ?? null, session?.user.email ?? null);
+        applySession(
+          session?.user.id ?? null,
+          session?.user.email ?? null,
+          session?.user.user_metadata ?? null,
+        );
       } else if (event === "SIGNED_OUT") {
         skipNextSave.current = true;
         setState(applyDailyCoachRefill(empty));
@@ -318,6 +342,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setUserEmail(null);
       }
     });
+
 
     return () => sub.subscription.unsubscribe();
   }, []);
