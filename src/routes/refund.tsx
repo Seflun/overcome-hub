@@ -4,9 +4,9 @@ export const Route = createFileRoute("/refund")({
   head: () => ({
     meta: [
       { title: "Refund Policy — Addiblock" },
-      { name: "description", content: "Addiction Breaker's 30-day money-back guarantee and how to request a refund." },
+      { name: "description", content: "Addiblock's 30-day money-back guarantee and how to request a refund." },
       { property: "og:title", content: "Refund Policy — Addiblock" },
-      { property: "og:description", content: "Addiction Breaker's 30-day money-back guarantee and how to request a refund." },
+      { property: "og:description", content: "Addiblock's 30-day money-back guarantee and how to request a refund." },
     ],
   }),
   component: RefundPage,
@@ -23,7 +23,7 @@ function RefundPage() {
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/90">
           <section>
             <h2 className="text-xl font-bold">30-day money-back guarantee</h2>
-            <p>Addiction Breaker offers a <strong>30-day money-back guarantee</strong> on Addiblock+ subscriptions. If you're not satisfied with your purchase, you can request a full refund within 30 days of your order date.</p>
+            <p>Addiblock offers a <strong>30-day money-back guarantee</strong> on Addiblock+ subscriptions. If you're not satisfied with your purchase, you can request a full refund within 30 days of your order date.</p>
           </section>
 
           <section>

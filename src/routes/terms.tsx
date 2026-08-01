@@ -23,7 +23,7 @@ function TermsPage() {
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/90">
           <section>
             <h2 className="text-xl font-bold">1. Who you are contracting with</h2>
-            <p>These terms are a binding agreement between you and <strong>Addiction Breaker</strong> ("we", "us"), the operator of the Addiblock application and website (the "Service").</p>
+            <p>These terms are a binding agreement between you and <strong>Addiblock</strong> ("we", "us"), the operator of the Addiblock application and website (the "Service").</p>
           </section>
 
           <section>
@@ -66,7 +66,7 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">8. Subscriptions, payments, and refunds</h2>
-            <p>Paid plans are billed by Addiction Breaker and processed by our payment provider, Stripe. Applicable taxes are calculated and collected at checkout.</p>
+            <p>Paid plans are billed by Addiblock and processed by our payment provider, Stripe. Applicable taxes are calculated and collected at checkout.</p>
             <p>By subscribing, you authorize recurring charges to your payment method until you cancel. You can cancel at any time from your account page. See our <Link to="/refund" className="underline">Refund Policy</Link> for our position on refunds.</p>
           </section>
 
@@ -97,7 +97,7 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">14. Governing law</h2>
-            <p>These Terms are governed by the laws of the jurisdiction in which Addiction Breaker is established, without regard to conflict-of-laws principles. Disputes will be brought in the competent courts of that jurisdiction.</p>
+            <p>These Terms are governed by the laws of the jurisdiction in which Addiblock is established, without regard to conflict-of-laws principles. Disputes will be brought in the competent courts of that jurisdiction.</p>
           </section>
 
           <section>
