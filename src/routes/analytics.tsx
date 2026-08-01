@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { PatternSpotlight } from "../components/pattern-spotlight";
+import { recoveryContext } from "../lib/ai-context";
 import { useStore } from "../lib/store";
 import { todayKey } from "../lib/addiction-data";
 import { levelFromRp } from "../lib/recovery-data";
