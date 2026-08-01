@@ -148,6 +148,7 @@ class SoundEngine {
   }
 
   private trackEl: HTMLAudioElement | null = null;
+  private graphConnected = false;
 
   private startMusic() {
     const ctx = this.ensureContext();
@@ -163,6 +164,7 @@ class SoundEngine {
       try {
         const src = ctx.createMediaElementSource(el);
         src.connect(this.musicGain!);
+        this.graphConnected = true;
       } catch {
         // Fallback: element plays directly at the chosen level.
         el.volume = this.musicVolume;
@@ -196,7 +198,7 @@ class SoundEngine {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(MUSIC_VOL_KEY, String(v));
     }
-    if (this.trackEl) this.trackEl.volume = 1;
+    if (this.trackEl && !this.graphConnected) this.trackEl.volume = v;
     if (this.ctx && this.musicGain && this.running) {
       const now = this.ctx.currentTime;
       this.musicGain.gain.cancelScheduledValues(now);
