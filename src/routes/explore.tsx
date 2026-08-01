@@ -54,6 +54,22 @@ function Explore() {
           </Link>
         )}
 
+        <div className="mb-4">
+          <AiInsightCard
+            title="Which one next?"
+            blurb="The coach looks at your journeys and data and helps you pick — and prepare for — the next one."
+            lockedBlurb="Addiblock+ helps you choose the right next journey and gives you a first-week plan tailored to your data."
+            summarizeLabel="Help me choose"
+            summarizePrompt="Based on my current journeys and data, which addiction should I take on next and why? Give me a short first-week plan for it."
+            suggestions={["Am I ready for another journey?", "What's the hardest part of week 1?", "Make me a first-week plan"]}
+            placeholder="Ask about starting a new journey…"
+            buildContext={() =>
+              recoveryContext(state, "The user is on the Explore page deciding whether to start another recovery journey.")
+            }
+          />
+        </div>
+
+
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIES.map((c) => {
             const activeJourneyId = activeMap.get(c.id);
