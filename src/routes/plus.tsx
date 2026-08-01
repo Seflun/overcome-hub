@@ -35,6 +35,7 @@ function Plus() {
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
   const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
   const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
 
   useEffect(() => {
     if (userEmail) setBillingEmail((prev) => prev || userEmail);
@@ -109,13 +110,20 @@ function Plus() {
             <>
               <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => buy("monthly")}
+                  onClick={() => {
+                    setSelectedPlan("monthly");
+                    buy("monthly");
+                  }}
                   disabled={busy !== null}
-                  className="rounded-2xl border border-primary/40 bg-primary/10 p-3 text-left transition hover:bg-primary/15 disabled:opacity-60"
+                  className={`rounded-2xl border p-3 text-left transition disabled:opacity-60 ${
+                    selectedPlan === "monthly"
+                      ? "border-primary/70 bg-primary/15 ring-1 ring-primary/40"
+                      : "border-primary/30 bg-primary/5 hover:bg-primary/10"
+                  }`}
                 >
                   <div className="text-xs text-muted-foreground">Monthly</div>
                   <div className="mt-1 flex items-baseline gap-1">
-                    <span className="text-2xl font-black">$4.99</span>
+                    <span className="text-2xl font-black">$2.99</span>
                     <span className="text-xs text-muted-foreground">/mo</span>
                   </div>
                   <div className="mt-1 text-[10px] text-muted-foreground">
@@ -123,20 +131,27 @@ function Plus() {
                   </div>
                 </button>
                 <button
-                  onClick={() => buy("yearly")}
+                  onClick={() => {
+                    setSelectedPlan("yearly");
+                    buy("yearly");
+                  }}
                   disabled={busy !== null}
-                  className="relative rounded-2xl border border-primary/60 bg-aurora/10 p-3 text-left transition hover:bg-aurora/15 disabled:opacity-60"
+                  className={`relative rounded-2xl border p-3 text-left transition disabled:opacity-60 ${
+                    selectedPlan === "yearly"
+                      ? "border-primary/70 bg-aurora/15 ring-1 ring-primary/40"
+                      : "border-primary/30 bg-aurora/5 hover:bg-aurora/10"
+                  }`}
                 >
                   <div className="absolute -top-2 right-2 rounded-full bg-aurora px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary-foreground">
-                    Save 50%
+                    Save 53%
                   </div>
                   <div className="text-xs text-muted-foreground">Yearly</div>
                   <div className="mt-1 flex items-baseline gap-1">
-                    <span className="text-2xl font-black">$29</span>
+                    <span className="text-2xl font-black">$16.99</span>
                     <span className="text-xs text-muted-foreground">/yr</span>
                   </div>
                   <div className="mt-1 text-[10px] text-muted-foreground">
-                    {busy === "yearly" ? "Opening checkout…" : "$2.42/mo"}
+                    {busy === "yearly" ? "Opening checkout…" : "$1.42/mo"}
                   </div>
                 </button>
               </div>
@@ -161,12 +176,15 @@ function Plus() {
               </div>
 
               <button
-                onClick={() => buy(pendingPlan ?? "yearly")}
+                onClick={() => buy(selectedPlan)}
                 disabled={busy !== null}
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
-                {busy ? "Opening secure checkout…" : "Get Addiblock+"}
+                {busy
+                  ? "Opening secure checkout…"
+                  : `Get Addiblock+ · ${selectedPlan === "monthly" ? "$2.99/mo" : "$16.99/yr"}`}
               </button>
+
 
               <div className="mt-2 text-center text-[11px] text-muted-foreground">
                 Secure checkout · Cancel anytime

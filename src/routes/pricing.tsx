@@ -5,9 +5,9 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Addiblock" },
-      { name: "description", content: "Addiblock is free to start. Upgrade to Addiblock+ for $4.99/month or $29/year." },
+      { name: "description", content: "Addiblock is free to start. Upgrade to Addiblock+ for $2.99/month or $16.99/year." },
       { property: "og:title", content: "Pricing — Addiblock" },
-      { property: "og:description", content: "Free to start. Addiblock+ is $4.99/month or $29/year." },
+      { property: "og:description", content: "Free to start. Addiblock+ is $2.99/month or $16.99/year." },
     ],
   }),
   component: PricingPage,
@@ -75,10 +75,10 @@ function PricingPage() {
             <div className="absolute right-6 top-6 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">Best value</div>
             <div className="text-xs font-semibold uppercase tracking-widest text-primary">Addiblock+</div>
             <div className="mt-3 flex items-baseline gap-1">
-              <span className="text-5xl font-black">$4.99</span>
+              <span className="text-5xl font-black">$2.99</span>
               <span className="text-sm text-muted-foreground">/ month</span>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">or <strong className="text-foreground">$29 / year</strong> — save over 50%</p>
+            <p className="mt-1 text-sm text-muted-foreground">or <strong className="text-foreground">$16.99 / year</strong> — save over 50%</p>
             <ul className="mt-6 space-y-2 text-sm">
               {PLUS.map((f) => (
                 <li key={f} className="flex items-start gap-2">

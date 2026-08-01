@@ -15,6 +15,7 @@ import { StoreProvider } from "../lib/store";
 import { Toaster } from "../components/ui/sonner";
 import { ConfirmProvider } from "../components/confirm-dialog";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
+import { SoundProvider } from "../components/sound-controls";
 
 
 function NotFoundComponent() {
@@ -115,6 +116,7 @@ function RootComponent() {
       <StoreProvider>
         <ConfirmProvider>
           <PaymentTestModeBanner />
+          <SoundProvider />
           <Outlet />
           <Toaster position="top-center" />
         </ConfirmProvider>

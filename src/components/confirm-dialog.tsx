@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+
+import { playSound } from "@/lib/audio";
 import { AlertTriangle } from "lucide-react";
 
 type Tone = "default" | "destructive";
@@ -23,15 +25,18 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   const confirm = useCallback(
     (opts: ConfirmOptions) =>
       new Promise<boolean>((resolve) => {
+        playSound("open");
         setPending({ ...opts, resolve });
       }),
     [],
   );
 
   const close = (v: boolean) => {
+    playSound(v ? "complete" : "close");
     pending?.resolve(v);
     setPending(null);
   };
+
 
   useEffect(() => {
     if (!pending) return;

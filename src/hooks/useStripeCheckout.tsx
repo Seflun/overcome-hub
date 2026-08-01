@@ -23,8 +23,12 @@ export function useStripeCheckout() {
     setOptions(null);
   }, []);
 
+  // Keyed by the plan so switching plans mounts a brand-new Stripe provider
+  // instead of reusing the previous plan's client secret.
   const checkoutElement =
-    isOpen && options ? <StripeEmbeddedCheckout {...options} /> : null;
+    isOpen && options ? (
+      <StripeEmbeddedCheckout key={options.priceId} {...options} />
+    ) : null;
 
   return { openCheckout, closeCheckout, isOpen, checkoutElement };
 }
