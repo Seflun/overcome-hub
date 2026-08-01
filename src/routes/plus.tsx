@@ -35,6 +35,7 @@ function Plus() {
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
   const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
   const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
 
   useEffect(() => {
     if (userEmail) setBillingEmail((prev) => prev || userEmail);
