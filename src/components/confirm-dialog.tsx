@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+
+import { playSound } from "@/lib/audio";
 import { AlertTriangle } from "lucide-react";
 
 type Tone = "default" | "destructive";
