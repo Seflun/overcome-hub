@@ -42,7 +42,12 @@ export function SoundProvider() {
 export function SoundControls({ className = "" }: { className?: string }) {
   const [, force] = useState(0);
 
-  useEffect(() => sound.subscribe(() => force((n) => n + 1)), []);
+  useEffect(() => {
+    const unsubscribe = sound.subscribe(() => force((n) => n + 1));
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <div
