@@ -8,6 +8,9 @@ import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 import { PremiumBadge } from "../components/premium-badge";
 import { AiMessage } from "../lib/markdown";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { DailyReflection } from "../components/daily-reflection";
+import { recoveryContext } from "../lib/ai-context";
 
 export const Route = createFileRoute("/journal")({
   head: () => ({
