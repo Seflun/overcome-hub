@@ -117,7 +117,7 @@ const empty: AppState = {
   coachStreak: 0,
   lastCoachRefill: null,
   aiReviewEnabled: false,
-  profile: { username: "", avatar: "🌱", bio: "", joinedAt: new Date().toISOString() },
+  profile: { username: "", avatar: "🌱", bio: "", joinedAt: new Date().toISOString(), language: "en" },
   relapses: [],
   cravings: [],
   checkins: [],
