@@ -29,7 +29,7 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
 
-  await getSupabase()
+  const { error } = await getSupabase()
     .from("subscriptions")
     .upsert(
       {
@@ -50,6 +50,7 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
       },
       { onConflict: "stripe_subscription_id" },
     );
+  if (error) console.error("Failed to save subscription:", error.message);
 }
 
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
