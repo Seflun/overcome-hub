@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CATEGORIES, type CategoryId, todayKey } from "./addiction-data";
+import { CATEGORIES, daysBetween, type CategoryId, todayKey } from "./addiction-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Journey {
@@ -37,6 +37,44 @@ export interface SosSession {
   survived: boolean;
 }
 
+export interface RelapseLog {
+  id: string;
+  journeyId: string;
+  at: string;
+  mood: number;
+  trigger: string;
+  intensity: number;
+  note?: string;
+}
+
+export interface CravingLog {
+  id: string;
+  journeyId?: string;
+  at: string;
+  intensity: number;
+  minutes: number;
+  trigger: string;
+  note?: string;
+}
+
+export interface CheckIn {
+  id: string;
+  dateKey: string;
+  at: string;
+  mood: number;
+  cravings: boolean;
+  stress: number;
+  energy: number;
+  sleep: number;
+}
+
+export interface Profile {
+  username: string;
+  avatar: string;
+  bio: string;
+  joinedAt: string;
+}
+
 export interface AppState {
   journeys: Journey[];
   activeId: string | null;
@@ -48,6 +86,15 @@ export interface AppState {
   coachStreak: number;
   lastCoachRefill: string | null;
   aiReviewEnabled: boolean;
+  profile: Profile;
+  relapses: RelapseLog[];
+  cravings: CravingLog[];
+  checkins: CheckIn[];
+  generalMissions: Record<string, string[]>;
+  rpBonus: number;
+  unlocked: string[];
+  theme: "dark" | "light";
+  reasons: string[];
 }
 
 const KEY = "reclaim.state.v2";
@@ -67,6 +114,15 @@ const empty: AppState = {
   coachStreak: 0,
   lastCoachRefill: null,
   aiReviewEnabled: false,
+  profile: { username: "", avatar: "🌱", bio: "", joinedAt: new Date().toISOString() },
+  relapses: [],
+  cravings: [],
+  checkins: [],
+  generalMissions: {},
+  rpBonus: 0,
+  unlocked: [],
+  theme: "dark",
+  reasons: [],
 };
 
 export const FREE_JOURNEY_LIMIT = 2;
@@ -83,6 +139,13 @@ interface Ctx {
   removeJourney: (id: string) => void;
   toggleTask: (journeyId: string, taskId: string, xp: number) => void;
   resetStreak: (journeyId: string) => void;
+  logRelapse: (r: Omit<RelapseLog, "id" | "at">) => void;
+  logCraving: (c: Omit<CravingLog, "id" | "at">) => void;
+  addCheckIn: (c: Omit<CheckIn, "id" | "at" | "dateKey">) => void;
+  toggleGeneralMission: (missionId: string, rp: number) => void;
+  updateProfile: (p: Partial<Profile>) => void;
+  setTheme: (t: "dark" | "light") => void;
+  setReasons: (r: string[]) => void;
   setCostPerDay: (journeyId: string, cost: number) => void;
   setPremium: (v: boolean) => void;
   addJournal: (e: Omit<JournalEntry, "id" | "createdAt">) => string;
@@ -94,7 +157,11 @@ interface Ctx {
   logSos: (tool: string, survived: boolean) => void;
   useCoachCredit: () => boolean;
   exportAll: () => string;
+  deleteAccountData: () => Promise<void>;
   totalXp: number;
+  totalRp: number;
+  checkedInToday: boolean;
+  checkinStreak: number;
 }
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -141,6 +208,38 @@ function applyDailyCoachRefill(s: AppState): AppState {
   const daily = COACH_STREAK_SCHEDULE[Math.min(streak - 1, COACH_STREAK_SCHEDULE.length - 1)];
   return { ...s, coachStreak: streak, coachCredits: daily, lastCoachRefill: today };
 }
+
+export function computeCheckinStreak(checkins: CheckIn[]): number {
+  if (checkins.length === 0) return 0;
+  const keys = new Set(checkins.map((c) => c.dateKey));
+  let streak = 0;
+  const cursor = new Date();
+  if (!keys.has(todayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (keys.has(todayKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+export function earnedAchievements(s: AppState): string[] {
+  const out: string[] = [];
+  const longest = s.journeys.reduce((max, j) => Math.max(max, daysBetween(j.startedAt)), 0);
+  const rp = s.journeys.reduce((a, j) => a + j.xp, 0) + s.rpBonus;
+  if (longest >= 1) out.push("first-day");
+  if (longest >= 7) out.push("week-clean");
+  if (longest >= 30) out.push("month-clean");
+  if (longest >= 90) out.push("three-months");
+  if (longest >= 365) out.push("year-clean");
+  if (s.cravings.length >= 100) out.push("cravings-100");
+  if (s.journal.length >= 1) out.push("first-journal");
+  if (s.checkins.some((c) => new Date(c.at).getHours() < 12)) out.push("morning-routine");
+  if (s.journal.some((j) => new Date(j.createdAt).getHours() >= 21)) out.push("night-routine");
+  if (rp >= 1000) out.push("warrior");
+  if (computeCheckinStreak(s.checkins) >= 7) out.push("consistency");
+  return out;
+}
+
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(empty);
@@ -282,6 +381,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
   }, [userId]);
 
+  // Apply theme to <html>
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    root.classList.toggle("light", state.theme === "light");
+    root.classList.toggle("dark", state.theme !== "light");
+  }, [state.theme]);
+
+  // Unlock achievements as they're earned
+  useEffect(() => {
+    if (!hydrated) return;
+    const earned = earnedAchievements(state);
+    const missing = earned.filter((id) => !state.unlocked.includes(id));
+    if (missing.length === 0) return;
+    setState((s) => ({ ...s, unlocked: [...s.unlocked, ...missing] }));
+  }, [state, hydrated]);
+
+
   const value = useMemo<Ctx>(() => ({
     state,
     userId,
@@ -417,8 +534,76 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s.sos,
         ].slice(0, 200),
       })),
+    logRelapse: (r) =>
+      setState((s) => {
+        const key = todayKey();
+        return {
+          ...s,
+          relapses: [{ ...r, id: `rl-${Date.now()}`, at: new Date().toISOString() }, ...s.relapses].slice(0, 500),
+          journeys: s.journeys.map((j) => {
+            if (j.id !== r.journeyId) return j;
+            const { [key]: _cleared, ...restCompletions } = j.completions;
+            return {
+              ...j,
+              startedAt: new Date().toISOString(),
+              lastRelapse: new Date().toISOString(),
+              completions: restCompletions,
+            };
+          }),
+        };
+      }),
+    logCraving: (c) =>
+      setState((s) => ({
+        ...s,
+        cravings: [{ ...c, id: `cv-${Date.now()}`, at: new Date().toISOString() }, ...s.cravings].slice(0, 1000),
+        rpBonus: s.rpBonus + 30,
+      })),
+    addCheckIn: (c) =>
+      setState((s) => {
+        const key = todayKey();
+        const rest = s.checkins.filter((x) => x.dateKey !== key);
+        const already = s.checkins.some((x) => x.dateKey === key);
+        return {
+          ...s,
+          checkins: [{ ...c, id: `ci-${Date.now()}`, at: new Date().toISOString(), dateKey: key }, ...rest].slice(0, 730),
+          rpBonus: already ? s.rpBonus : s.rpBonus + 25,
+        };
+      }),
+    toggleGeneralMission: (missionId, rp) =>
+      setState((s) => {
+        const key = todayKey();
+        const done = s.generalMissions[key] ?? [];
+        const isDone = done.includes(missionId);
+        return {
+          ...s,
+          generalMissions: {
+            ...s.generalMissions,
+            [key]: isDone ? done.filter((x) => x !== missionId) : [...done, missionId],
+          },
+          rpBonus: Math.max(0, s.rpBonus + (isDone ? -rp : rp)),
+        };
+      }),
+    updateProfile: (p) => setState((s) => ({ ...s, profile: { ...s.profile, ...p } })),
+    setTheme: (t) => setState((s) => ({ ...s, theme: t })),
+    setReasons: (r) => setState((s) => ({ ...s, reasons: r })),
     exportAll: () => JSON.stringify(state, null, 2),
-    totalXp: state.journeys.reduce((acc, j) => acc + j.xp, 0),
+    deleteAccountData: async () => {
+      if (userId) {
+        try {
+          await supabase.from("user_state").delete().eq("user_id", userId);
+        } catch {}
+      }
+      skipNextSave.current = true;
+      try { localStorage.removeItem(KEY); } catch {}
+      setState(empty);
+      await supabase.auth.signOut();
+      setUserId(null);
+      setUserEmail(null);
+    },
+    totalXp: state.journeys.reduce((acc, j) => acc + j.xp, 0) + state.rpBonus,
+    totalRp: state.journeys.reduce((acc, j) => acc + j.xp, 0) + state.rpBonus,
+    checkedInToday: state.checkins.some((c) => c.dateKey === todayKey()),
+    checkinStreak: computeCheckinStreak(state.checkins),
   }), [state, userId, userEmail, authChecked, syncing]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;

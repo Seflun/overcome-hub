@@ -14,16 +14,22 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RemindersRouteImport } from './routes/reminders'
+import { Route as RelapseRouteImport } from './routes/relapse'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlusRouteImport } from './routes/plus'
+import { Route as LibraryRouteImport } from './routes/library'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as CravingsRouteImport } from './routes/cravings'
 import { Route as CoachRouteImport } from './routes/coach'
+import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -54,6 +60,11 @@ const RemindersRoute = RemindersRouteImport.update({
   path: '/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelapseRoute = RelapseRouteImport.update({
+  id: '/relapse',
+  path: '/relapse',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RefundRoute = RefundRouteImport.update({
   id: '/refund',
   path: '/refund',
@@ -62,6 +73,11 @@ const RefundRoute = RefundRouteImport.update({
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -79,6 +95,11 @@ const PlusRoute = PlusRouteImport.update({
   path: '/plus',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JournalRoute = JournalRouteImport.update({
   id: '/journal',
   path: '/journal',
@@ -94,14 +115,29 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CravingsRoute = CravingsRouteImport.update({
+  id: '/cravings',
+  path: '/cravings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoachRoute = CoachRouteImport.update({
   id: '/coach',
   path: '/coach',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -128,16 +164,22 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/checkin': typeof CheckinRoute
   '/coach': typeof CoachRoute
+  '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
+  '/library': typeof LibraryRoute
   '/plus': typeof PlusRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
   '/refund': typeof RefundRoute
+  '/relapse': typeof RelapseRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
@@ -149,16 +191,22 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/checkin': typeof CheckinRoute
   '/coach': typeof CoachRoute
+  '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
+  '/library': typeof LibraryRoute
   '/plus': typeof PlusRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
   '/refund': typeof RefundRoute
+  '/relapse': typeof RelapseRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
@@ -171,16 +219,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/checkin': typeof CheckinRoute
   '/coach': typeof CoachRoute
+  '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
+  '/library': typeof LibraryRoute
   '/plus': typeof PlusRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
   '/refund': typeof RefundRoute
+  '/relapse': typeof RelapseRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
   '/sos': typeof SosRoute
@@ -194,16 +248,22 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/auth'
+    | '/checkin'
     | '/coach'
+    | '/cravings'
     | '/explore'
     | '/insights'
     | '/journal'
+    | '/library'
     | '/plus'
     | '/pricing'
     | '/privacy'
+    | '/profile'
     | '/progress'
     | '/refund'
+    | '/relapse'
     | '/reminders'
     | '/settings'
     | '/sos'
@@ -215,16 +275,22 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analytics'
     | '/auth'
+    | '/checkin'
     | '/coach'
+    | '/cravings'
     | '/explore'
     | '/insights'
     | '/journal'
+    | '/library'
     | '/plus'
     | '/pricing'
     | '/privacy'
+    | '/profile'
     | '/progress'
     | '/refund'
+    | '/relapse'
     | '/reminders'
     | '/settings'
     | '/sos'
@@ -236,16 +302,22 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/auth'
+    | '/checkin'
     | '/coach'
+    | '/cravings'
     | '/explore'
     | '/insights'
     | '/journal'
+    | '/library'
     | '/plus'
     | '/pricing'
     | '/privacy'
+    | '/profile'
     | '/progress'
     | '/refund'
+    | '/relapse'
     | '/reminders'
     | '/settings'
     | '/sos'
@@ -258,16 +330,22 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
+  CheckinRoute: typeof CheckinRoute
   CoachRoute: typeof CoachRoute
+  CravingsRoute: typeof CravingsRoute
   ExploreRoute: typeof ExploreRoute
   InsightsRoute: typeof InsightsRoute
   JournalRoute: typeof JournalRoute
+  LibraryRoute: typeof LibraryRoute
   PlusRoute: typeof PlusRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   ProgressRoute: typeof ProgressRoute
   RefundRoute: typeof RefundRoute
+  RelapseRoute: typeof RelapseRoute
   RemindersRoute: typeof RemindersRoute
   SettingsRoute: typeof SettingsRoute
   SosRoute: typeof SosRoute
@@ -315,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relapse': {
+      id: '/relapse'
+      path: '/relapse'
+      fullPath: '/relapse'
+      preLoaderRoute: typeof RelapseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/refund': {
       id: '/refund'
       path: '/refund'
@@ -327,6 +412,13 @@ declare module '@tanstack/react-router' {
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -350,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/journal': {
       id: '/journal'
       path: '/journal'
@@ -371,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cravings': {
+      id: '/cravings'
+      path: '/cravings'
+      fullPath: '/cravings'
+      preLoaderRoute: typeof CravingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/coach': {
       id: '/coach'
       path: '/coach'
@@ -378,11 +484,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoachRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -418,16 +538,22 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
+  CheckinRoute: CheckinRoute,
   CoachRoute: CoachRoute,
+  CravingsRoute: CravingsRoute,
   ExploreRoute: ExploreRoute,
   InsightsRoute: InsightsRoute,
   JournalRoute: JournalRoute,
+  LibraryRoute: LibraryRoute,
   PlusRoute: PlusRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   ProgressRoute: ProgressRoute,
   RefundRoute: RefundRoute,
+  RelapseRoute: RelapseRoute,
   RemindersRoute: RemindersRoute,
   SettingsRoute: SettingsRoute,
   SosRoute: SosRoute,

@@ -1,25 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Lock, Trophy } from "lucide-react";
+import { Lock, Trophy, LineChart } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
-import { CATEGORIES, MILESTONES, daysBetween, levelFromXp } from "../lib/addiction-data";
+import { CATEGORIES, daysBetween } from "../lib/addiction-data";
+import { ACHIEVEMENTS, TIMELINE, levelFromRp } from "../lib/recovery-data";
 import { useStore } from "../lib/store";
 
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
       { title: "Progress — Addiblock" },
-      { name: "description", content: "Milestones, streaks and XP for every addiction you're breaking." },
+      { name: "description", content: "Milestones, recovery timeline, streaks and Recovery Points for every addiction you're breaking." },
       { property: "og:title", content: "Progress — Addiblock" },
-      { property: "og:description", content: "See your streaks, milestones and XP across every journey." },
+      { property: "og:description", content: "See your streaks, milestones and Recovery Points across every journey." },
     ],
   }),
   component: Progress,
 });
 
 function Progress() {
-  const { state, totalXp } = useStore();
-  const { level, into, needed, progress } = levelFromXp(totalXp);
+  const { state, totalRp } = useStore();
+  const { level, into, needed, progress } = levelFromRp(totalRp);
+
 
   if (state.journeys.length === 0) {
     return (
@@ -62,9 +64,9 @@ function Progress() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Total XP
+                Recovery score
               </div>
-              <div className="mt-1 text-4xl font-black tracking-tight">{totalXp}</div>
+              <div className="mt-1 text-4xl font-black tracking-tight">{totalRp} <span className="text-base font-bold text-muted-foreground">RP</span></div>
             </div>
             <div className="rounded-2xl bg-primary/15 px-4 py-2 text-primary">
               <div className="text-xs font-semibold uppercase tracking-widest">Level</div>
@@ -78,10 +80,37 @@ function Progress() {
             />
           </div>
           <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
-            <span>{into} / {needed} XP</span>
-            <span>Next level in {needed - into} XP</span>
+            <span>{into} / {needed} RP</span>
+            <span>Next level in {needed - into} RP</span>
           </div>
         </div>
+
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            { label: "Cravings resisted", value: state.cravings.length },
+            { label: "Check-ins", value: state.checkins.length },
+            { label: "Journal entries", value: state.journal.length },
+            { label: "Badges", value: `${state.unlocked.length}/${ACHIEVEMENTS.length}` },
+          ].map((s) => (
+            <div key={s.label} className="rounded-2xl border border-border/60 bg-card/70 p-3">
+              <div className="text-2xl font-black">{s.value}</div>
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <Link
+          to="/analytics"
+          className="mt-3 flex items-center gap-3 rounded-2xl border border-border/60 bg-card/70 p-4 transition hover:border-primary/40"
+        >
+          <LineChart className="h-5 w-5 shrink-0 text-primary" />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold">Analytics</div>
+            <div className="text-xs text-muted-foreground">Mood trends, trigger frequency, heatmap</div>
+          </div>
+          <span className="shrink-0 text-xs font-bold text-primary">Open →</span>
+        </Link>
+
 
         <div className="mt-6">
           <h2 className="mb-3 text-lg font-bold">Journeys</h2>
@@ -102,7 +131,7 @@ function Progress() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-semibold">Quitting {meta.name}</div>
-                    <div className="text-xs text-muted-foreground">{j.xp} XP earned</div>
+                    <div className="text-xs text-muted-foreground">{j.xp} RP earned</div>
                   </div>
                   <div className="shrink-0 text-right">
                     <div className="text-2xl font-black leading-none">{days}</div>
@@ -115,12 +144,12 @@ function Progress() {
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-1 text-lg font-bold">Milestones</h2>
+          <h2 className="mb-1 text-lg font-bold">Recovery timeline</h2>
           <p className="mb-3 text-xs text-muted-foreground">
-            Based on your longest streak — {bestDays} day{bestDays === 1 ? "" : "s"}.
+            Based on your longest streak — {bestDays} day{bestDays === 1 ? "" : "s"}. General information, not medical advice.
           </p>
           <ol className="relative space-y-3 border-l border-border/60 pl-5">
-            {MILESTONES.map((m) => {
+            {TIMELINE.map((m) => {
               const reached = bestDays >= m.days;
               return (
                 <li key={m.days} className="relative">
@@ -146,13 +175,42 @@ function Progress() {
                         <Lock className="h-3.5 w-3.5 text-muted-foreground" />
                       )}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{m.note}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{m.message}</p>
+                    {m.changes.length > 0 && (
+                      <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                        {m.changes.map((c) => (
+                          <li key={c}>· {c}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </li>
               );
             })}
           </ol>
         </div>
+
+        <div className="mt-8 mb-4">
+          <h2 className="mb-3 text-lg font-bold">Badges</h2>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {ACHIEVEMENTS.map((a) => {
+              const got = state.unlocked.includes(a.id);
+              return (
+                <div
+                  key={a.id}
+                  className={`rounded-2xl border p-3 ${
+                    got ? "border-primary/40 bg-primary/10" : "border-border/60 bg-card/50 opacity-60"
+                  }`}
+                >
+                  <div className="text-2xl">{got ? a.emoji : "🔒"}</div>
+                  <div className="mt-1 text-sm font-bold">{a.name}</div>
+                  <div className="mt-0.5 text-[11px] text-muted-foreground">{a.description}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
     </AppShell>
   );

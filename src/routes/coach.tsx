@@ -24,9 +24,10 @@ export const Route = createFileRoute("/coach")({
 const STARTERS = [
   "I'm having a craving right now.",
   "I slipped yesterday. Help me reset.",
-  "How do I get through tonight without drinking?",
-  "Why does the urge feel so strong at night?",
+  "Analyze my relapse patterns.",
+  "Build me a daily routine that protects my streak.",
 ];
+
 
 function Coach() {
   const { state, useCoachCredit } = useStore();
@@ -61,9 +62,29 @@ function Coach() {
     setLoading(true);
 
     try {
-      const ctx = active && meta
+      const triggerCounts = new Map<string, number>();
+      for (const c of state.cravings) triggerCounts.set(c.trigger, (triggerCounts.get(c.trigger) ?? 0) + 1);
+      for (const r of state.relapses) triggerCounts.set(r.trigger, (triggerCounts.get(r.trigger) ?? 0) + 1);
+      const topTriggers = [...triggerCounts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4)
+        .map(([t, n]) => `${t} (${n})`)
+        .join(", ");
+      const recentCheckin = state.checkins[0];
+      const base = active && meta
         ? `The user is working on quitting ${meta.name.toLowerCase()}. They are ${days} day(s) in.`
         : "The user has not picked an addiction yet.";
+      const ctx = [
+        base,
+        `They have logged ${state.relapses.length} relapse(s) and ${state.cravings.length} resisted craving(s).`,
+        topTriggers ? `Their most common triggers are: ${topTriggers}.` : "",
+        recentCheckin
+          ? `Latest check-in: mood ${recentCheckin.mood}/5, stress ${recentCheckin.stress}/10, energy ${recentCheckin.energy}/10, sleep ${recentCheckin.sleep}/10.`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

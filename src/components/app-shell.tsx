@@ -7,10 +7,16 @@ import {
   Sparkles,
   Settings,
   BookHeart,
+  BookOpen,
+  ClipboardCheck,
+  LineChart,
+  ShieldCheck,
+  User,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 
+import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 
 interface NavItem {
@@ -21,12 +27,26 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { to: "/today", label: "Today", icon: Home },
+  { to: "/checkin", label: "Check-in", icon: ClipboardCheck },
   { to: "/coach", label: "Coach", icon: Sparkles },
   { to: "/sos", label: "SOS", icon: ShieldAlert },
+  { to: "/cravings", label: "Cravings", icon: ShieldCheck },
   { to: "/journal", label: "Journal", icon: BookHeart },
+  { to: "/library", label: "Library", icon: BookOpen },
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/progress", label: "Progress", icon: Trophy },
+  { to: "/analytics", label: "Analytics", icon: LineChart },
+  { to: "/profile", label: "Profile", icon: User },
 ];
+
+const mobileNav: NavItem[] = [
+  { to: "/today", label: "Home", icon: Home },
+  { to: "/coach", label: "Coach", icon: Sparkles },
+  { to: "/sos", label: "SOS", icon: ShieldAlert },
+  { to: "/progress", label: "Progress", icon: Trophy },
+  { to: "/profile", label: "Profile", icon: User },
+];
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
@@ -57,9 +77,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-border/50 bg-card/40 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
         <Link to="/today" className="flex items-center gap-2 px-6 pt-6 pb-8">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-aurora shadow-glow">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img src={logo} alt="Addiblock logo" className="h-9 w-9 rounded-xl object-contain" />
+
           <div className="min-w-0">
             <div className="truncate font-black tracking-tight">Addiblock</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -134,7 +153,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile bottom nav */}
         <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md px-3 pb-4 lg:hidden">
           <div className="flex items-center justify-around rounded-full border border-border/60 bg-card/80 px-1.5 py-2 shadow-soft backdrop-blur-xl">
-            {nav.map((item) => {
+            {mobileNav.map((item) => {
               const active =
                 item.to === "/today"
                   ? pathname === "/today"

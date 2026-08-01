@@ -12,6 +12,7 @@ import {
   Check,
 } from "lucide-react";
 
+import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 
@@ -64,11 +65,10 @@ function TopNav() {
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-xl bg-aurora shadow-glow">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img src={logo} alt="Addiblock logo" className="h-8 w-8 rounded-xl object-contain" />
           <span className="font-black tracking-tight">Addiblock</span>
         </Link>
+
         <nav className="flex items-center gap-2">
           <Link
             to="/auth"
@@ -335,9 +335,8 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 text-xs text-muted-foreground md:px-8">
         <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div className="flex items-center gap-2">
-            <div className="grid h-5 w-5 place-items-center rounded-md bg-aurora">
-              <Sparkles className="h-3 w-3 text-primary-foreground" />
-            </div>
+            <img src={logo} alt="Addiblock logo" className="h-5 w-5 object-contain" />
+
             <span>Addiblock © {new Date().getFullYear()}</span>
           </div>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">

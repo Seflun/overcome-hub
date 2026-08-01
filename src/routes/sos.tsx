@@ -1,12 +1,71 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ShieldAlert, Wind, Waves, Sparkles, Phone, PhoneOff, Timer } from "lucide-react";
+import { ShieldAlert, Wind, Waves, Sparkles, Phone, PhoneOff, Timer, Quote, Heart, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { PremiumBadge } from "../components/premium-badge";
 import { useStore } from "../lib/store";
+import { quoteForDay } from "../lib/recovery-data";
+import { todayKey } from "../lib/addiction-data";
 import { Link } from "@tanstack/react-router";
+
+function ReasonsCard() {
+  const { state, setReasons } = useStore();
+  const [draft, setDraft] = useState("");
+
+  return (
+    <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
+      <div className="flex items-center gap-2 text-sm font-bold">
+        <Heart className="h-4 w-4 text-primary" /> Why you're doing this
+      </div>
+      {state.reasons.length === 0 ? (
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Add your reasons now, while you're clear-headed. They'll be here when the urge hits.
+        </p>
+      ) : (
+        <ul className="mt-3 space-y-1.5">
+          {state.reasons.map((r) => (
+            <li key={r} className="flex items-start gap-2 rounded-xl bg-background/50 px-3 py-2 text-sm">
+              <span className="flex-1">{r}</span>
+              <button
+                aria-label="Remove reason"
+                onClick={() => setReasons(state.reasons.filter((x) => x !== r))}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const v = draft.trim();
+          if (!v || state.reasons.includes(v)) return;
+          setReasons([...state.reasons, v]);
+          setDraft("");
+        }}
+        className="mt-3 flex gap-2"
+      >
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="e.g. I want to be present for my kids"
+          className="flex-1 rounded-full border border-border/60 bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary/60"
+        />
+        <button
+          type="submit"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </form>
+    </div>
+  );
+}
+
 
 export const Route = createFileRoute("/sos")({
   head: () => ({
@@ -73,6 +132,27 @@ function Sos() {
             <Protocol onDone={() => logSos("protocol", true)} />
           )}
         </div>
+
+        <ReasonsCard />
+
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-border/60 bg-card/60 p-4">
+          <Quote className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <p className="text-sm italic text-muted-foreground">{quoteForDay(todayKey())}</p>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <Link to="/cravings" className="rounded-2xl border border-border/60 bg-card/70 p-3 text-center text-xs font-semibold">
+            🛡️<div className="mt-1">Log craving</div>
+          </Link>
+          <Link to="/journal" className="rounded-2xl border border-border/60 bg-card/70 p-3 text-center text-xs font-semibold">
+            📓<div className="mt-1">Journal</div>
+          </Link>
+          <Link to="/coach" className="rounded-2xl border border-border/60 bg-card/70 p-3 text-center text-xs font-semibold">
+            💬<div className="mt-1">Talk to Coach</div>
+          </Link>
+        </div>
+
+
 
         {!state.isPremium && (
           <Link

@@ -1,9 +1,27 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Download, Bell, LineChart, ShieldAlert, BookHeart, ArrowLeft, LogIn, LogOut, User } from "lucide-react";
+import {
+  Sparkles,
+  Download,
+  Bell,
+  LineChart,
+  ShieldAlert,
+  ShieldCheck,
+  BookHeart,
+  BookOpen,
+  ClipboardCheck,
+  ArrowLeft,
+  LogIn,
+  LogOut,
+  User,
+  Sun,
+  Moon,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
+import { useConfirm } from "../components/confirm-dialog";
 import { PremiumBadge } from "../components/premium-badge";
 
 export const Route = createFileRoute("/settings")({
@@ -19,7 +37,8 @@ export const Route = createFileRoute("/settings")({
 });
 
 function Settings() {
-  const { state, exportAll, userId, userEmail, signOut, syncing } = useStore();
+  const { state, exportAll, userId, userEmail, signOut, syncing, setTheme, deleteAccountData } = useStore();
+  const confirm = useConfirm();
   const navigate = useNavigate();
 
   const download = () => {
@@ -97,11 +116,46 @@ function Settings() {
         </div>
 
         <div className="mt-6 space-y-2">
+          <Row to="/profile" icon={User} label="Profile & achievements" />
+          <Row to="/checkin" icon={ClipboardCheck} label="Daily check-in" />
+          <Row to="/cravings" icon={ShieldCheck} label="Craving tracker" />
           <Row to="/journal" icon={BookHeart} label="Journal & mood" />
+          <Row to="/library" icon={BookOpen} label="Educational library" />
+          <Row to="/analytics" icon={LineChart} label="Progress analytics" />
           <Row to="/insights" icon={LineChart} label="Health & money insights" premium={!state.isPremium} />
           <Row to="/reminders" icon={Bell} label="Reminders" />
           <Row to="/sos" icon={ShieldAlert} label="Craving SOS toolkit" />
         </div>
+
+        <div className="mt-6 rounded-2xl border border-border/60 bg-card/70 p-4">
+          <div className="flex items-center gap-3">
+            {state.theme === "light" ? (
+              <Sun className="h-5 w-5 text-primary" />
+            ) : (
+              <Moon className="h-5 w-5 text-primary" />
+            )}
+            <div className="flex-1">
+              <div className="font-semibold">Appearance</div>
+              <div className="text-xs text-muted-foreground">Dark mode is the default.</div>
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2">
+            {(["dark", "light"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                className={`flex-1 rounded-xl border py-2 text-sm font-semibold capitalize transition ${
+                  state.theme === t
+                    ? "border-primary/60 bg-primary/15 text-foreground"
+                    : "border-border/60 bg-background/40 text-muted-foreground"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
 
         <button
           onClick={download}
@@ -117,6 +171,35 @@ function Settings() {
             <div className="text-xs text-muted-foreground">For your therapist, doctor, or you.</div>
           </div>
         </button>
+
+        <button
+          onClick={async () => {
+            const ok = await confirm({
+              title: "Delete all my recovery data?",
+              description:
+                "Journeys, streaks, journal entries, check-ins, cravings and badges will be permanently deleted from this account.",
+              confirmLabel: "Delete everything",
+              tone: "destructive",
+            });
+            if (!ok) return;
+            await deleteAccountData();
+            toast.success("All recovery data deleted.");
+            navigate({ to: "/today" });
+          }}
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-left"
+        >
+          <Trash2 className="h-5 w-5 text-destructive" />
+          <div className="flex-1">
+            <div className="font-semibold text-destructive">Delete my data</div>
+            <div className="text-xs text-muted-foreground">Wipes every journey, log and badge. Can't be undone.</div>
+          </div>
+        </button>
+
+        <div className="mt-6 mb-4 flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground">
+          <Link to="/privacy" className="underline">Privacy</Link>
+          <Link to="/terms" className="underline">Terms</Link>
+          <Link to="/refund" className="underline">Refunds</Link>
+        </div>
 
       </div>
     </AppShell>
