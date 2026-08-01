@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download, X } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
@@ -33,23 +33,26 @@ function Plus() {
   const navigate = useNavigate();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
+  const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
+  const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
+
+  useEffect(() => {
+    if (userEmail) setBillingEmail((prev) => prev || userEmail);
+  }, [userEmail]);
 
   const isPremium = state.isPremium;
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(billingEmail.trim());
 
-  const buy = (plan: "monthly" | "yearly") => {
-    if (!userId) {
-      toast("Sign in to subscribe");
-      navigate({ to: "/auth" });
-      return;
-    }
+  const start = (plan: "monthly" | "yearly", email: string) => {
     setBusy(plan);
     try {
       openCheckout({
         priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
-        customerEmail: userEmail ?? undefined,
-        userId,
+        customerEmail: email,
+        userId: userId!,
         returnUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       });
+      setPendingPlan(null);
     } catch (e: any) {
       console.error(e);
       toast.error("Checkout couldn't open. Try again in a moment.");
@@ -57,6 +60,22 @@ function Plus() {
       setBusy(null);
     }
   };
+
+  const buy = (plan: "monthly" | "yearly") => {
+    if (!userId) {
+      toast("Sign in to subscribe");
+      navigate({ to: "/auth" });
+      return;
+    }
+    // A receipt email is required before we can open checkout.
+    if (!emailValid) {
+      setPendingPlan(plan);
+      toast("Add the email address for your receipt");
+      return;
+    }
+    start(plan, billingEmail.trim());
+  };
+
 
   return (
     <AppShell>
@@ -122,13 +141,33 @@ function Plus() {
                 </button>
               </div>
 
+              <div className="mt-4">
+                <label className="px-1 text-[11px] text-muted-foreground">
+                  Email for your receipt <span className="text-primary">(required)</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={billingEmail}
+                  onChange={(e) => setBillingEmail(e.target.value)}
+                  placeholder="you@email.com"
+                  className={`mt-1 w-full rounded-2xl border bg-background/50 px-4 py-3 text-sm outline-none focus:border-primary/60 ${
+                    pendingPlan && !emailValid ? "border-destructive/70" : "border-border/60"
+                  }`}
+                />
+                <p className="mt-1 px-1 text-[11px] text-muted-foreground">
+                  We send your receipt and subscription updates here.
+                </p>
+              </div>
+
               <button
-                onClick={() => buy("yearly")}
+                onClick={() => buy(pendingPlan ?? "yearly")}
                 disabled={busy !== null}
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy ? "Opening secure checkout…" : "Get Addiblock+"}
               </button>
+
               <div className="mt-2 text-center text-[11px] text-muted-foreground">
                 Secure checkout · Cancel anytime
               </div>

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/profile")({
 const AVATARS = ["🌱", "🔥", "🛡️", "🦉", "🌊", "⛰️", "🧭", "🌟", "🐺", "☀️"];
 
 function ProfilePage() {
-  const { state, userEmail, updateProfile, totalRp } = useStore();
+  const { state, updateProfile, totalRp } = useStore();
   const [editing, setEditing] = useState(false);
   const [username, setUsername] = useState(state.profile.username);
   const [bio, setBio] = useState(state.profile.bio);
@@ -89,7 +89,7 @@ function ProfilePage() {
                 <>
                   <div className="flex items-center gap-2">
                     <div className="truncate text-xl font-black">
-                      {state.profile.username || userEmail?.split("@")[0] || "You"}
+                      {state.profile.username || "You"}
                     </div>
                     <button onClick={() => setEditing(true)} className="text-muted-foreground hover:text-foreground">
                       <Pencil className="h-3.5 w-3.5" />

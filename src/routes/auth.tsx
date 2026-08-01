@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { LANGUAGES } from "@/lib/languages";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -18,11 +19,18 @@ export const Route = createFileRoute("/auth")({
   component: Auth,
 });
 
+const inputClass =
+  "w-full rounded-2xl border border-border/60 bg-card/70 px-4 py-3 text-sm outline-none focus:border-primary/60";
+
 function Auth() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [dob, setDob] = useState("");
+  const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,13 +41,32 @@ function Auth() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "signup") {
+      const name = username.trim();
+      if (name.length < 3) {
+        toast.error("Pick a username with at least 3 characters");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Passwords don't match");
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              display_name: username.trim(),
+              username: username.trim(),
+              ...(dob ? { dob } : {}),
+              language,
+            },
+          },
         });
         if (error) throw error;
         toast.success("Account created. You're in.");
@@ -70,21 +97,23 @@ function Auth() {
     navigate({ to: "/today" });
   };
 
+  const isSignup = mode === "signup";
+
   return (
-    <div className="min-h-dvh bg-background px-5 pt-8">
+    <div className="min-h-dvh bg-background px-5 pb-12 pt-8">
       <Link to="/" className="mb-6 inline-flex items-center gap-1 text-xs text-muted-foreground">
         <ArrowLeft className="h-3.5 w-3.5" /> Back
       </Link>
 
       <div className="mx-auto max-w-sm">
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          {mode === "signin" ? "Welcome back" : "Get started"}
+          {isSignup ? "Get started" : "Welcome back"}
         </div>
         <h1 className="mt-1 text-3xl font-black tracking-tight">
-          {mode === "signin" ? (
-            <>Sign in to <span className="text-aurora">sync</span></>
-          ) : (
+          {isSignup ? (
             <>Save your <span className="text-aurora">progress</span></>
+          ) : (
+            <>Sign in to <span className="text-aurora">sync</span></>
           )}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -107,13 +136,31 @@ function Auth() {
         </div>
 
         <form onSubmit={submit} className="space-y-3">
+          {isSignup && (
+            <div>
+              <input
+                type="text"
+                required
+                minLength={3}
+                maxLength={24}
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className={inputClass}
+              />
+              <p className="mt-1 px-1 text-[11px] text-muted-foreground">
+                This is the name shown on your profile — not your email.
+              </p>
+            </div>
+          )}
+
           <input
             type="email"
             required
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-2xl border border-border/60 bg-card/70 px-4 py-3 text-sm outline-none focus:border-primary/60"
+            className={inputClass}
           />
           <input
             type="password"
@@ -122,22 +169,71 @@ function Auth() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-2xl border border-border/60 bg-card/70 px-4 py-3 text-sm outline-none focus:border-primary/60"
+            className={inputClass}
           />
+
+          {isSignup && (
+            <>
+              <input
+                type="password"
+                required
+                minLength={6}
+                placeholder="Repeat password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={inputClass}
+              />
+              {confirmPassword.length > 0 && confirmPassword !== password && (
+                <p className="px-1 text-[11px] text-destructive">Passwords don't match yet.</p>
+              )}
+
+              <div>
+                <label className="px-1 text-[11px] text-muted-foreground">
+                  Date of birth <span className="opacity-70">(optional)</span>
+                </label>
+                <input
+                  type="date"
+                  value={dob}
+                  max={new Date().toISOString().slice(0, 10)}
+                  onChange={(e) => setDob(e.target.value)}
+                  className={`${inputClass} mt-1`}
+                />
+              </div>
+
+              <div>
+                <label className="px-1 text-[11px] text-muted-foreground">Language</label>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className={`${inputClass} mt-1`}
+                >
+                  {LANGUAGES.map((l) => (
+                    <option key={l.code} value={l.code}>
+                      {l.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 px-1 text-[11px] text-muted-foreground">
+                  The app and the Coach will speak your language. You can change it later in Settings.
+                </p>
+              </div>
+            </>
+          )}
+
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
           >
-            {loading ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            {loading ? "…" : isSignup ? "Create account" : "Sign in"}
           </button>
         </form>
 
         <button
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          onClick={() => setMode(isSignup ? "signin" : "signup")}
           className="mt-4 w-full text-center text-xs text-muted-foreground"
         >
-          {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
+          {isSignup ? "Already have an account? Sign in" : "New here? Create an account"}
         </button>
       </div>
     </div>

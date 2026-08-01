@@ -5,6 +5,8 @@ import { Send, Sparkles, Bot, User as UserIcon } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { useStore, useCategoryMeta } from "../lib/store";
 import { daysBetween } from "../lib/addiction-data";
+import { languageName } from "../lib/languages";
+
 import { AiMessage } from "../lib/markdown";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -81,6 +83,7 @@ function Coach() {
         recentCheckin
           ? `Latest check-in: mood ${recentCheckin.mood}/5, stress ${recentCheckin.stress}/10, energy ${recentCheckin.energy}/10, sleep ${recentCheckin.sleep}/10.`
           : "",
+        `Reply in ${languageName(state.profile.language)}.`,
       ]
         .filter(Boolean)
         .join(" ");
