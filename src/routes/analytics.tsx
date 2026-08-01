@@ -145,6 +145,24 @@ function Analytics() {
           ))}
         </div>
 
+        <div className="mt-4 space-y-3">
+          <PatternSpotlight />
+          <AiInsightCard
+            title="Explain my data"
+            blurb="The coach reads your trends, triggers and check-ins and tells you what's actually going on."
+            lockedBlurb="Addiblock+ turns these charts into plain-English insight: what's improving, what's driving your urges, and what to change this week."
+            summarizeLabel="Summarize my recovery"
+            summarizePrompt="Look at my data and summarize what's going well, what's slipping, and the two most useful changes I could make this week."
+            suggestions={[
+              "What's my biggest risk pattern?",
+              "What should I focus on this week?",
+              "Is my mood actually improving?",
+            ]}
+            placeholder="Ask about your numbers…"
+            buildContext={() => recoveryContext(state)}
+          />
+        </div>
+
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <Sparkline points={moodByDay} label="Mood trend (14 days)" />
           <Sparkline points={stressByDay} label="Stress trend (14 days)" />
