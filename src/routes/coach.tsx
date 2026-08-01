@@ -12,9 +12,9 @@ type Msg = { role: "user" | "assistant"; content: string };
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
-      { title: "Coach — Addiction Blocker" },
+      { title: "Coach — Addiblock" },
       { name: "description", content: "Talk to an AI companion trained to help you ride out cravings and rebuild habits. Not a therapist." },
-      { property: "og:title", content: "Coach — Addiction Blocker" },
+      { property: "og:title", content: "Coach — Addiblock" },
       { property: "og:description", content: "An AI companion for the tough moments in recovery." },
     ],
   }),
@@ -51,7 +51,7 @@ function Coach() {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
     if (!useCoachCredit()) {
-      setError("You're out of free Coach credits. Upgrade to Addiction Blocker+ for unlimited chats.");
+      setError("You're out of free Coach credits. Upgrade to Addiblock+ for unlimited chats.");
       return;
     }
     setError(null);

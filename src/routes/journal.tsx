@@ -12,9 +12,9 @@ import { AiMessage } from "../lib/markdown";
 export const Route = createFileRoute("/journal")({
   head: () => ({
     meta: [
-      { title: "Journal — Addiction Blocker" },
+      { title: "Journal — Addiblock" },
       { name: "description", content: "Log cravings, moods and triggers. See the patterns behind your slips." },
-      { property: "og:title", content: "Journal — Addiction Blocker" },
+      { property: "og:title", content: "Journal — Addiblock" },
       { property: "og:description", content: "Track mood and triggers to spot the patterns behind your slips." },
     ],
   }),

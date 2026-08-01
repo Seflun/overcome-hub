@@ -18,13 +18,13 @@ import { CATEGORIES } from "../lib/addiction-data";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Addiction Blocker — Break the loop, rebuild yourself" },
+      { title: "Addiblock — Break the loop, rebuild yourself" },
       {
         name: "description",
         content:
           "A calm, structured recovery companion. Pick an addiction, follow a daily plan, and rebuild the version of you that's underneath. Free to start.",
       },
-      { property: "og:title", content: "Addiction Blocker — Break the loop, rebuild yourself" },
+      { property: "og:title", content: "Addiblock — Break the loop, rebuild yourself" },
       {
         property: "og:description",
         content:
@@ -67,7 +67,7 @@ function TopNav() {
           <div className="grid h-8 w-8 place-items-center rounded-xl bg-aurora shadow-glow">
             <Sparkles className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="font-black tracking-tight">Addiction Blocker</span>
+          <span className="font-black tracking-tight">Addiblock</span>
         </Link>
         <nav className="flex items-center gap-2">
           <Link
@@ -177,7 +177,7 @@ function Method() {
             Small daily wins.<br className="hidden md:block" /> Compounded into a new <span className="text-aurora">identity</span>.
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-            Recovery isn't willpower — it's structure. Addiction Blocker gives you a
+            Recovery isn't willpower — it's structure. Addiblock gives you a
             tiny, evidence-informed plan you can follow on your worst day, not just
             your best one.
           </p>
@@ -338,7 +338,7 @@ function Footer() {
             <div className="grid h-5 w-5 place-items-center rounded-md bg-aurora">
               <Sparkles className="h-3 w-3 text-primary-foreground" />
             </div>
-            <span>Addiction Blocker by Addiction Breaker © {new Date().getFullYear()}</span>
+            <span>Addiblock by Addiction Breaker © {new Date().getFullYear()}</span>
           </div>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to="/pricing" className="hover:text-foreground">Pricing</Link>

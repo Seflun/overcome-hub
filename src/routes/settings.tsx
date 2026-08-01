@@ -9,9 +9,9 @@ import { PremiumBadge } from "../components/premium-badge";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Addiction Blocker" },
+      { title: "Settings — Addiblock" },
       { name: "description", content: "Manage your account, plan, reminders, insights and data export." },
-      { property: "og:title", content: "Settings — Addiction Blocker" },
+      { property: "og:title", content: "Settings — Addiblock" },
       { property: "og:description", content: "Manage your account and data." },
     ],
   }),
@@ -83,7 +83,7 @@ function Settings() {
         <div className="mt-5 rounded-3xl border border-primary/40 bg-card-grad p-5 shadow-soft">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            <div className="text-xs font-bold uppercase tracking-widest text-primary">Addiction Blocker+</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-primary">Addiblock+</div>
           </div>
           <div className="mt-1 text-lg font-bold">
             {state.isPremium ? "Active — thanks for supporting the work." : "Unlock the full toolkit."}

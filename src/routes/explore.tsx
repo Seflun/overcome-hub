@@ -10,9 +10,9 @@ import { useConfirm } from "../components/confirm-dialog";
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore — Addiction Blocker" },
+      { title: "Explore — Addiblock" },
       { name: "description", content: "Start a new journey and stack XP across every addiction you break." },
-      { property: "og:title", content: "Explore — Addiction Blocker" },
+      { property: "og:title", content: "Explore — Addiblock" },
       { property: "og:description", content: "Start a new recovery journey. Stack XP as you break each loop." },
     ],
   }),

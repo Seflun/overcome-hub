@@ -61,7 +61,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Sparkles className="h-4 w-4 text-primary-foreground" />
           </div>
           <div className="min-w-0">
-            <div className="truncate font-black tracking-tight">Addiction Blocker</div>
+            <div className="truncate font-black tracking-tight">Addiblock</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Break the loop
             </div>

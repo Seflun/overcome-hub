@@ -9,9 +9,9 @@ import { lovable } from "@/integrations/lovable";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Addiction Blocker" },
+      { title: "Sign in — Addiblock" },
       { name: "description", content: "Sign in to sync your recovery journey across devices." },
-      { property: "og:title", content: "Sign in — Addiction Blocker" },
+      { property: "og:title", content: "Sign in — Addiblock" },
       { property: "og:description", content: "Sync your streaks, XP, journal and reminders across devices." },
     ],
   }),
