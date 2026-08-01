@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lock, Trophy, LineChart } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { AiInsightCard } from "../components/ai-insight-card";
+import { recoveryContext } from "../lib/ai-context";
 import { CATEGORIES, daysBetween } from "../lib/addiction-data";
 import { ACHIEVEMENTS, TIMELINE, levelFromRp } from "../lib/recovery-data";
 import { useStore } from "../lib/store";
