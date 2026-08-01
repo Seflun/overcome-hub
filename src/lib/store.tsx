@@ -588,17 +588,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setReasons: (r) => setState((s) => ({ ...s, reasons: r })),
     exportAll: () => JSON.stringify(state, null, 2),
     deleteAccountData: async () => {
+      const fresh: AppState = { ...empty, isPremium: state.isPremium, theme: state.theme };
       if (userId) {
         try {
-          await supabase.from("user_state").delete().eq("user_id", userId);
+          await supabase
+            .from("user_state")
+            .upsert({ user_id: userId, data: fresh as any, updated_at: new Date().toISOString() });
         } catch {}
       }
       skipNextSave.current = true;
       try { localStorage.removeItem(KEY); } catch {}
-      setState(empty);
-      await supabase.auth.signOut();
-      setUserId(null);
-      setUserEmail(null);
+      setState(fresh);
     },
     totalXp: state.journeys.reduce((acc, j) => acc + j.xp, 0) + state.rpBonus,
     totalRp: state.journeys.reduce((acc, j) => acc + j.xp, 0) + state.rpBonus,
