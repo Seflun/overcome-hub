@@ -94,6 +94,11 @@ function ProfilePage() {
                     <button onClick={() => setEditing(true)} className="text-muted-foreground hover:text-foreground">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
+                    {state.isPremium && (
+                      <span className="rounded-full border border-primary/40 px-1.5 py-[1px] text-[9px] font-bold uppercase tracking-widest text-primary/90">
+                        Plus
+                      </span>
+                    )}
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {state.profile.bio || "No bio yet — tap the pencil to add one."}
