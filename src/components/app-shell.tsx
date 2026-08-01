@@ -165,6 +165,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   : pathname.startsWith(item.to);
               const Icon = item.icon;
               const isSos = item.to === "/sos";
+              const isCoach = item.to === "/coach";
               return (
                 <Link
                   key={item.to}
@@ -174,12 +175,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                       ? active
                         ? "bg-destructive/20 text-destructive"
                         : "text-destructive/80 hover:text-destructive"
-                      : active
-                        ? "bg-primary/15 text-primary"
-                        : "text-muted-foreground hover:text-foreground"
+                      : isCoach
+                        ? active
+                          ? "bg-aurora text-primary-foreground shadow-glow"
+                          : "bg-primary/20 text-primary ring-1 ring-primary/40"
+                        : active
+                          ? "bg-primary/15 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 1.8} />
+                  <Icon className="h-5 w-5" strokeWidth={active || isCoach ? 2.4 : 1.8} />
                   <span className="font-medium">{item.label}</span>
                 </Link>
               );
