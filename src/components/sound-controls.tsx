@@ -67,6 +67,20 @@ export function SoundControls({ className = "" }: { className?: string }) {
       >
         {sound.musicEnabled ? <Music className="h-4 w-4" /> : <Music2 className="h-4 w-4" />}
       </button>
+      {sound.musicEnabled ? (
+        <input
+          type="range"
+          min={0}
+          max={100}
+          step={1}
+          data-no-sound
+          value={Math.round(sound.musicVolume * 100)}
+          onChange={(e) => sound.setMusicVolume(Number(e.target.value) / 100)}
+          aria-label="Music volume"
+          title={`Music volume: ${Math.round(sound.musicVolume * 100)}%`}
+          className="h-1 w-20 cursor-pointer appearance-none rounded-full bg-border accent-primary"
+        />
+      ) : null}
       <button
         type="button"
         data-no-sound
