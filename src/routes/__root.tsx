@@ -113,6 +113,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
         <ConfirmProvider>
+          <AutoTranslate />
           <PaymentTestModeBanner />
           <Outlet />
           <Toaster position="top-center" />
@@ -120,4 +121,5 @@ function RootComponent() {
       </StoreProvider>
     </QueryClientProvider>
   );
+
 }
