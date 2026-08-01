@@ -338,7 +338,7 @@ function Footer() {
             <div className="grid h-5 w-5 place-items-center rounded-md bg-aurora">
               <Sparkles className="h-3 w-3 text-primary-foreground" />
             </div>
-            <span>Addiblock by Addiction Breaker © {new Date().getFullYear()}</span>
+            <span>Addiblock © {new Date().getFullYear()}</span>
           </div>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to="/pricing" className="hover:text-foreground">Pricing</Link>

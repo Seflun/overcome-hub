@@ -4,9 +4,9 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Privacy Notice — Addiblock" },
-      { name: "description", content: "How Addiction Breaker collects, uses, and protects your personal data." },
+      { name: "description", content: "How Addiblock collects, uses, and protects your personal data." },
       { property: "og:title", content: "Privacy Notice — Addiblock" },
-      { property: "og:description", content: "How Addiction Breaker collects, uses, and protects your personal data." },
+      { property: "og:description", content: "How Addiblock collects, uses, and protects your personal data." },
     ],
   }),
   component: PrivacyPage,
@@ -23,7 +23,7 @@ function PrivacyPage() {
         <div className="prose prose-invert mt-8 max-w-none space-y-6 text-sm leading-relaxed text-foreground/90">
           <section>
             <h2 className="text-xl font-bold">1. Who we are</h2>
-            <p>This service ("Addiblock", the "app") is operated by <strong>Addiction Breaker</strong> ("we", "us"). We act as the data controller for personal data processed in connection with the app.</p>
+            <p>This service ("Addiblock", the "app") is operated by <strong>Addiblock</strong> ("we", "us"). We act as the data controller for personal data processed in connection with the app.</p>
           </section>
 
           <section>
@@ -86,7 +86,7 @@ function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold">10. Contact</h2>
-            <p>For any privacy question or to exercise your rights, contact Addiction Breaker via the support channel inside the app.</p>
+            <p>For any privacy question or to exercise your rights, contact Addiblock via the support channel inside the app.</p>
           </section>
         </div>
       </div>
