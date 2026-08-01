@@ -24,9 +24,10 @@ export const Route = createFileRoute("/coach")({
 const STARTERS = [
   "I'm having a craving right now.",
   "I slipped yesterday. Help me reset.",
-  "How do I get through tonight without drinking?",
-  "Why does the urge feel so strong at night?",
+  "Analyze my relapse patterns.",
+  "Build me a daily routine that protects my streak.",
 ];
+
 
 function Coach() {
   const { state, useCoachCredit } = useStore();
