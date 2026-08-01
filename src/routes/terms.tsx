@@ -24,6 +24,7 @@ function TermsPage() {
           <section>
             <h2 className="text-xl font-bold">1. Who you are contracting with</h2>
             <p>These terms are a binding agreement between you and <strong>Addiblock</strong> ("we", "us"), the operator of the Addiblock application and website (the "Service").</p>
+
           </section>
 
           <section>
