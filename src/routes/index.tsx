@@ -64,11 +64,10 @@ function TopNav() {
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-xl bg-aurora shadow-glow">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img src={logo} alt="Addiblock logo" className="h-8 w-8 rounded-xl object-contain" />
           <span className="font-black tracking-tight">Addiblock</span>
         </Link>
+
         <nav className="flex items-center gap-2">
           <Link
             to="/auth"
