@@ -141,7 +141,7 @@ export const confirmCheckoutSession = createServerFn({ method: "POST" })
       const periodEnd = item?.current_period_end ?? (sub as any).current_period_end;
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin.from("subscriptions").upsert(
+      const { error: upsertError } = await supabaseAdmin.from("subscriptions").upsert(
         {
           user_id: context.userId,
           stripe_subscription_id: sub.id,
@@ -157,6 +157,7 @@ export const confirmCheckoutSession = createServerFn({ method: "POST" })
         } as any,
         { onConflict: "stripe_subscription_id" },
       );
+      if (upsertError) return { error: `Could not save subscription: ${upsertError.message}` };
 
       const active = ["active", "trialing", "past_due"].includes(sub.status);
       return { active };
