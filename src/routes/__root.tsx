@@ -116,6 +116,7 @@ function RootComponent() {
       <StoreProvider>
         <ConfirmProvider>
           <PaymentTestModeBanner />
+          <SoundProvider />
           <Outlet />
           <Toaster position="top-center" />
         </ConfirmProvider>
