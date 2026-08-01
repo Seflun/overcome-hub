@@ -73,7 +73,10 @@ export interface Profile {
   avatar: string;
   bio: string;
   joinedAt: string;
+  dob?: string;
+  language?: string;
 }
+
 
 export interface AppState {
   journeys: Journey[];
