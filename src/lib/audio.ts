@@ -21,8 +21,22 @@ type SfxName =
 
 const MUSIC_KEY = "addiblock.sound.music";
 const MUSIC_VOL_KEY = "addiblock.sound.musicVolume";
-/** Soft default: sits behind the interface, still audible. */
-const DEFAULT_MUSIC_VOLUME = 0.12;
+/** Ceiling for the ambience: "normal" background level, never foreground loud. */
+export const MAX_MUSIC_VOLUME = 0.28;
+/** Slider curve so the low end is near-silent and the middle is soft background. */
+const VOLUME_CURVE = 2.2;
+/** Slider position (0-100) -> actual gain. */
+export function sliderToVolume(pos: number) {
+  const p = Math.min(100, Math.max(0, pos)) / 100;
+  return MAX_MUSIC_VOLUME * Math.pow(p, VOLUME_CURVE);
+}
+/** Actual gain -> slider position (0-100). */
+export function volumeToSlider(vol: number) {
+  const v = Math.min(1, Math.max(0, vol / MAX_MUSIC_VOLUME));
+  return Math.round(Math.pow(v, 1 / VOLUME_CURVE) * 100);
+}
+/** Soft default: mid-slider, sits behind the interface but still audible. */
+const DEFAULT_MUSIC_VOLUME = sliderToVolume(50);
 const SFX_KEY = "addiblock.sound.sfx";
 
 // A slow, airy D-major-ish drift: low sustained pads with long crossfades so it
@@ -174,7 +188,10 @@ class SoundEngine {
     this.musicGain!.gain.cancelScheduledValues(ctx.currentTime);
     this.musicGain!.gain.setValueAtTime(this.musicGain!.gain.value, ctx.currentTime);
     this.musicGain!.gain.linearRampToValueAtTime(this.musicVolume, ctx.currentTime + 3);
-    void this.trackEl.play().catch(() => {});
+    void this.trackEl.play().catch(() => {
+      // Autoplay blocked (e.g. right after returning from checkout) — allow a retry.
+      this.running = false;
+    });
   }
 
   private stopMusic() {
@@ -230,9 +247,14 @@ class SoundEngine {
     if (on) this.play("toggle");
   }
 
-  /** Called on the first user gesture so autoplay policies are respected. */
+  /** True once the ambience is actually playing. */
+  get isPlaying() {
+    return this.running && !!this.trackEl && !this.trackEl.paused;
+  }
+
+  /** Called on user gestures so autoplay policies are respected. */
   resumeIfEnabled() {
-    if (this.musicEnabled) this.startMusic();
+    if (this.musicEnabled && !this.isPlaying) this.startMusic();
   }
 
   // --------------------------------------------------------------------- sfx
