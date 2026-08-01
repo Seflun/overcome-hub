@@ -115,8 +115,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                       : "text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
                     : isCoach
                       ? active
-                        ? "bg-aurora text-primary-foreground shadow-glow"
-                        : "bg-primary/20 text-primary ring-1 ring-primary/40 hover:bg-primary/30"
+                        ? "bg-accent text-accent-foreground shadow-glow"
+                        : "bg-accent/20 text-accent ring-1 ring-accent/40 hover:bg-accent/30"
                       : active
                         ? "bg-primary/15 text-primary"
                         : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
@@ -189,8 +189,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                         : "text-destructive/80 hover:text-destructive"
                       : isCoach
                         ? active
-                          ? "bg-aurora text-primary-foreground shadow-glow"
-                          : "bg-primary/20 text-primary ring-1 ring-primary/40"
+                          ? "bg-accent text-accent-foreground shadow-glow"
+                          : "bg-accent/20 text-accent ring-1 ring-accent/40"
                         : active
                           ? "bg-primary/15 text-primary"
                           : "text-muted-foreground hover:text-foreground"

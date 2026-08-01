@@ -1,7 +1,7 @@
 import { Music, Music2, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { sound } from "@/lib/audio";
+import { sound, sliderToVolume, volumeToSlider } from "@/lib/audio";
 
 /**
  * Mounts the app-wide sound layer: restores preferences, unlocks audio on the
@@ -11,7 +11,23 @@ export function SoundProvider() {
   useEffect(() => {
     sound.hydrate();
 
-    const unlock = () => sound.resumeIfEnabled();
+    const unlock = () => {
+      sound.resumeIfEnabled();
+      if (sound.isPlaying) detachUnlock();
+    };
+
+    const detachUnlock = () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      window.removeEventListener("visibilitychange", unlock);
+    };
+
+    // Try immediately (works when the tab already has audio permission, e.g.
+    // coming back from checkout), then keep retrying on user gestures.
+    sound.resumeIfEnabled();
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    window.addEventListener("visibilitychange", unlock);
 
     const onPointerDown = (e: Event) => {
       const target = e.target as HTMLElement | null;
@@ -25,12 +41,9 @@ export function SoundProvider() {
       sound.play("click");
     };
 
-    window.addEventListener("pointerdown", unlock, { once: true });
-    window.addEventListener("keydown", unlock, { once: true });
     window.addEventListener("pointerdown", onPointerDown, true);
     return () => {
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
+      detachUnlock();
       window.removeEventListener("pointerdown", onPointerDown, true);
     };
   }, []);
@@ -74,10 +87,10 @@ export function SoundControls({ className = "" }: { className?: string }) {
           max={100}
           step={1}
           data-no-sound
-          value={Math.round(sound.musicVolume * 100)}
-          onChange={(e) => sound.setMusicVolume(Number(e.target.value) / 100)}
+          value={volumeToSlider(sound.musicVolume)}
+          onChange={(e) => sound.setMusicVolume(sliderToVolume(Number(e.target.value)))}
           aria-label="Music volume"
-          title={`Music volume: ${Math.round(sound.musicVolume * 100)}%`}
+          title={`Music volume: ${volumeToSlider(sound.musicVolume)}%`}
           className="h-1 w-20 cursor-pointer appearance-none rounded-full bg-border accent-primary"
         />
       ) : null}
