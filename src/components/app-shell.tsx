@@ -50,7 +50,7 @@ const mobileNav: NavItem[] = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  const { userId, authChecked } = useStore();
+  const { userId, authChecked, state } = useStore();
   const navigate = useNavigate();
 
   // Route guard: unauthenticated users are sent to the landing page
@@ -80,7 +80,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <img src={logo} alt="Addiblock logo" className="h-9 w-9 rounded-xl object-contain" />
 
           <div className="min-w-0">
-            <div className="truncate font-black tracking-tight">Addiblock</div>
+            <div className="flex min-w-0 items-center gap-1.5">
+              <span className="truncate font-black tracking-tight">Addiblock</span>
+              {state.isPremium && (
+                <span className="rounded-full border border-primary/40 px-1.5 py-[1px] text-[9px] font-bold uppercase tracking-widest text-primary/90">
+                  Plus
+                </span>
+              )}
+            </div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Break the loop
             </div>
