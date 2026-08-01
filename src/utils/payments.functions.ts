@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import Stripe from "stripe";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   type StripeEnv,
   createStripeClient,
   getStripeErrorMessage,
 } from "@/lib/stripe.server";
+
 
 const checkoutInput = z.object({
   priceId: z
