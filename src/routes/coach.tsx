@@ -5,6 +5,8 @@ import { Send, Sparkles, Bot, User as UserIcon } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { useStore, useCategoryMeta } from "../lib/store";
 import { daysBetween } from "../lib/addiction-data";
+import { languageName } from "../lib/languages";
+
 import { AiMessage } from "../lib/markdown";
 
 type Msg = { role: "user" | "assistant"; content: string };
