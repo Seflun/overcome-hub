@@ -5,7 +5,7 @@ import { createCheckoutSession } from "@/utils/payments.functions";
 interface Props {
   priceId: string;
   quantity?: number;
-  customerEmail?: string;
+  customerEmail: string;
   userId?: string;
   returnUrl?: string;
 }
