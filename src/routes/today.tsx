@@ -31,7 +31,7 @@ import {
   nextStage,
   quoteForDay,
 } from "../lib/recovery-data";
-import logo from "@/assets/addiblock-logo.png";
+import { LOGO_URL as logo } from "@/lib/brand";
 
 export const Route = createFileRoute("/today")({
   head: () => ({

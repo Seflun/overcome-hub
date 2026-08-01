@@ -12,7 +12,7 @@ import {
   Check,
 } from "lucide-react";
 
-import logo from "@/assets/addiblock-logo.png";
+import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 import { CATEGORIES } from "../lib/addiction-data";
 

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 
-import logo from "@/assets/addiblock-logo.png";
+import { LOGO_URL as logo } from "@/lib/brand";
 import { useStore } from "../lib/store";
 
 interface NavItem {
