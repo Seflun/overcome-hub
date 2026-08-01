@@ -15,6 +15,8 @@ import { StoreProvider } from "../lib/store";
 import { Toaster } from "../components/ui/sonner";
 import { ConfirmProvider } from "../components/confirm-dialog";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
+import { AutoTranslate } from "../components/auto-translate";
+
 
 function NotFoundComponent() {
   return (
