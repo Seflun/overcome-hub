@@ -33,23 +33,22 @@ function Plus() {
   const navigate = useNavigate();
   const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
+  const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
+  const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
 
   const isPremium = state.isPremium;
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(billingEmail.trim());
 
-  const buy = (plan: "monthly" | "yearly") => {
-    if (!userId) {
-      toast("Sign in to subscribe");
-      navigate({ to: "/auth" });
-      return;
-    }
+  const start = (plan: "monthly" | "yearly", email: string) => {
     setBusy(plan);
     try {
       openCheckout({
         priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
-        customerEmail: userEmail ?? undefined,
-        userId,
+        customerEmail: email,
+        userId: userId!,
         returnUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       });
+      setPendingPlan(null);
     } catch (e: any) {
       console.error(e);
       toast.error("Checkout couldn't open. Try again in a moment.");
@@ -57,6 +56,22 @@ function Plus() {
       setBusy(null);
     }
   };
+
+  const buy = (plan: "monthly" | "yearly") => {
+    if (!userId) {
+      toast("Sign in to subscribe");
+      navigate({ to: "/auth" });
+      return;
+    }
+    // A receipt email is required before we can open checkout.
+    if (!emailValid) {
+      setPendingPlan(plan);
+      toast("Add the email address for your receipt");
+      return;
+    }
+    start(plan, billingEmail.trim());
+  };
+
 
   return (
     <AppShell>
