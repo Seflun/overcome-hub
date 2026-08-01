@@ -10,9 +10,9 @@ import { useStripeCheckout } from "../hooks/useStripeCheckout";
 export const Route = createFileRoute("/plus")({
   head: () => ({
     meta: [
-      { title: "Addiction Blocker+ — Go deeper" },
+      { title: "Addiblock+ — Go deeper" },
       { name: "description", content: "Unlock unlimited journeys, the craving SOS toolkit, insights, unlimited AI Coach and export." },
-      { property: "og:title", content: "Addiction Blocker+ — Go deeper" },
+      { property: "og:title", content: "Addiblock+ — Go deeper" },
       { property: "og:description", content: "Deeper recovery tools: SOS toolkit, unlimited AI Coach, insights, export." },
     ],
   }),
@@ -69,18 +69,18 @@ function Plus() {
 
         <div className="rounded-3xl border border-primary/40 bg-card-grad p-6 shadow-glow">
           <div className="inline-flex items-center gap-1 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-            <Sparkles className="h-3 w-3" /> Addiction Blocker+
+            <Sparkles className="h-3 w-3" /> Addiblock+
           </div>
           <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight">
             Go <span className="text-aurora">deeper</span> into your recovery.
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Addiction Blocker's core — streaks, XP, daily missions, slip resets — stays free forever. Addiction Blocker+ adds the tools that make the hard moments survivable.
+            Addiblock's core — streaks, XP, daily missions, slip resets — stays free forever. Addiblock+ adds the tools that make the hard moments survivable.
           </p>
 
           {isPremium ? (
             <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-center">
-              <div className="text-sm font-semibold">You're on Addiction Blocker+</div>
+              <div className="text-sm font-semibold">You're on Addiblock+</div>
               <div className="mt-1 text-xs text-muted-foreground">
                 Thanks for supporting recovery. Manage your subscription from your email receipt.
               </div>
@@ -126,7 +126,7 @@ function Plus() {
                 disabled={busy !== null}
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
-                {busy ? "Opening secure checkout…" : "Get Addiction Blocker+"}
+                {busy ? "Opening secure checkout…" : "Get Addiblock+"}
               </button>
               <div className="mt-2 text-center text-[11px] text-muted-foreground">
                 Secure checkout · Cancel anytime

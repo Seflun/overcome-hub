@@ -11,9 +11,9 @@ import { Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/sos")({
   head: () => ({
     meta: [
-      { title: "Craving SOS — Addiction Blocker" },
+      { title: "Craving SOS — Addiblock" },
       { name: "description", content: "Panic button, guided breathing and urge-surf timer for cravings in the moment." },
-      { property: "og:title", content: "Craving SOS — Addiction Blocker" },
+      { property: "og:title", content: "Craving SOS — Addiblock" },
       { property: "og:description", content: "Survive the craving. 3-minute science-backed protocol." },
     ],
   }),
@@ -81,7 +81,7 @@ function Sos() {
           >
             <div className="text-xs font-bold uppercase tracking-widest text-primary">Unlock the full toolkit</div>
             <div className="mt-1 text-sm font-semibold">Guided 3-minute SOS protocol</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">With Addiction Blocker+</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">With Addiblock+</div>
           </Link>
         )}
 

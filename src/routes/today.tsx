@@ -16,9 +16,9 @@ import {
 export const Route = createFileRoute("/today")({
   head: () => ({
     meta: [
-      { title: "Today — Addiction Blocker" },
+      { title: "Today — Addiblock" },
       { name: "description", content: "Your daily plan to break the addiction loop." },
-      { property: "og:title", content: "Today — Addiction Blocker" },
+      { property: "og:title", content: "Today — Addiblock" },
       { property: "og:description", content: "Daily tasks and streaks to help you quit." },
     ],
   }),
@@ -106,7 +106,7 @@ function Header() {
     <div className="mb-6 flex items-center justify-between">
       <div>
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Addiction Blocker{state.isPremium && <span className="ml-1 text-primary">+</span>}
+          Addiblock{state.isPremium && <span className="ml-1 text-primary">+</span>}
         </div>
         <h1 className="mt-1 text-3xl font-black tracking-tight">
           Today's <span className="text-aurora">plan</span>
@@ -270,7 +270,7 @@ function Onboarding({ onPick }: { onPick: (c: (typeof CATEGORIES)[number]["id"])
       <div className="px-5 pt-10">
         <div className="mb-8">
           <div className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-            Addiction Blocker
+            Addiblock
           </div>
           <h1 className="mt-3 text-4xl font-black leading-tight tracking-tight">
             What do you want to <span className="text-aurora">break free</span> from?

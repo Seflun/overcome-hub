@@ -3,9 +3,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Notice — Addiction Blocker" },
+      { title: "Privacy Notice — Addiblock" },
       { name: "description", content: "How Addiction Breaker collects, uses, and protects your personal data." },
-      { property: "og:title", content: "Privacy Notice — Addiction Blocker" },
+      { property: "og:title", content: "Privacy Notice — Addiblock" },
       { property: "og:description", content: "How Addiction Breaker collects, uses, and protects your personal data." },
     ],
   }),
@@ -23,7 +23,7 @@ function PrivacyPage() {
         <div className="prose prose-invert mt-8 max-w-none space-y-6 text-sm leading-relaxed text-foreground/90">
           <section>
             <h2 className="text-xl font-bold">1. Who we are</h2>
-            <p>This service ("Addiction Blocker", the "app") is operated by <strong>Addiction Breaker</strong> ("we", "us"). We act as the data controller for personal data processed in connection with the app.</p>
+            <p>This service ("Addiblock", the "app") is operated by <strong>Addiction Breaker</strong> ("we", "us"). We act as the data controller for personal data processed in connection with the app.</p>
           </section>
 
           <section>

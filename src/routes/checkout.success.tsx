@@ -8,10 +8,10 @@ import { supabase } from "../integrations/supabase/client";
 export const Route = createFileRoute("/checkout/success")({
   head: () => ({
     meta: [
-      { title: "Welcome to Addiction Blocker+" },
-      { name: "description", content: "Your Addiction Blocker+ subscription is active." },
-      { property: "og:title", content: "Welcome to Addiction Blocker+" },
-      { property: "og:description", content: "Your Addiction Blocker+ subscription is active." },
+      { title: "Welcome to Addiblock+" },
+      { name: "description", content: "Your Addiblock+ subscription is active." },
+      { property: "og:title", content: "Welcome to Addiblock+" },
+      { property: "og:description", content: "Your Addiblock+ subscription is active." },
     ],
   }),
   component: Success,
@@ -77,7 +77,7 @@ function Success() {
         </h1>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
           {confirmed
-            ? "Addiction Blocker+ is active. Your subscription unlocks unlimited journeys, unlimited AI Coach, and the full toolkit."
+            ? "Addiblock+ is active. Your subscription unlocks unlimited journeys, unlimited AI Coach, and the full toolkit."
             : "We're confirming your payment. This usually takes a couple seconds."}
         </p>
         <button

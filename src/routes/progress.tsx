@@ -8,9 +8,9 @@ import { useStore } from "../lib/store";
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Progress — Addiction Blocker" },
+      { title: "Progress — Addiblock" },
       { name: "description", content: "Milestones, streaks and XP for every addiction you're breaking." },
-      { property: "og:title", content: "Progress — Addiction Blocker" },
+      { property: "og:title", content: "Progress — Addiblock" },
       { property: "og:description", content: "See your streaks, milestones and XP across every journey." },
     ],
   }),

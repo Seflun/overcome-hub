@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — Addiction Blocker" },
-      { name: "description", content: "The terms governing your use of Addiction Blocker." },
-      { property: "og:title", content: "Terms & Conditions — Addiction Blocker" },
-      { property: "og:description", content: "The terms governing your use of Addiction Blocker." },
+      { title: "Terms & Conditions — Addiblock" },
+      { name: "description", content: "The terms governing your use of Addiblock." },
+      { property: "og:title", content: "Terms & Conditions — Addiblock" },
+      { property: "og:description", content: "The terms governing your use of Addiblock." },
     ],
   }),
   component: TermsPage,
@@ -23,7 +23,7 @@ function TermsPage() {
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/90">
           <section>
             <h2 className="text-xl font-bold">1. Who you are contracting with</h2>
-            <p>These terms are a binding agreement between you and <strong>Addiction Breaker</strong> ("we", "us"), the operator of the Addiction Blocker application and website (the "Service").</p>
+            <p>These terms are a binding agreement between you and <strong>Addiction Breaker</strong> ("we", "us"), the operator of the Addiblock application and website (the "Service").</p>
           </section>
 
           <section>
@@ -38,7 +38,7 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">4. What the Service is (and isn't)</h2>
-            <p>Addiction Blocker provides self-help tools — daily missions, streaks, journaling, reminders, and an AI companion — to support people working on reducing or stopping addictive behaviours. <strong>It is not a therapist, doctor, or medical service.</strong> Outputs from the AI Coach may be inaccurate and are not a substitute for professional advice. In an emergency, contact local emergency services.</p>
+            <p>Addiblock provides self-help tools — daily missions, streaks, journaling, reminders, and an AI companion — to support people working on reducing or stopping addictive behaviours. <strong>It is not a therapist, doctor, or medical service.</strong> Outputs from the AI Coach may be inaccurate and are not a substitute for professional advice. In an emergency, contact local emergency services.</p>
           </section>
 
           <section>
