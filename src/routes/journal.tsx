@@ -47,10 +47,43 @@ function Journal() {
         </p>
 
         <div className="mt-6">
+          <DailyReflection />
+        </div>
+
+        <div className="mt-6">
           <JournalInner />
+        </div>
+
+        <div className="mt-6">
+          <JournalAi />
         </div>
       </div>
     </AppShell>
+  );
+}
+
+function JournalAi() {
+  const { state } = useStore();
+  return (
+    <AiInsightCard
+      title="Journal recap"
+      blurb="The coach reads your recent entries and pulls out the themes you can't see from inside them."
+      lockedBlurb="Addiblock+ reads your whole journal and gives you a weekly recap: recurring triggers, what's working, and what to try next."
+      summarizeLabel="Recap my week"
+      summarizePrompt="Read my recent journal entries and give me a short weekly recap: themes, recurring triggers, what's improving, and one thing to try next week."
+      suggestions={[
+        "What keeps repeating in my entries?",
+        "Write me an encouraging note based on this",
+        "What should I watch out for?",
+      ]}
+      placeholder="Ask about your entries…"
+      buildContext={() =>
+        recoveryContext(
+          state,
+          "The user is on their Journal page and wants reflection on what they've written. Reference their own words when useful.",
+        )
+      }
+    />
   );
 }
 
