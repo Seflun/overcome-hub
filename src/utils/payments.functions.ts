@@ -15,7 +15,7 @@ const checkoutInput = z.object({
     .min(1)
     .regex(/^[a-zA-Z0-9_-]+$/, "Invalid priceId"),
   quantity: z.number().int().positive().optional(),
-  customerEmail: z.string().email().optional(),
+  customerEmail: z.string().email("A valid email is required for your receipt"),
   userId: z
     .string()
     .regex(/^[a-zA-Z0-9_-]+$/, "Invalid userId")
