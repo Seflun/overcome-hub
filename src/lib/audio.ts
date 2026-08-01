@@ -20,14 +20,17 @@ type SfxName =
 const MUSIC_KEY = "addiblock.sound.music";
 const SFX_KEY = "addiblock.sound.sfx";
 
-// A gentle F-major-ish pentatonic world: calm, no dissonance, no urgency.
+// A slow, airy D-major-ish drift: low sustained pads with long crossfades so it
+// sits far behind the interface instead of feeling like a song being played.
 const CHORDS: number[][] = [
-  [174.61, 261.63, 349.23], // F3 C4 F4
-  [196.0, 293.66, 392.0], // G3 D4 G4
-  [220.0, 329.63, 440.0], // A3 E4 A4
-  [130.81, 196.0, 261.63], // C3 G3 C4
+  [146.83, 220.0, 293.66], // D3 A3 D4
+  [164.81, 246.94, 329.63], // E3 B3 E4
+  [110.0, 164.81, 220.0], // A2 E3 A3
+  [123.47, 185.0, 246.94], // B2 F#3 B3
 ];
-const BELLS = [523.25, 587.33, 698.46, 783.99, 880.0, 1046.5];
+// Sparse, very soft high notes that just colour the air.
+const BELLS = [587.33, 659.25, 880.0, 987.77];
+
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
@@ -93,26 +96,27 @@ class SoundEngine {
   private padVoice(freq: number, at: number, dur: number) {
     const ctx = this.ctx!;
     const gain = ctx.createGain();
+    // Very long fade in/out so chords blur into each other — no attack, no beat.
     gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(0.16, at + dur * 0.4);
+    gain.gain.linearRampToValueAtTime(0.1, at + dur * 0.45);
     gain.gain.linearRampToValueAtTime(0, at + dur);
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 900;
-    filter.Q.value = 0.4;
+    filter.frequency.value = 520;
+    filter.Q.value = 0.2;
 
     gain.connect(filter);
     filter.connect(this.musicGain!);
 
-    [0, 3.5].forEach((detune, i) => {
+    [0, 2.5].forEach((detune) => {
       const osc = ctx.createOscillator();
-      osc.type = i === 0 ? "sine" : "triangle";
+      osc.type = "sine";
       osc.frequency.value = freq;
       osc.detune.value = detune;
       osc.connect(gain);
       osc.start(at);
-      osc.stop(at + dur + 0.2);
+      osc.stop(at + dur + 0.4);
     });
   }
 
@@ -124,12 +128,12 @@ class SoundEngine {
     osc.frequency.value = freq;
     const gain = ctx.createGain();
     gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(0.05, at + 0.08);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + 3.5);
+    gain.gain.linearRampToValueAtTime(0.018, at + 0.6);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + 5);
     osc.connect(gain);
     gain.connect(this.musicGain!);
     osc.start(at);
-    osc.stop(at + 3.6);
+    osc.stop(at + 5.1);
   }
 
   private scheduleChord = () => {
@@ -137,8 +141,9 @@ class SoundEngine {
     const now = this.ctx.currentTime;
     const chord = CHORDS[this.chordIndex % CHORDS.length];
     this.chordIndex += 1;
-    chord.forEach((f, i) => this.padVoice(f, now + i * 0.15, 13));
-    if (Math.random() > 0.35) this.bell(now + 2 + Math.random() * 6);
+    // 22s voices on an 18s cycle -> chords overlap into a continuous wash.
+    chord.forEach((f, i) => this.padVoice(f, now + i * 0.6, 22));
+    if (Math.random() > 0.6) this.bell(now + 4 + Math.random() * 9);
   };
 
   private startMusic() {
@@ -147,10 +152,12 @@ class SoundEngine {
     this.running = true;
     this.musicGain!.gain.cancelScheduledValues(ctx.currentTime);
     this.musicGain!.gain.setValueAtTime(this.musicGain!.gain.value, ctx.currentTime);
-    this.musicGain!.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 2.5);
+    // Background level: audible in a quiet room, never competing with the UI.
+    this.musicGain!.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 6);
     this.scheduleChord();
-    this.timers.push(window.setInterval(this.scheduleChord, 11000));
+    this.timers.push(window.setInterval(this.scheduleChord, 18000));
   }
+
 
   private stopMusic() {
     if (!this.ctx || !this.musicGain) return;
