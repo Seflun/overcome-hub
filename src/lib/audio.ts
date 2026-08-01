@@ -136,40 +136,49 @@ class SoundEngine {
     osc.stop(at + 5.1);
   }
 
-  private scheduleChord = () => {
-    if (!this.running || !this.ctx) return;
-    const now = this.ctx.currentTime;
-    const chord = CHORDS[this.chordIndex % CHORDS.length];
-    this.chordIndex += 1;
-    // 22s voices on an 18s cycle -> chords overlap into a continuous wash.
-    chord.forEach((f, i) => this.padVoice(f, now + i * 0.6, 22));
-    if (Math.random() > 0.6) this.bell(now + 4 + Math.random() * 9);
-  };
+  private trackEl: HTMLAudioElement | null = null;
 
   private startMusic() {
     const ctx = this.ensureContext();
     if (!ctx || this.running) return;
     this.running = true;
+
+    if (!this.trackEl) {
+      const el = new Audio(ambientLoop.url);
+      el.loop = true;
+      el.preload = "auto";
+      el.crossOrigin = "anonymous";
+      this.trackEl = el;
+      try {
+        const src = ctx.createMediaElementSource(el);
+        src.connect(this.musicGain!);
+      } catch {
+        // Fallback: element plays directly at a soft level.
+        el.volume = 0.28;
+      }
+    }
+
     this.musicGain!.gain.cancelScheduledValues(ctx.currentTime);
     this.musicGain!.gain.setValueAtTime(this.musicGain!.gain.value, ctx.currentTime);
-    // Background level: audible in a quiet room, never competing with the UI.
-    this.musicGain!.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 6);
-    this.scheduleChord();
-    this.timers.push(window.setInterval(this.scheduleChord, 18000));
+    // Present in the room without competing with the interface.
+    this.musicGain!.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 3);
+    void this.trackEl.play().catch(() => {});
   }
-
 
   private stopMusic() {
-    if (!this.ctx || !this.musicGain) return;
-    const now = this.ctx.currentTime;
-    this.musicGain.gain.cancelScheduledValues(now);
-    this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
-    this.musicGain.gain.linearRampToValueAtTime(0, now + 1.2);
+    this.running = false;
+    if (this.ctx && this.musicGain) {
+      const now = this.ctx.currentTime;
+      this.musicGain.gain.cancelScheduledValues(now);
+      this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
+      this.musicGain.gain.linearRampToValueAtTime(0, now + 1);
+    }
+    const el = this.trackEl;
+    if (el) window.setTimeout(() => el.pause(), 1100);
     this.timers.forEach((t) => window.clearInterval(t));
     this.timers = [];
-    this.musicNodes = [];
-    this.running = false;
   }
+
 
   setMusic(on: boolean) {
     this.musicEnabled = on;
