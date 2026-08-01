@@ -47,7 +47,8 @@ class SoundEngine {
   private chordIndex = 0;
   private running = false;
 
-  musicEnabled = false;
+  musicEnabled = true;
+  musicVolume = DEFAULT_MUSIC_VOLUME;
   sfxEnabled = true;
 
   private listeners = new Set<() => void>();
@@ -57,10 +58,15 @@ class SoundEngine {
     if (typeof window === "undefined") return;
     const music = window.localStorage.getItem(MUSIC_KEY);
     const sfx = window.localStorage.getItem(SFX_KEY);
-    this.musicEnabled = music === "on";
+    const vol = Number(window.localStorage.getItem(MUSIC_VOL_KEY));
+    // Music is on by default; only an explicit "off" disables it.
+    this.musicEnabled = music !== "off";
+    this.musicVolume =
+      Number.isFinite(vol) && vol > 0 && vol <= 1 ? vol : DEFAULT_MUSIC_VOLUME;
     this.sfxEnabled = sfx !== "off";
     this.emit();
   }
+
 
   subscribe(fn: () => void) {
     this.listeners.add(fn);
