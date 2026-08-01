@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { LANGUAGES } from "@/lib/languages";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -30,7 +29,6 @@ function Auth() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [dob, setDob] = useState("");
-  const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -64,7 +62,6 @@ function Auth() {
               display_name: username.trim(),
               username: username.trim(),
               ...(dob ? { dob } : {}),
-              language,
             },
           },
         });
@@ -200,23 +197,6 @@ function Auth() {
                 />
               </div>
 
-              <div>
-                <label className="px-1 text-[11px] text-muted-foreground">Language</label>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className={`${inputClass} mt-1`}
-                >
-                  {LANGUAGES.map((l) => (
-                    <option key={l.code} value={l.code}>
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1 px-1 text-[11px] text-muted-foreground">
-                  The app and the Coach will speak your language. You can change it later in Settings.
-                </p>
-              </div>
             </>
           )}
 

@@ -74,7 +74,6 @@ export interface Profile {
   bio: string;
   joinedAt: string;
   dob?: string;
-  language?: string;
 }
 
 
@@ -117,7 +116,7 @@ const empty: AppState = {
   coachStreak: 0,
   lastCoachRefill: null,
   aiReviewEnabled: false,
-  profile: { username: "", avatar: "🌱", bio: "", joinedAt: new Date().toISOString(), language: "en" },
+  profile: { username: "", avatar: "🌱", bio: "", joinedAt: new Date().toISOString() },
   relapses: [],
   cravings: [],
   checkins: [],
@@ -276,13 +275,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setUserEmail(email);
       if (!uid) return;
 
-      // Sign-up choices (username / date of birth / language) live on the auth
+      // Sign-up choices (username / date of birth) live on the auth
       // user, so they follow the account onto any device.
       const seedProfile = (p: Profile): Profile => ({
         ...p,
         username: p.username || (meta?.["display_name"] as string) || (meta?.["username"] as string) || "",
         dob: p.dob || ((meta?.["dob"] as string) || undefined),
-        language: p.language && p.language !== "en" ? p.language : ((meta?.["language"] as string) || p.language || "en"),
       });
 
       setSyncing(true);
