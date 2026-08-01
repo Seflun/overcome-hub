@@ -335,9 +335,8 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 text-xs text-muted-foreground md:px-8">
         <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div className="flex items-center gap-2">
-            <div className="grid h-5 w-5 place-items-center rounded-md bg-aurora">
-              <Sparkles className="h-3 w-3 text-primary-foreground" />
-            </div>
+            <img src={logo} alt="Addiblock logo" className="h-5 w-5 object-contain" />
+
             <span>Addiblock © {new Date().getFullYear()}</span>
           </div>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
