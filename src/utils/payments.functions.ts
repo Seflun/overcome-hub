@@ -155,24 +155,30 @@ export const confirmPolarCheckout = createServerFn({ method: "POST" })
       }
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error: upsertError } = await supabaseAdmin.from("subscriptions").upsert(
-        {
-          user_id: context.userId,
-          provider: "polar",
-          polar_subscription_id: sub.id,
-          polar_customer_id: String(sub.customer_id ?? checkout.customer_id ?? ""),
-          product_id: String(sub.product_id ?? checkout.product_id ?? ""),
-          price_id: String(sub.metadata?.plan ?? checkout.metadata?.plan ?? sub.recurring_interval ?? ""),
-          status: String(sub.status),
-          current_period_start: sub.current_period_start ?? null,
-          current_period_end: sub.current_period_end ?? null,
-          cancel_at_period_end: sub.cancel_at_period_end ?? false,
-          environment: "live",
-          updated_at: new Date().toISOString(),
-        } as any,
-        { onConflict: "polar_subscription_id" },
-      );
-      if (upsertError) return { error: `Could not save subscription: ${upsertError.message}` };
+      const subscriptionRow = {
+        user_id: context.userId,
+        provider: "polar",
+        polar_subscription_id: sub.id,
+        polar_customer_id: String(sub.customer_id ?? checkout.customer_id ?? ""),
+        product_id: String(sub.product_id ?? checkout.product_id ?? ""),
+        price_id: String(sub.metadata?.plan ?? checkout.metadata?.plan ?? sub.recurring_interval ?? ""),
+        status: String(sub.status),
+        current_period_start: sub.current_period_start ?? null,
+        current_period_end: sub.current_period_end ?? null,
+        cancel_at_period_end: sub.cancel_at_period_end ?? false,
+        environment: "live",
+        updated_at: new Date().toISOString(),
+      } as any;
+      const { data: existing } = await supabaseAdmin
+        .from("subscriptions")
+        .select("id")
+        .eq("polar_subscription_id", sub.id)
+        .maybeSingle();
+      const saveQuery = existing?.id
+        ? supabaseAdmin.from("subscriptions").update(subscriptionRow).eq("id", existing.id)
+        : supabaseAdmin.from("subscriptions").insert(subscriptionRow);
+      const { error: saveError } = await saveQuery;
+      if (saveError) return { error: `Could not save subscription: ${saveError.message}` };
 
       return { active: ACTIVE_STATUSES.includes(String(sub.status)) };
     } catch (error) {
