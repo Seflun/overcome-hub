@@ -24,6 +24,7 @@ import { Route as PlusRouteImport } from './routes/plus'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as FunFactRouteImport } from './routes/fun-fact'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CravingsRouteImport } from './routes/cravings'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -108,6 +109,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FunFactRoute = FunFactRouteImport.update({
+  id: '/fun-fact',
+  path: '/fun-fact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CravingsRoute: typeof CravingsRoute
   ExploreRoute: typeof ExploreRoute
+  FunFactRoute: typeof FunFactRoute
   InsightsRoute: typeof InsightsRoute
   JournalRoute: typeof JournalRoute
   LibraryRoute: typeof LibraryRoute
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fun-fact': {
+      id: '/fun-fact'
+      path: '/fun-fact'
+      fullPath: '/fun-fact'
+      preLoaderRoute: typeof FunFactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
@@ -503,6 +523,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CravingsRoute: CravingsRoute,
   ExploreRoute: ExploreRoute,
+  FunFactRoute: FunFactRoute,
   InsightsRoute: InsightsRoute,
   JournalRoute: JournalRoute,
   LibraryRoute: LibraryRoute,

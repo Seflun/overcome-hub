@@ -12,6 +12,7 @@ import {
   LineChart,
   ShieldCheck,
   User,
+  HeartHandshake,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
@@ -38,6 +39,8 @@ const nav: NavItem[] = [
   { to: "/progress", label: "Progress", icon: Trophy },
   { to: "/analytics", label: "Analytics", icon: LineChart },
   { to: "/profile", label: "Profile", icon: User },
+  { to: "/plus", label: "Plus Demo", icon: Sparkles },
+  { to: "/fun-fact", label: "Fun fact", icon: HeartHandshake },
 ];
 
 const mobileNav: NavItem[] = [
