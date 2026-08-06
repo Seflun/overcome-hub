@@ -72,6 +72,7 @@ export const createPolarCheckout = createServerFn({ method: "POST" })
           external_customer_id: context.userId,
           success_url: data.successUrl,
           metadata: { userId: context.userId, plan: data.plan },
+          currency: "usd",
         }),
       });
 
