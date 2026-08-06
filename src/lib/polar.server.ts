@@ -39,11 +39,39 @@ export async function polarFetch<T = any>(
   if (!res.ok) {
     const body = await res.text();
     console.error(`Polar request failed [${res.status}] ${path}: ${body}`);
-    throw new Error(`Polar request failed [${res.status}]: ${body}`);
+    throw new Error(friendlyPolarError(res.status, body));
   }
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
+
+/** Turns Polar's verbose validation payloads into one readable sentence. */
+export function friendlyPolarError(status: number, body: string): string {
+  try {
+    const parsed = JSON.parse(body) as {
+      detail?: Array<{ msg?: string; loc?: unknown[] }> | string;
+    };
+    const detail = parsed.detail;
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) {
+      const messages = detail
+        .map((d) => String(d?.msg ?? ""))
+        .filter(Boolean);
+      const emailIssue = messages.find((m) => /email|domain/i.test(m));
+      if (emailIssue) {
+        return "That email address doesn't look deliverable. Please use a real email you can receive the receipt at.";
+      }
+      if (messages.length) return messages[0]!;
+    }
+  } catch {
+    // fall through
+  }
+  if (status === 401 || status === 403) {
+    return "Payment provider rejected our credentials. Please try again shortly.";
+  }
+  return "We couldn't start checkout just now. Please try again in a moment.";
+}
+
 
 export function getPolarErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
