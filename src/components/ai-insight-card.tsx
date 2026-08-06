@@ -73,11 +73,12 @@ export function AiInsightCard({
           </span>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">{lockedBlurb ?? blurb}</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">No payment needed — Plus is a free demo toggle.</p>
         <Link
           to="/plus"
           className="mt-3 inline-flex items-center gap-1 rounded-full bg-aurora px-4 py-2 text-xs font-bold text-primary-foreground shadow-glow"
         >
-          <Lock className="h-3.5 w-3.5" /> Unlock with Addiblock+
+          <Lock className="h-3.5 w-3.5" /> Turn on Addiblock+ — free demo
         </Link>
       </div>
     );

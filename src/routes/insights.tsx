@@ -85,7 +85,7 @@ function Insights() {
         </p>
         <div className="mt-6">
           <PremiumGate
-            title="Insights are a Plus feature"
+            title="Insights are a Plus feature (free demo)"
             blurb="See your body recover in real time and how much money you're saving."
           >
             <InsightsInner />
