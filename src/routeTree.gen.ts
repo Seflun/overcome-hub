@@ -33,6 +33,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicPolarWebhookRouteImport } from './routes/api/public/polar/webhook'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TodayRoute = TodayRouteImport.update({
@@ -155,6 +156,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPolarWebhookRoute = ApiPublicPolarWebhookRouteImport.update({
+  id: '/api/public/polar/webhook',
+  path: '/api/public/polar/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/checkout/success'
     | '/api/public/payments/webhook'
+    | '/api/public/polar/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/checkout/success'
     | '/api/public/payments/webhook'
+    | '/api/public/polar/webhook'
   id:
     | '__root__'
     | '/'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/checkout/success'
     | '/api/public/payments/webhook'
+    | '/api/public/polar/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicPolarWebhookRoute: typeof ApiPublicPolarWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -526,6 +539,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/polar/webhook': {
+      id: '/api/public/polar/webhook'
+      path: '/api/public/polar/webhook'
+      fullPath: '/api/public/polar/webhook'
+      preLoaderRoute: typeof ApiPublicPolarWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -562,17 +582,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicPolarWebhookRoute: ApiPublicPolarWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
