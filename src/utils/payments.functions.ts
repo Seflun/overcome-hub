@@ -124,31 +124,61 @@ export const confirmPolarCheckout = createServerFn({ method: "POST" })
 
       const subscriptionId: string | null =
         checkout.subscription_id ?? checkout.subscription?.id ?? null;
-      if (!subscriptionId) return { active: false };
-
-      const sub = await polarFetch<any>(
-        `/v1/subscriptions/${encodeURIComponent(subscriptionId)}`,
-      );
+      let sub: any = null;
+      if (subscriptionId) {
+        sub = await polarFetch<any>(
+          `/v1/subscriptions/${encodeURIComponent(subscriptionId)}`,
+        );
+      } else {
+        // Polar can finish a fully discounted recurring checkout before it
+        // links subscription_id onto the checkout response. Resolve the
+        // subscription from the verified customer and product instead.
+        const customerId = checkout.customer_id ?? null;
+        const productId = checkout.product_id ?? checkout.product?.id ?? null;
+        if (!customerId || !productId) return { active: false };
+        const query = new URLSearchParams({
+          customer_id: String(customerId),
+          product_id: String(productId),
+          limit: "100",
+        });
+        const subscriptions = await polarFetch<{ items?: any[] }>(
+          `/v1/subscriptions/?${query.toString()}`,
+        );
+        sub = (subscriptions.items ?? [])
+          .filter((candidate) => ACTIVE_STATUSES.includes(String(candidate.status)))
+          .sort(
+            (a, b) =>
+              new Date(String(b.created_at ?? 0)).getTime() -
+              new Date(String(a.created_at ?? 0)).getTime(),
+          )[0] ?? null;
+        if (!sub) return { active: false };
+      }
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error: upsertError } = await supabaseAdmin.from("subscriptions").upsert(
-        {
-          user_id: context.userId,
-          provider: "polar",
-          polar_subscription_id: sub.id,
-          polar_customer_id: String(sub.customer_id ?? checkout.customer_id ?? ""),
-          product_id: String(sub.product_id ?? checkout.product_id ?? ""),
-          price_id: String(sub.metadata?.plan ?? checkout.metadata?.plan ?? sub.recurring_interval ?? ""),
-          status: String(sub.status),
-          current_period_start: sub.current_period_start ?? null,
-          current_period_end: sub.current_period_end ?? null,
-          cancel_at_period_end: sub.cancel_at_period_end ?? false,
-          environment: "live",
-          updated_at: new Date().toISOString(),
-        } as any,
-        { onConflict: "polar_subscription_id" },
-      );
-      if (upsertError) return { error: `Could not save subscription: ${upsertError.message}` };
+      const subscriptionRow = {
+        user_id: context.userId,
+        provider: "polar",
+        polar_subscription_id: sub.id,
+        polar_customer_id: String(sub.customer_id ?? checkout.customer_id ?? ""),
+        product_id: String(sub.product_id ?? checkout.product_id ?? ""),
+        price_id: String(sub.metadata?.plan ?? checkout.metadata?.plan ?? sub.recurring_interval ?? ""),
+        status: String(sub.status),
+        current_period_start: sub.current_period_start ?? null,
+        current_period_end: sub.current_period_end ?? null,
+        cancel_at_period_end: sub.cancel_at_period_end ?? false,
+        environment: "live",
+        updated_at: new Date().toISOString(),
+      } as any;
+      const { data: existing } = await supabaseAdmin
+        .from("subscriptions")
+        .select("id")
+        .eq("polar_subscription_id", sub.id)
+        .maybeSingle();
+      const saveQuery = existing?.id
+        ? supabaseAdmin.from("subscriptions").update(subscriptionRow).eq("id", existing.id)
+        : supabaseAdmin.from("subscriptions").insert(subscriptionRow);
+      const { error: saveError } = await saveQuery;
+      if (saveError) return { error: `Could not save subscription: ${saveError.message}` };
 
       return { active: ACTIVE_STATUSES.includes(String(sub.status)) };
     } catch (error) {
