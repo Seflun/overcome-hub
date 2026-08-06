@@ -1,0 +1,1 @@
+DELETE FROM public.subscriptions WHERE environment = 'sandbox' OR provider IN ('stripe','paddle');
