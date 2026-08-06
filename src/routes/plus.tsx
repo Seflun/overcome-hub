@@ -208,13 +208,13 @@ function Plus() {
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy
-                  ? "Opening secure checkout…"
+                  ? "Opening PayPal…"
                   : `Get Addiblock+ · ${selectedPlan === "monthly" ? "$2.99/mo" : "$16.99/yr"}`}
               </button>
 
 
               <div className="mt-2 text-center text-[11px] text-muted-foreground">
-                Secure checkout · Cancel anytime
+                Secure PayPal checkout · Cancel anytime
               </div>
             </>
           )}
