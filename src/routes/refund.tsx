@@ -28,7 +28,7 @@ function RefundPage() {
 
           <section>
             <h2 className="text-xl font-bold">How to request a refund</h2>
-            <p>To request a refund, contact our support team from within the app or reply to your purchase receipt. We'll process eligible refunds through our payment processor (Polar) back to the original payment method — typically within 5–10 business days.</p>
+            <p>To request a refund, contact our support team from within the app or reply to your purchase receipt. We'll process eligible refunds through our payment processor (PayPal) back to the original payment method — typically within 5–10 business days.</p>
           </section>
 
           <section>
@@ -38,7 +38,7 @@ function RefundPage() {
 
           <section>
             <h2 className="text-xl font-bold">Payment processing</h2>
-            <p>Payments for Addiblock+ are processed securely by Polar. Applicable taxes are calculated and collected at checkout. Refunds are issued back to the original payment method.</p>
+            <p>Payments for Addiblock+ are processed securely by PayPal. Applicable taxes are calculated and collected at checkout. Refunds are issued back to the original payment method.</p>
           </section>
         </div>
       </div>

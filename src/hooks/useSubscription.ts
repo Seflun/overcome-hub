@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type SubscriptionRow = {
   id: string;
-  polar_subscription_id: string | null;
+  paypal_subscription_id: string | null;
   product_id: string;
   price_id: string;
   status: string;
@@ -31,7 +31,7 @@ export function useSubscription(userId: string | null | undefined) {
         .from("subscriptions")
         .select("*")
         .eq("user_id", userId)
-        .eq("provider", "polar")
+        .eq("provider", "paypal")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();

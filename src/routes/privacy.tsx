@@ -53,7 +53,7 @@ function PrivacyPage() {
             <ul className="list-disc pl-6">
               <li><strong>Hosting & database providers</strong> that store your account and app content.</li>
               <li><strong>AI model providers</strong> that process your Coach and journal-review prompts to generate responses.</li>
-              <li><strong>Polar</strong>, our payment processor, for checkout, subscription billing, tax calculation, invoicing, and refunds.</li>
+              <li><strong>PayPal</strong>, our payment processor, for checkout, subscription billing, tax calculation, invoicing, and refunds.</li>
               <li><strong>Professional advisers</strong> (legal, accounting) where necessary.</li>
               <li><strong>Authorities</strong> where required by law.</li>
             </ul>

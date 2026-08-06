@@ -372,7 +372,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         .from("subscriptions")
         .select("status, current_period_end")
         .eq("user_id", userId)
-        .eq("provider", "polar")
+        .eq("provider", "paypal")
 
         .order("created_at", { ascending: false })
         .limit(1)

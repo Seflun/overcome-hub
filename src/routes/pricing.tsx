@@ -99,7 +99,7 @@ function PricingPage() {
         </div>
 
         <p className="mx-auto mt-10 max-w-2xl text-center text-xs text-muted-foreground">
-          Prices in USD. Payments are processed securely by Polar. Applicable taxes may be added at checkout. See our <Link to="/terms" className="underline">Terms</Link> and <Link to="/refund" className="underline">Refund Policy</Link>.
+          Prices in USD. Payments are processed securely by PayPal. Applicable taxes may be added at checkout. See our <Link to="/terms" className="underline">Terms</Link> and <Link to="/refund" className="underline">Refund Policy</Link>.
         </p>
       </div>
     </div>
