@@ -53,7 +53,7 @@ function PrivacyPage() {
             <ul className="list-disc pl-6">
               <li><strong>Hosting & database providers</strong> that store your account and app content.</li>
               <li><strong>AI model providers</strong> that process your Coach and journal-review prompts to generate responses.</li>
-              <li><strong>PayPal</strong>, our payment processor, for checkout, subscription billing, tax calculation, invoicing, and refunds.</li>
+              <li>No payment processor — Addiblock is a free demo and we do not collect payments or payment details.</li>
               <li><strong>Professional advisers</strong> (legal, accounting) where necessary.</li>
               <li><strong>Authorities</strong> where required by law.</li>
             </ul>
@@ -81,7 +81,7 @@ function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold">9. Cookies</h2>
-            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. our payment provider's embedded checkout may set its own cookies, described in our payment provider's privacy notice.</p>
+            <p>We use strictly necessary cookies and local storage for authentication and to remember your preferences. There is no payment checkout, so no payment-provider cookies are set.</p>
           </section>
 
           <section>

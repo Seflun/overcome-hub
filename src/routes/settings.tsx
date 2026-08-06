@@ -102,16 +102,16 @@ function Settings() {
         <div className="mt-5 rounded-3xl border border-primary/40 bg-card-grad p-5 shadow-soft">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            <div className="text-xs font-bold uppercase tracking-widest text-primary">Addiblock+</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-primary">Addiblock+ Demo</div>
           </div>
           <div className="mt-1 text-lg font-bold">
-            {state.isPremium ? "Active — thanks for supporting the work." : "Unlock the full toolkit."}
+            {state.isPremium ? "On — enjoy the full toolkit." : "Free during the demo — just toggle it on."}
           </div>
           <Link
             to="/plus"
             className="mt-3 inline-flex rounded-full bg-aurora px-4 py-2 text-xs font-bold text-primary-foreground shadow-glow"
           >
-            {state.isPremium ? "Manage plan" : "See plans"}
+            {state.isPremium ? "Manage demo toggle" : "Unlock Plus (free)"}
           </Link>
         </div>
 

@@ -35,11 +35,12 @@ export function PremiumGate({
           </div>
           <h3 className="mt-3 font-bold">{title}</h3>
           <p className="mt-1 text-xs text-muted-foreground">{blurb}</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Free demo — no payment needed.</p>
           <Link
             to="/plus"
             className="mt-4 inline-flex items-center gap-1 rounded-full bg-aurora px-4 py-2 text-xs font-bold text-primary-foreground shadow-glow"
           >
-            <Sparkles className="h-3.5 w-3.5" /> Unlock Addiblock+
+            <Sparkles className="h-3.5 w-3.5" /> Turn on Addiblock+ (free)
           </Link>
         </div>
       </div>

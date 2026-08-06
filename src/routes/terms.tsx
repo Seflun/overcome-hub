@@ -67,8 +67,8 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">8. Subscriptions, payments, and refunds</h2>
-            <p>Paid plans are billed by Addiblock and processed by our payment provider, PayPal. Applicable taxes are calculated and collected at checkout.</p>
-            <p>By subscribing, you authorize recurring charges to your payment method until you cancel. You can cancel at any time from your account page. See our <Link to="/refund" className="underline">Refund Policy</Link> for our position on refunds.</p>
+            <p>Addiblock is currently a free demo. There are no paid plans and no payments are collected: Addiblock+ is unlocked with an in-app toggle at no cost.</p>
+            <p>Because nothing is sold, there is no billing, no recurring charge, and nothing to cancel — you can simply switch Addiblock+ off. Donations toward development are voluntary gifts. See our <Link to="/refund" className="underline">Refund Policy</Link> for our position on refunds.</p>
           </section>
 
           <section>
@@ -78,7 +78,7 @@ function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold">10. Suspension and termination</h2>
-            <p>We may suspend or terminate your access for material breach, non-payment, security or fraud risk, or repeated or serious violations of these Terms. On termination, your right to use the Service ends; you can request an export of your data within a reasonable window before deletion.</p>
+            <p>We may suspend or terminate your access for material breach, security or fraud risk, or repeated or serious violations of these Terms. On termination, your right to use the Service ends; you can request an export of your data within a reasonable window before deletion.</p>
           </section>
 
           <section>

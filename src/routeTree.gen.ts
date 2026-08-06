@@ -24,6 +24,7 @@ import { Route as PlusRouteImport } from './routes/plus'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as FunFactRouteImport } from './routes/fun-fact'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CravingsRouteImport } from './routes/cravings'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -31,9 +32,7 @@ import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as ApiPublicPaypalWebhookRouteImport } from './routes/api/public/paypal/webhook'
 
 const TodayRoute = TodayRouteImport.update({
   id: '/today',
@@ -110,6 +109,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FunFactRoute = FunFactRouteImport.update({
+  id: '/fun-fact',
+  path: '/fun-fact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -145,19 +149,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
-  id: '/checkout/success',
-  path: '/checkout/success',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicPaypalWebhookRoute = ApiPublicPaypalWebhookRouteImport.update({
-  id: '/api/public/paypal/webhook',
-  path: '/api/public/paypal/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -169,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -185,8 +180,6 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -196,6 +189,7 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -212,8 +206,6 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -224,6 +216,7 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/cravings': typeof CravingsRoute
   '/explore': typeof ExploreRoute
+  '/fun-fact': typeof FunFactRoute
   '/insights': typeof InsightsRoute
   '/journal': typeof JournalRoute
   '/library': typeof LibraryRoute
@@ -240,8 +233,6 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -253,6 +244,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -269,8 +261,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/today'
     | '/api/chat'
-    | '/checkout/success'
-    | '/api/public/paypal/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -280,6 +270,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -296,8 +287,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/today'
     | '/api/chat'
-    | '/checkout/success'
-    | '/api/public/paypal/webhook'
   id:
     | '__root__'
     | '/'
@@ -307,6 +296,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/cravings'
     | '/explore'
+    | '/fun-fact'
     | '/insights'
     | '/journal'
     | '/library'
@@ -323,8 +313,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/today'
     | '/api/chat'
-    | '/checkout/success'
-    | '/api/public/paypal/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -335,6 +323,7 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CravingsRoute: typeof CravingsRoute
   ExploreRoute: typeof ExploreRoute
+  FunFactRoute: typeof FunFactRoute
   InsightsRoute: typeof InsightsRoute
   JournalRoute: typeof JournalRoute
   LibraryRoute: typeof LibraryRoute
@@ -351,8 +340,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TodayRoute: typeof TodayRoute
   ApiChatRoute: typeof ApiChatRoute
-  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
-  ApiPublicPaypalWebhookRoute: typeof ApiPublicPaypalWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -462,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fun-fact': {
+      id: '/fun-fact'
+      path: '/fun-fact'
+      fullPath: '/fun-fact'
+      preLoaderRoute: typeof FunFactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
@@ -511,25 +505,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/checkout/success': {
-      id: '/checkout/success'
-      path: '/checkout/success'
-      fullPath: '/checkout/success'
-      preLoaderRoute: typeof CheckoutSuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/paypal/webhook': {
-      id: '/api/public/paypal/webhook'
-      path: '/api/public/paypal/webhook'
-      fullPath: '/api/public/paypal/webhook'
-      preLoaderRoute: typeof ApiPublicPaypalWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -543,6 +523,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CravingsRoute: CravingsRoute,
   ExploreRoute: ExploreRoute,
+  FunFactRoute: FunFactRoute,
   InsightsRoute: InsightsRoute,
   JournalRoute: JournalRoute,
   LibraryRoute: LibraryRoute,
@@ -559,19 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TodayRoute: TodayRoute,
   ApiChatRoute: ApiChatRoute,
-  CheckoutSuccessRoute: CheckoutSuccessRoute,
-  ApiPublicPaypalWebhookRoute: ApiPublicPaypalWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

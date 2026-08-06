@@ -161,7 +161,7 @@ function Sos() {
           >
             <div className="text-xs font-bold uppercase tracking-widest text-primary">Unlock the full toolkit</div>
             <div className="mt-1 text-sm font-semibold">Guided 3-minute SOS protocol</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">With Addiblock+</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Free — just toggle Addiblock+ on</div>
           </Link>
         )}
 

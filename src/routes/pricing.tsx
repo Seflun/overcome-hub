@@ -5,9 +5,9 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Addiblock" },
-      { name: "description", content: "Addiblock is free to start. Upgrade to Addiblock+ for $2.99/month or $16.99/year." },
+      { name: "description", content: "Addiblock is completely free right now — Addiblock+ is a demo you unlock with a single toggle. No payment needed." },
       { property: "og:title", content: "Pricing — Addiblock" },
-      { property: "og:description", content: "Free to start. Addiblock+ is $2.99/month or $16.99/year." },
+      { property: "og:description", content: "Everything is free during the demo. Addiblock+ unlocks with a toggle." },
     ],
   }),
   component: PricingPage,
@@ -38,13 +38,13 @@ function PricingPage() {
         <Link to="/" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← Back home</Link>
         <div className="mt-6 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-            <Sparkles className="h-3 w-3 text-primary" /> Simple pricing
+            <Sparkles className="h-3 w-3 text-primary" /> Free while in demo
           </div>
           <h1 className="mt-6 text-4xl font-black tracking-tight md:text-6xl">
-            Free to start. <span className="text-aurora">Cheap</span> to go further.
+Everything is <span className="text-aurora">free</span> right now.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">
-            Everything you need to break the loop is free. Addiblock+ unlocks unlimited journeys and unlimited AI Coach when you're ready.
+Payments aren't set up yet — Addiblock is a demo built to help people. Addiblock+ isn't sold: you unlock it with a single toggle inside the app, and you can turn it off again any time.
           </p>
         </div>
 
@@ -72,13 +72,13 @@ function PricingPage() {
           </div>
 
           <div className="relative rounded-3xl border border-primary/40 bg-card p-8 shadow-glow">
-            <div className="absolute right-6 top-6 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">Best value</div>
+            <div className="absolute right-6 top-6 rounded-full bg-aurora px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">Free demo</div>
             <div className="text-xs font-semibold uppercase tracking-widest text-primary">Addiblock+</div>
             <div className="mt-3 flex items-baseline gap-1">
-              <span className="text-5xl font-black">$2.99</span>
-              <span className="text-sm text-muted-foreground">/ month</span>
+              <span className="text-5xl font-black">$0</span>
+              <span className="text-sm text-muted-foreground">/ demo</span>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">or <strong className="text-foreground">$16.99 / year</strong> — save over 50%</p>
+            <p className="mt-1 text-sm text-muted-foreground">Unlock it with the <strong className="text-foreground">Plus Demo</strong> toggle — no card, no checkout.</p>
             <ul className="mt-6 space-y-2 text-sm">
               {PLUS.map((f) => (
                 <li key={f} className="flex items-start gap-2">
@@ -90,16 +90,16 @@ function PricingPage() {
               to="/auth"
               className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow"
             >
-              Get Addiblock+ <ArrowRight className="h-4 w-4" />
+              Create an account & toggle Plus on <ArrowRight className="h-4 w-4" />
             </Link>
             <p className="mt-3 text-center text-[11px] text-muted-foreground">
-              30-day money-back guarantee. Cancel anytime.
+No payment required. Toggle Addiblock+ on or off whenever you want.
             </p>
           </div>
         </div>
 
         <p className="mx-auto mt-10 max-w-2xl text-center text-xs text-muted-foreground">
-          Prices in USD. Payments are processed securely by PayPal. Applicable taxes may be added at checkout. See our <Link to="/terms" className="underline">Terms</Link> and <Link to="/refund" className="underline">Refund Policy</Link>.
+There is nothing to pay: Addiblock is currently a free demo and Addiblock+ is unlocked by a toggle. Donations toward development are optional. See our <Link to="/terms" className="underline">Terms</Link> and <Link to="/refund" className="underline">Refund Policy</Link>.
         </p>
       </div>
     </div>
