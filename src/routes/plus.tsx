@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
-import { createPolarCheckout, createPolarPortalSession } from "../utils/payments.functions";
+import { cancelPayPalSubscription, createPayPalCheckout } from "../utils/payments.functions";
 
 
 export const Route = createFileRoute("/plus")({

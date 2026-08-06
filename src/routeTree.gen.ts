@@ -33,6 +33,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicPaypalWebhookRouteImport } from './routes/api/public/paypal/webhook'
 
 const TodayRoute = TodayRouteImport.update({
   id: '/today',
@@ -154,6 +155,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaypalWebhookRoute = ApiPublicPaypalWebhookRouteImport.update({
+  id: '/api/public/paypal/webhook',
+  path: '/api/public/paypal/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,6 +241,7 @@ export interface FileRoutesById {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/api/public/paypal/webhook': typeof ApiPublicPaypalWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
+    | '/api/public/paypal/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
+    | '/api/public/paypal/webhook'
   id:
     | '__root__'
     | '/'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
+    | '/api/public/paypal/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -340,6 +352,7 @@ export interface RootRouteChildren {
   TodayRoute: typeof TodayRoute
   ApiChatRoute: typeof ApiChatRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  ApiPublicPaypalWebhookRoute: typeof ApiPublicPaypalWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/paypal/webhook': {
+      id: '/api/public/paypal/webhook'
+      path: '/api/public/paypal/webhook'
+      fullPath: '/api/public/paypal/webhook'
+      preLoaderRoute: typeof ApiPublicPaypalWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -540,6 +560,7 @@ const rootRouteChildren: RootRouteChildren = {
   TodayRoute: TodayRoute,
   ApiChatRoute: ApiChatRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
+  ApiPublicPaypalWebhookRoute: ApiPublicPaypalWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
