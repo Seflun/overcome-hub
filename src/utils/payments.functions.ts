@@ -74,7 +74,7 @@ export const createPolarCheckout = createServerFn({ method: "POST" })
         method: "POST",
         body: JSON.stringify({
           products: [product.id],
-          customer_email: data.customerEmail,
+          customer_email: email,
           external_customer_id: context.userId,
           success_url: data.successUrl,
           metadata: { userId: context.userId, plan: data.plan },
