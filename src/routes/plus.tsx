@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
-import { createPolarCheckout, createPolarPortalSession } from "../utils/payments.functions";
+import { cancelPayPalSubscription, createPayPalCheckout } from "../utils/payments.functions";
 
 
 export const Route = createFileRoute("/plus")({
@@ -48,11 +48,12 @@ function Plus() {
   const start = async (plan: "monthly" | "yearly", email: string) => {
     setBusy(plan);
     try {
-      const result = await createPolarCheckout({
+      const result = await createPayPalCheckout({
         data: {
           plan,
           customerEmail: email,
-          successUrl: `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`,
+          successUrl: `${window.location.origin}/checkout/success`,
+          cancelUrl: `${window.location.origin}/plus`,
         },
       });
       if ("error" in result) throw new Error(result.error);
@@ -80,15 +81,15 @@ function Plus() {
     void start(plan, billingEmail.trim());
   };
 
-  const openPortal = async () => {
+  const cancelPlan = async () => {
     setPortalBusy(true);
     try {
-      const result = await createPolarPortalSession();
+      const result = await cancelPayPalSubscription();
       if ("error" in result) throw new Error(result.error);
-      window.open(result.url, "_blank", "noopener,noreferrer");
+      toast.success("Your subscription has been cancelled.");
     } catch (e: any) {
       console.error(e);
-      toast.error(e?.message ?? "Couldn't open the billing portal.");
+      toast.error(e?.message ?? "Couldn't cancel the subscription.");
     } finally {
       setPortalBusy(false);
     }
@@ -121,15 +122,15 @@ function Plus() {
             <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-center">
               <div className="text-sm font-semibold">You're on Addiblock+</div>
               <div className="mt-1 text-xs text-muted-foreground">
-                Thanks for supporting recovery. Manage your plan, payment method or invoices
-                anytime.
+                Thanks for supporting recovery. Your plan and receipts also live in your
+                PayPal account under Automatic Payments.
               </div>
               <button
-                onClick={openPortal}
+                onClick={cancelPlan}
                 disabled={portalBusy}
                 className="mt-3 rounded-full border border-primary/50 px-4 py-2 text-xs font-semibold text-primary disabled:opacity-60"
               >
-                {portalBusy ? "Opening…" : "Manage subscription"}
+                {portalBusy ? "Cancelling…" : "Cancel subscription"}
               </button>
             </div>
           ) : (
@@ -207,13 +208,13 @@ function Plus() {
                 className="mt-4 w-full rounded-full bg-aurora px-5 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy
-                  ? "Opening secure checkout…"
+                  ? "Opening PayPal…"
                   : `Get Addiblock+ · ${selectedPlan === "monthly" ? "$2.99/mo" : "$16.99/yr"}`}
               </button>
 
 
               <div className="mt-2 text-center text-[11px] text-muted-foreground">
-                Secure checkout · Cancel anytime
+                Secure PayPal checkout · Cancel anytime
               </div>
             </>
           )}

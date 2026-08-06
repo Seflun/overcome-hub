@@ -43,10 +43,8 @@ export type Database = {
           current_period_start: string | null
           environment: string
           id: string
-          paddle_customer_id: string | null
-          paddle_subscription_id: string | null
-          polar_customer_id: string | null
-          polar_subscription_id: string | null
+          paypal_payer_id: string | null
+          paypal_subscription_id: string | null
           price_id: string
           product_id: string
           provider: string
@@ -61,10 +59,8 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
-          paddle_customer_id?: string | null
-          paddle_subscription_id?: string | null
-          polar_customer_id?: string | null
-          polar_subscription_id?: string | null
+          paypal_payer_id?: string | null
+          paypal_subscription_id?: string | null
           price_id: string
           product_id: string
           provider?: string
@@ -79,10 +75,8 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
-          paddle_customer_id?: string | null
-          paddle_subscription_id?: string | null
-          polar_customer_id?: string | null
-          polar_subscription_id?: string | null
+          paypal_payer_id?: string | null
+          paypal_subscription_id?: string | null
           price_id?: string
           product_id?: string
           provider?: string

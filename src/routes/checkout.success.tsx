@@ -4,7 +4,7 @@ import { Sparkles, Loader2, AlertTriangle } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { supabase } from "../integrations/supabase/client";
-import { confirmPolarCheckout } from "../utils/payments.functions";
+import { confirmPayPalSubscription } from "../utils/payments.functions";
 
 export const Route = createFileRoute("/checkout/success")({
   head: () => ({
@@ -15,15 +15,16 @@ export const Route = createFileRoute("/checkout/success")({
       { property: "og:description", content: "Your Addiblock+ subscription is active." },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>): { checkout_id?: string } => ({
-    checkout_id: typeof search.checkout_id === "string" ? search.checkout_id : undefined,
+  validateSearch: (search: Record<string, unknown>): { subscription_id?: string } => ({
+    subscription_id:
+      typeof search.subscription_id === "string" ? search.subscription_id : undefined,
   }),
   component: Success,
 });
 
 function Success() {
   const navigate = useNavigate();
-  const { checkout_id: checkoutId } = Route.useSearch();
+  const { subscription_id: subscriptionId } = Route.useSearch();
   const { userId, state } = useStore();
   const [confirmed, setConfirmed] = useState(state.isPremium);
   const [stalled, setStalled] = useState(false);
@@ -42,7 +43,7 @@ function Success() {
         .from("subscriptions")
         .select("status, current_period_end")
         .eq("user_id", userId)
-        .eq("provider", "polar")
+        .eq("provider", "paypal")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -61,10 +62,10 @@ function Success() {
       if (cancelled) return;
       attempts++;
 
-      // Ask Polar directly (and sync the row) instead of waiting on the webhook.
-      if (checkoutId) {
+      // Ask PayPal directly (and sync the row) instead of waiting on the webhook.
+      if (subscriptionId) {
         try {
-          const result = await confirmPolarCheckout({ data: { checkoutId } });
+          const result = await confirmPayPalSubscription({ data: { subscriptionId } });
           if (!cancelled && "active" in result && result.active) {
             setConfirmed(true);
             return;
@@ -90,7 +91,7 @@ function Success() {
     return () => {
       cancelled = true;
     };
-  }, [userId, confirmed, checkoutId]);
+  }, [userId, confirmed, subscriptionId]);
 
 
   const icon = confirmed ? (
