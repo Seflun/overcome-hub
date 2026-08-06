@@ -34,7 +34,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPublicPolarWebhookRouteImport } from './routes/api/public/polar/webhook'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TodayRoute = TodayRouteImport.update({
   id: '/today',
@@ -161,12 +160,6 @@ const ApiPublicPolarWebhookRoute = ApiPublicPolarWebhookRouteImport.update({
   path: '/api/public/polar/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -193,7 +186,6 @@ export interface FileRoutesByFullPath {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -221,7 +213,6 @@ export interface FileRoutesByTo {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRoutesById {
@@ -250,7 +241,6 @@ export interface FileRoutesById {
   '/today': typeof TodayRoute
   '/api/chat': typeof ApiChatRoute
   '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/polar/webhook': typeof ApiPublicPolarWebhookRoute
 }
 export interface FileRouteTypes {
@@ -280,7 +270,6 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
-    | '/api/public/payments/webhook'
     | '/api/public/polar/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -308,7 +297,6 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
-    | '/api/public/payments/webhook'
     | '/api/public/polar/webhook'
   id:
     | '__root__'
@@ -336,7 +324,6 @@ export interface FileRouteTypes {
     | '/today'
     | '/api/chat'
     | '/checkout/success'
-    | '/api/public/payments/webhook'
     | '/api/public/polar/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -365,7 +352,6 @@ export interface RootRouteChildren {
   TodayRoute: typeof TodayRoute
   ApiChatRoute: typeof ApiChatRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
-  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPolarWebhookRoute: typeof ApiPublicPolarWebhookRoute
 }
 
@@ -546,13 +532,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPolarWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -581,7 +560,6 @@ const rootRouteChildren: RootRouteChildren = {
   TodayRoute: TodayRoute,
   ApiChatRoute: ApiChatRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
-  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPolarWebhookRoute: ApiPublicPolarWebhookRoute,
 }
 export const routeTree = rootRouteImport
