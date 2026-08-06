@@ -48,11 +48,12 @@ function Plus() {
   const start = async (plan: "monthly" | "yearly", email: string) => {
     setBusy(plan);
     try {
-      const result = await createPolarCheckout({
+      const result = await createPayPalCheckout({
         data: {
           plan,
           customerEmail: email,
-          successUrl: `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`,
+          successUrl: `${window.location.origin}/checkout/success`,
+          cancelUrl: `${window.location.origin}/plus`,
         },
       });
       if ("error" in result) throw new Error(result.error);
@@ -80,15 +81,15 @@ function Plus() {
     void start(plan, billingEmail.trim());
   };
 
-  const openPortal = async () => {
+  const cancelPlan = async () => {
     setPortalBusy(true);
     try {
-      const result = await createPolarPortalSession();
+      const result = await cancelPayPalSubscription();
       if ("error" in result) throw new Error(result.error);
-      window.open(result.url, "_blank", "noopener,noreferrer");
+      toast.success("Your subscription has been cancelled.");
     } catch (e: any) {
       console.error(e);
-      toast.error(e?.message ?? "Couldn't open the billing portal.");
+      toast.error(e?.message ?? "Couldn't cancel the subscription.");
     } finally {
       setPortalBusy(false);
     }
