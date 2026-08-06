@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getStripeEnvironment } from "@/lib/stripe";
+
 
 export type SubscriptionRow = {
   id: string;
-  stripe_subscription_id: string | null;
+  polar_subscription_id: string | null;
   product_id: string;
   price_id: string;
   status: string;
@@ -24,14 +24,14 @@ export function useSubscription(userId: string | null | undefined) {
       return;
     }
     let cancelled = false;
-    const env = getStripeEnvironment();
+    
 
     const fetchSub = async () => {
       const { data } = await supabase
         .from("subscriptions")
         .select("*")
         .eq("user_id", userId)
-        .eq("environment", env)
+        .eq("provider", "polar")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
