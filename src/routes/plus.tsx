@@ -32,8 +32,8 @@ const FEATURES = [
 function Plus() {
   const { state, userId, userEmail } = useStore();
   const navigate = useNavigate();
-  const { openCheckout, closeCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [busy, setBusy] = useState<"monthly" | "yearly" | null>(null);
+  const [portalBusy, setPortalBusy] = useState(false);
   const [billingEmail, setBillingEmail] = useState(userEmail ?? "");
   const [pendingPlan, setPendingPlan] = useState<"monthly" | "yearly" | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
@@ -45,20 +45,22 @@ function Plus() {
   const isPremium = state.isPremium;
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(billingEmail.trim());
 
-  const start = (plan: "monthly" | "yearly", email: string) => {
+  const start = async (plan: "monthly" | "yearly", email: string) => {
     setBusy(plan);
     try {
-      openCheckout({
-        priceId: plan === "monthly" ? "plus_monthly" : "plus_yearly",
-        customerEmail: email,
-        userId: userId!,
-        returnUrl: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      const result = await createPolarCheckout({
+        data: {
+          plan,
+          customerEmail: email,
+          successUrl: `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`,
+        },
       });
+      if ("error" in result) throw new Error(result.error);
       setPendingPlan(null);
+      window.location.href = result.url;
     } catch (e: any) {
       console.error(e);
-      toast.error("Checkout couldn't open. Try again in a moment.");
-    } finally {
+      toast.error(e?.message ?? "Checkout couldn't open. Try again in a moment.");
       setBusy(null);
     }
   };
@@ -75,8 +77,23 @@ function Plus() {
       toast("Add the email address for your receipt");
       return;
     }
-    start(plan, billingEmail.trim());
+    void start(plan, billingEmail.trim());
   };
+
+  const openPortal = async () => {
+    setPortalBusy(true);
+    try {
+      const result = await createPolarPortalSession();
+      if ("error" in result) throw new Error(result.error);
+      window.open(result.url, "_blank", "noopener,noreferrer");
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e?.message ?? "Couldn't open the billing portal.");
+    } finally {
+      setPortalBusy(false);
+    }
+  };
+
 
 
   return (
