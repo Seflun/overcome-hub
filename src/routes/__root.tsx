@@ -14,7 +14,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "../lib/store";
 import { Toaster } from "../components/ui/sonner";
 import { ConfirmProvider } from "../components/confirm-dialog";
-import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
 import { SoundProvider } from "../components/sound-controls";
 
 
@@ -115,7 +114,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
         <ConfirmProvider>
-          <PaymentTestModeBanner />
           <SoundProvider />
           <Outlet />
           <Toaster position="top-center" />
