@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download, X } from "lucide-react";
+import { Sparkles, Check, ArrowLeft, Layers, ShieldAlert, Bot, LineChart, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
-import { useStripeCheckout } from "../hooks/useStripeCheckout";
+import { createPolarCheckout, createPolarPortalSession } from "../utils/payments.functions";
+
 
 export const Route = createFileRoute("/plus")({
   head: () => ({
