@@ -69,6 +69,12 @@ export type PolarProduct = {
   metadata?: Record<string, unknown>;
 };
 
+/** Pick the USD price, or fall back to the first price. */
+export function pickDisplayPrice(product: PolarProduct): PolarPrice {
+  const usd = product.prices?.find((p) => p.price_currency?.toLowerCase() === "usd");
+  return usd ?? product.prices?.[0] ?? {};
+}
+
 export type PlanKey = "monthly" | "yearly";
 
 /**
