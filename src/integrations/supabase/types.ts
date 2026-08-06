@@ -45,8 +45,11 @@ export type Database = {
           id: string
           paddle_customer_id: string | null
           paddle_subscription_id: string | null
+          polar_customer_id: string | null
+          polar_subscription_id: string | null
           price_id: string
           product_id: string
+          provider: string
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -62,8 +65,11 @@ export type Database = {
           id?: string
           paddle_customer_id?: string | null
           paddle_subscription_id?: string | null
+          polar_customer_id?: string | null
+          polar_subscription_id?: string | null
           price_id: string
           product_id: string
+          provider?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -79,8 +85,11 @@ export type Database = {
           id?: string
           paddle_customer_id?: string | null
           paddle_subscription_id?: string | null
+          polar_customer_id?: string | null
+          polar_subscription_id?: string | null
           price_id?: string
           product_id?: string
+          provider?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
