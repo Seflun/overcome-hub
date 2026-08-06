@@ -367,15 +367,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    const env = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith("pk_test_")
-      ? "sandbox"
-      : "live";
     const check = async () => {
       const { data } = await supabase
         .from("subscriptions")
         .select("status, current_period_end")
         .eq("user_id", userId)
-        .eq("environment", env)
+        .eq("provider", "polar")
+
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
