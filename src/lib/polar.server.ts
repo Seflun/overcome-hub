@@ -51,11 +51,13 @@ export function getPolarErrorMessage(error: unknown): string {
 }
 
 export type PolarPrice = {
+  id?: string;
   amount_type?: string;
   price_amount?: number;
   price_currency?: string;
   recurring_interval?: string | null;
 };
+
 
 export type PolarProduct = {
   id: string;
@@ -66,6 +68,12 @@ export type PolarProduct = {
   prices: PolarPrice[];
   metadata?: Record<string, unknown>;
 };
+
+/** Pick the USD price, or fall back to the first price. */
+export function pickDisplayPrice(product: PolarProduct): PolarPrice {
+  const usd = product.prices?.find((p) => p.price_currency?.toLowerCase() === "usd");
+  return usd ?? product.prices?.[0] ?? {};
+}
 
 export type PlanKey = "monthly" | "yearly";
 

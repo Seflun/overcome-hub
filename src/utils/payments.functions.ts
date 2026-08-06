@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   getPolarErrorMessage,
+  pickDisplayPrice,
   polarFetch,
   resolvePlanProducts,
   type PlanKey,
@@ -28,7 +29,7 @@ export const getPlusPlans = createServerFn({ method: "GET" }).handler(
       const products = await resolvePlanProducts();
       const plans = (["monthly", "yearly"] as PlanKey[]).map((plan) => {
         const product = products[plan];
-        const price = product.prices?.[0];
+        const price = pickDisplayPrice(product);
         return {
           plan,
           productId: product.id,
@@ -72,6 +73,7 @@ export const createPolarCheckout = createServerFn({ method: "POST" })
           external_customer_id: context.userId,
           success_url: data.successUrl,
           metadata: { userId: context.userId, plan: data.plan },
+          currency: "usd",
         }),
       });
 
