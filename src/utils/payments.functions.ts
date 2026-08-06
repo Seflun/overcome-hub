@@ -55,15 +55,20 @@ export const createPolarCheckout = createServerFn({ method: "POST" })
     z
       .object({
         plan: planSchema,
-        customerEmail: z.string().email("A valid email is required for your receipt"),
+        customerEmail: z.string().max(320),
         successUrl: z.string().url(),
       })
       .parse(data),
   )
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const email = data.customerEmail.trim().toLowerCase();
+    if (!z.string().email().safeParse(email).success) {
+      return { error: "A valid email is required for your receipt." };
+    }
     try {
       const products = await resolvePlanProducts();
       const product = products[data.plan];
+
 
       const checkout = await polarFetch<{ url: string }>("/v1/checkouts/", {
         method: "POST",
