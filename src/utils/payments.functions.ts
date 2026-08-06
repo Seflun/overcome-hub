@@ -29,7 +29,7 @@ export const getPlusPlans = createServerFn({ method: "GET" }).handler(
       const products = await resolvePlanProducts();
       const plans = (["monthly", "yearly"] as PlanKey[]).map((plan) => {
         const product = products[plan];
-        const price = product.prices?.[0];
+        const price = pickDisplayPrice(product);
         return {
           plan,
           productId: product.id,
