@@ -4,7 +4,7 @@ import { Sparkles, Loader2, AlertTriangle } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { useStore } from "../lib/store";
 import { supabase } from "../integrations/supabase/client";
-import { confirmCheckoutSession } from "../utils/payments.functions";
+import { confirmPolarCheckout } from "../utils/payments.functions";
 
 export const Route = createFileRoute("/checkout/success")({
   head: () => ({
@@ -15,21 +15,15 @@ export const Route = createFileRoute("/checkout/success")({
       { property: "og:description", content: "Your Addiblock+ subscription is active." },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
-    session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+  validateSearch: (search: Record<string, unknown>): { checkout_id?: string } => ({
+    checkout_id: typeof search.checkout_id === "string" ? search.checkout_id : undefined,
   }),
   component: Success,
 });
 
-const ENV = (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined)?.startsWith(
-  "pk_test_",
-)
-  ? ("sandbox" as const)
-  : ("live" as const);
-
 function Success() {
   const navigate = useNavigate();
-  const { session_id: sessionId } = Route.useSearch();
+  const { checkout_id: checkoutId } = Route.useSearch();
   const { userId, state } = useStore();
   const [confirmed, setConfirmed] = useState(state.isPremium);
   const [stalled, setStalled] = useState(false);
@@ -48,7 +42,7 @@ function Success() {
         .from("subscriptions")
         .select("status, current_period_end")
         .eq("user_id", userId)
-        .eq("environment", ENV)
+        .eq("provider", "polar")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -67,12 +61,10 @@ function Success() {
       if (cancelled) return;
       attempts++;
 
-      // Ask Stripe directly (and sync the row) instead of waiting on the webhook.
-      if (sessionId) {
+      // Ask Polar directly (and sync the row) instead of waiting on the webhook.
+      if (checkoutId) {
         try {
-          const result = await confirmCheckoutSession({
-            data: { sessionId, environment: ENV },
-          });
+          const result = await confirmPolarCheckout({ data: { checkoutId } });
           if (!cancelled && "active" in result && result.active) {
             setConfirmed(true);
             return;
@@ -98,7 +90,8 @@ function Success() {
     return () => {
       cancelled = true;
     };
-  }, [userId, confirmed, sessionId]);
+  }, [userId, confirmed, checkoutId]);
+
 
   const icon = confirmed ? (
     <Sparkles className="h-8 w-8" />
