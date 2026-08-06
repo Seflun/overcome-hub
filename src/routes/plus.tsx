@@ -122,15 +122,15 @@ function Plus() {
             <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-center">
               <div className="text-sm font-semibold">You're on Addiblock+</div>
               <div className="mt-1 text-xs text-muted-foreground">
-                Thanks for supporting recovery. Manage your plan, payment method or invoices
-                anytime.
+                Thanks for supporting recovery. Your plan and receipts also live in your
+                PayPal account under Automatic Payments.
               </div>
               <button
-                onClick={openPortal}
+                onClick={cancelPlan}
                 disabled={portalBusy}
                 className="mt-3 rounded-full border border-primary/50 px-4 py-2 text-xs font-semibold text-primary disabled:opacity-60"
               >
-                {portalBusy ? "Opening…" : "Manage subscription"}
+                {portalBusy ? "Cancelling…" : "Cancel subscription"}
               </button>
             </div>
           ) : (
