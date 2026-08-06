@@ -1,168 +1,171 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import Stripe from "stripe";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-  type StripeEnv,
-  createStripeClient,
-  getStripeErrorMessage,
-} from "@/lib/stripe.server";
+  getPolarErrorMessage,
+  polarFetch,
+  resolvePlanProducts,
+  type PlanKey,
+} from "@/lib/polar.server";
 
+const planSchema = z.enum(["monthly", "yearly"]);
 
-const checkoutInput = z.object({
-  priceId: z
-    .string()
-    .min(1)
-    .regex(/^[a-zA-Z0-9_-]+$/, "Invalid priceId"),
-  quantity: z.number().int().positive().optional(),
-  customerEmail: z.string().email("A valid email is required for your receipt"),
-  userId: z
-    .string()
-    .regex(/^[a-zA-Z0-9_-]+$/, "Invalid userId")
-    .optional(),
-  returnUrl: z.string().url(),
-  environment: z.enum(["sandbox", "live"]),
-});
+export type PlanInfo = {
+  plan: PlanKey;
+  productId: string;
+  name: string;
+  amount: number | null;
+  currency: string | null;
+  interval: string | null;
+};
 
-type CheckoutResult = { clientSecret: string } | { error: string };
+type PlansResult = { plans: PlanInfo[] } | { error: string };
 
-async function resolveOrCreateCustomer(
-  stripe: Stripe,
-  options: { email?: string; userId?: string },
-): Promise<string> {
-  if (options.userId) {
-    const found = await stripe.customers.search({
-      query: `metadata['userId']:'${options.userId}'`,
-      limit: 1,
-    });
-    if (found.data.length) {
-      const customer = found.data[0];
-      // Keep the receipt address in sync with what the buyer just confirmed.
-      if (options.email && customer.email !== options.email) {
-        await stripe.customers.update(customer.id, { email: options.email });
-      }
-      return customer.id;
-    }
-  }
-
-  if (options.email) {
-    const existing = await stripe.customers.list({ email: options.email, limit: 1 });
-    if (existing.data.length) {
-      const customer = existing.data[0];
-      if (options.userId && customer.metadata?.userId !== options.userId) {
-        await stripe.customers.update(customer.id, {
-          metadata: { ...customer.metadata, userId: options.userId },
-        });
-      }
-      return customer.id;
-    }
-  }
-  const created = await stripe.customers.create({
-    ...(options.email && { email: options.email }),
-    ...(options.userId && { metadata: { userId: options.userId } }),
-  });
-  return created.id;
-}
-
-export const createCheckoutSession = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => checkoutInput.parse(data))
-  .handler(async ({ data }): Promise<CheckoutResult> => {
+/** Public plan metadata straight from Polar (names + amounts only). */
+export const getPlusPlans = createServerFn({ method: "GET" }).handler(
+  async (): Promise<PlansResult> => {
     try {
-      const stripe = createStripeClient(data.environment as StripeEnv);
-
-      const prices = await stripe.prices.list({ lookup_keys: [data.priceId] });
-      if (!prices.data.length) throw new Error(`Price not found: ${data.priceId}`);
-      const stripePrice = prices.data[0];
-      const isRecurring = stripePrice.type === "recurring";
-
-      // An email is mandatory so Stripe can send the receipt / invoices.
-      const customerId = await resolveOrCreateCustomer(stripe, {
-        email: data.customerEmail,
-        userId: data.userId,
+      const products = await resolvePlanProducts();
+      const plans = (["monthly", "yearly"] as PlanKey[]).map((plan) => {
+        const product = products[plan];
+        const price = product.prices?.[0];
+        return {
+          plan,
+          productId: product.id,
+          name: product.name,
+          amount: price?.price_amount ?? null,
+          currency: price?.price_currency ?? null,
+          interval: price?.recurring_interval ?? product.recurring_interval ?? null,
+        };
       });
-
-
-      const session = await stripe.checkout.sessions.create({
-        line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
-        mode: isRecurring ? "subscription" : "payment",
-        ui_mode: "embedded_page",
-        return_url: data.returnUrl,
-        ...(customerId && { customer: customerId }),
-        managed_payments: { enabled: true },
-        ...(data.userId && {
-          metadata: { userId: data.userId },
-          ...(isRecurring && {
-            subscription_data: { metadata: { userId: data.userId } },
-          }),
-        }),
-      } as Stripe.Checkout.SessionCreateParams);
-
-      return { clientSecret: session.client_secret ?? "" };
+      return { plans };
     } catch (error) {
-      return { error: getStripeErrorMessage(error) };
+      return { error: getPolarErrorMessage(error) };
     }
-  });
+  },
+);
 
-// Confirms a checkout session straight from Stripe and syncs the subscription
-// row, so the success page never has to wait on webhook delivery.
-type ConfirmResult = { active: boolean } | { error: string };
+type CheckoutResult = { url: string } | { error: string };
 
-export const confirmCheckoutSession = createServerFn({ method: "POST" })
+/** Creates a Polar checkout session and returns its hosted URL. */
+export const createPolarCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
-        sessionId: z.string().min(1).regex(/^cs_[a-zA-Z0-9_]+$/, "Invalid sessionId"),
-        environment: z.enum(["sandbox", "live"]),
+        plan: planSchema,
+        customerEmail: z.string().email("A valid email is required for your receipt"),
+        successUrl: z.string().url(),
       })
       .parse(data),
   )
-  .handler(async ({ data, context }): Promise<ConfirmResult> => {
+  .handler(async ({ data, context }): Promise<CheckoutResult> => {
     try {
-      const stripe = createStripeClient(data.environment as StripeEnv);
-      const session = await stripe.checkout.sessions.retrieve(data.sessionId, {
-        expand: ["subscription", "subscription.items.data.price"],
+      const products = await resolvePlanProducts();
+      const product = products[data.plan];
+
+      const checkout = await polarFetch<{ url: string }>("/v1/checkouts/", {
+        method: "POST",
+        body: JSON.stringify({
+          products: [product.id],
+          customer_email: data.customerEmail,
+          external_customer_id: context.userId,
+          success_url: data.successUrl,
+          metadata: { userId: context.userId, plan: data.plan },
+        }),
       });
 
-      if (session.payment_status === "unpaid") return { active: false };
+      if (!checkout.url) throw new Error("Polar did not return a checkout URL");
+      return { url: checkout.url };
+    } catch (error) {
+      return { error: getPolarErrorMessage(error) };
+    }
+  });
 
-      const sub = session.subscription as Stripe.Subscription | null;
-      if (!sub || typeof sub === "string") return { active: false };
+type ConfirmResult = { active: boolean } | { error: string };
 
-      const userId = (sub.metadata?.userId as string | undefined) ?? context.userId;
-      if (userId !== context.userId) return { error: "Session does not belong to this user" };
+const ACTIVE_STATUSES = ["active", "trialing", "past_due"];
 
-      const item: any = sub.items?.data?.[0];
-      const priceId =
-        item?.price?.lookup_key || item?.price?.metadata?.lovable_external_id || item?.price?.id;
-      const productId =
-        typeof item?.price?.product === "string" ? item.price.product : item?.price?.product?.id;
-      const periodStart = item?.current_period_start ?? (sub as any).current_period_start;
-      const periodEnd = item?.current_period_end ?? (sub as any).current_period_end;
+/**
+ * Reads a checkout straight from Polar and syncs the subscription row, so the
+ * success page never has to wait on webhook delivery.
+ */
+export const confirmPolarCheckout = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ checkoutId: z.string().min(1).max(100) }).parse(data),
+  )
+  .handler(async ({ data, context }): Promise<ConfirmResult> => {
+    try {
+      const checkout = await polarFetch<any>(
+        `/v1/checkouts/${encodeURIComponent(data.checkoutId)}`,
+      );
+
+      const externalCustomerId =
+        checkout.customer_external_id ?? checkout.external_customer_id ?? null;
+      const metaUserId = checkout.metadata?.userId ?? null;
+      if (
+        (externalCustomerId && externalCustomerId !== context.userId) ||
+        (metaUserId && metaUserId !== context.userId)
+      ) {
+        return { error: "This checkout belongs to a different account" };
+      }
+
+      if (!["succeeded", "confirmed"].includes(String(checkout.status))) {
+        return { active: false };
+      }
+
+      const subscriptionId: string | null =
+        checkout.subscription_id ?? checkout.subscription?.id ?? null;
+      if (!subscriptionId) return { active: false };
+
+      const sub = await polarFetch<any>(
+        `/v1/subscriptions/${encodeURIComponent(subscriptionId)}`,
+      );
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { error: upsertError } = await supabaseAdmin.from("subscriptions").upsert(
         {
           user_id: context.userId,
-          stripe_subscription_id: sub.id,
-          stripe_customer_id: String(sub.customer),
-          product_id: productId,
-          price_id: priceId,
-          status: sub.status,
-          current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
-          current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+          provider: "polar",
+          polar_subscription_id: sub.id,
+          polar_customer_id: String(sub.customer_id ?? checkout.customer_id ?? ""),
+          product_id: String(sub.product_id ?? checkout.product_id ?? ""),
+          price_id: String(sub.metadata?.plan ?? checkout.metadata?.plan ?? sub.recurring_interval ?? ""),
+          status: String(sub.status),
+          current_period_start: sub.current_period_start ?? null,
+          current_period_end: sub.current_period_end ?? null,
           cancel_at_period_end: sub.cancel_at_period_end ?? false,
-          environment: data.environment,
+          environment: "live",
           updated_at: new Date().toISOString(),
         } as any,
-        { onConflict: "stripe_subscription_id" },
+        { onConflict: "polar_subscription_id" },
       );
       if (upsertError) return { error: `Could not save subscription: ${upsertError.message}` };
 
-      const active = ["active", "trialing", "past_due"].includes(sub.status);
-      return { active };
+      return { active: ACTIVE_STATUSES.includes(String(sub.status)) };
     } catch (error) {
-      return { error: getStripeErrorMessage(error) };
+      return { error: getPolarErrorMessage(error) };
     }
   });
 
+type PortalResult = { url: string } | { error: string };
+
+/** Opens the Polar customer portal for the signed-in user. */
+export const createPolarPortalSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<PortalResult> => {
+    try {
+      const session = await polarFetch<{ customer_portal_url: string }>(
+        "/v1/customer-sessions/",
+        {
+          method: "POST",
+          body: JSON.stringify({ external_customer_id: context.userId }),
+        },
+      );
+      if (!session.customer_portal_url) throw new Error("No portal URL returned");
+      return { url: session.customer_portal_url };
+    } catch (error) {
+      return { error: getPolarErrorMessage(error) };
+    }
+  });
