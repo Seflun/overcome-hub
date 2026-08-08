@@ -13,9 +13,11 @@ import {
   ShieldCheck,
   User,
   HeartHandshake,
+  Menu,
+  X,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { LOGO_URL as logo } from "@/lib/brand";
 import { SoundControls } from "./sound-controls";
@@ -51,16 +53,54 @@ const mobileNav: NavItem[] = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
+const moreNav: NavItem[] = nav.filter(
+  (n) => !mobileNav.find((m) => m.to === n.to) && n.to !== "/settings",
+);
+
+function NavLink({ item, active, onClick }: { item: NavItem; active: boolean; onClick?: () => void }) {
+  const Icon = item.icon;
+  const isSos = item.to === "/sos";
+  const isCoach = item.to === "/coach";
+  return (
+    <Link
+      key={item.to}
+      to={item.to}
+      onClick={onClick}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+        isSos
+          ? active
+            ? "bg-destructive/15 text-destructive"
+            : "text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
+          : isCoach
+            ? active
+              ? "bg-accent text-accent-foreground shadow-glow"
+              : "bg-accent/20 text-accent ring-1 ring-accent/40 hover:bg-accent/30"
+            : active
+              ? "bg-primary/15 text-primary"
+              : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+      }`}
+    >
+      <Icon className="h-4 w-4" strokeWidth={active || isCoach ? 2.4 : 1.8} />
+      {item.label}
+    </Link>
+  );
+}
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const { userId, authChecked, state } = useStore();
   const navigate = useNavigate();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   // Route guard: unauthenticated users are sent to the landing page
   useEffect(() => {
     if (authChecked && !userId) navigate({ to: "/" });
   }, [authChecked, userId, navigate]);
+
+  // Close the mobile drawer on route changes
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [pathname]);
 
   // While the session is still being checked (or the redirect is queued),
   // render a minimal placeholder to avoid flashing gated UI.
@@ -104,31 +144,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               item.to === "/today"
                 ? pathname === "/today"
                 : pathname.startsWith(item.to);
-            const Icon = item.icon;
-            const isSos = item.to === "/sos";
-            const isCoach = item.to === "/coach";
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                  isSos
-                    ? active
-                      ? "bg-destructive/15 text-destructive"
-                      : "text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
-                    : isCoach
-                      ? active
-                        ? "bg-accent text-accent-foreground shadow-glow"
-                        : "bg-accent/20 text-accent ring-1 ring-accent/40 hover:bg-accent/30"
-                      : active
-                        ? "bg-primary/15 text-primary"
-                        : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
-                }`}
-              >
-                <Icon className="h-4 w-4" strokeWidth={active || isCoach ? 2.4 : 1.8} />
-                {item.label}
-              </Link>
-            );
+            return <NavLink key={item.to} item={item} active={active} />;
           })}
         </nav>
 
@@ -149,20 +165,48 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Main content column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Floating sound controls + settings shortcut (top-right) */}
-        <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
-          <SoundControls />
-          {!isOnSettings && (
-            <Link
-              to="/settings"
-              aria-label="Settings"
-              className="rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground lg:hidden"
+        {/* Mobile top bar: keeps sound + settings off the main content surface */}
+        <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border/40 bg-background/70 px-4 py-2 backdrop-blur-xl lg:hidden">
+          <Link to="/today" className="flex min-w-0 items-center gap-2">
+            <img src={logo} alt="Addiblock logo" className="h-7 w-7 shrink-0 rounded-xl object-contain" />
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <span className="truncate font-black tracking-tight">Addiblock</span>
+                {state.isPremium && (
+                  <span className="rounded-full border border-primary/40 px-1.5 py-[1px] text-[9px] font-bold uppercase tracking-widest text-primary/90">
+                    Plus
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <SoundControls compact />
+            {!isOnSettings && (
+              <Link
+                to="/settings"
+                aria-label="Settings"
+                className="rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground"
+              >
+                <Settings className="h-4 w-4" />
+              </Link>
+            )}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={moreOpen}
+              onClick={() => setMoreOpen((v) => !v)}
+              className="rounded-full border border-border/60 bg-card/80 p-2 text-muted-foreground shadow-soft backdrop-blur-xl hover:text-foreground"
             >
-              <Settings className="h-4 w-4" />
-            </Link>
-          )}
+              {moreOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
 
+        {/* Floating sound controls (desktop only) */}
+        <div className="fixed right-4 top-4 z-50 hidden items-center gap-2 lg:flex">
+          <SoundControls />
+        </div>
 
         <main className="flex-1 pb-28 lg:pb-12">
           <div className="mx-auto w-full max-w-md lg:max-w-3xl xl:max-w-4xl">
@@ -206,7 +250,37 @@ export function AppShell({ children }: { children: ReactNode }) {
             })}
           </div>
         </nav>
+
+        {/* Mobile "more" drawer */}
+        {moreOpen && (
+          <div className="fixed inset-x-0 top-[3.25rem] z-30 lg:hidden">
+            <div className="mx-auto max-w-md px-4 pb-4">
+              <div className="max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-2xl border border-border/60 bg-card/95 p-3 shadow-soft backdrop-blur-xl">
+                <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  More
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {moreNav.map((item) => {
+                    const active =
+                      item.to === "/today"
+                        ? pathname === "/today"
+                        : pathname.startsWith(item.to);
+                    return <NavLink key={item.to} item={item} active={active} onClick={() => setMoreOpen(false)} />;
+                  })}
+                </div>
+                <div className="mt-2 border-t border-border/40 pt-2">
+                  <NavLink
+                    item={{ to: "/settings", label: "Settings", icon: Settings }}
+                    active={isOnSettings}
+                    onClick={() => setMoreOpen(false)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
