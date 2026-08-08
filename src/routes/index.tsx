@@ -64,14 +64,14 @@ function Landing() {
 function TopNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Addiblock logo" className="h-8 w-8 rounded-xl object-contain" />
-          <span className="font-black tracking-tight">Addiblock</span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8">
+        <Link to="/" className="flex min-w-0 items-center gap-2">
+          <img src={logo} alt="Addiblock logo" className="h-8 w-8 shrink-0 rounded-xl object-contain" />
+          <span className="truncate font-black tracking-tight">Addiblock</span>
         </Link>
 
-        <nav className="flex items-center gap-2">
-          <SoundControls className="mr-1" />
+        <nav className="flex shrink-0 items-center gap-2">
+          <SoundControls className="mr-1 hidden sm:flex" />
           <Link
             to="/auth"
             className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
@@ -89,6 +89,7 @@ function TopNav() {
     </header>
   );
 }
+
 
 function Hero() {
   return (
