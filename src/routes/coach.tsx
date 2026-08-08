@@ -103,7 +103,7 @@ function Coach() {
 
   return (
     <AppShell>
-      <div className="flex h-[calc(100dvh-10.25rem)] flex-col px-5 pt-6 lg:h-[calc(100dvh-7rem)]">
+      <div className="flex h-[calc(100dvh-10.25rem)] flex-col px-5 pt-6 lg:h-[calc(100dvh-3rem)]">
         <div className="mb-3">
           <div className="flex items-center justify-between">
             <div>
