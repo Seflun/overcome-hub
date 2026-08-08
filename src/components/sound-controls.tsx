@@ -51,36 +51,62 @@ export function SoundProvider() {
   return null;
 }
 
+interface SoundControlsProps {
+  className?: string;
+  /** Hide the ambient music toggle. */
+  hideMusic?: boolean;
+  /** Hide the volume slider when music is enabled. */
+  compact?: boolean;
+}
+
 /** Small floating pill to toggle the ambient music and the UI sounds. */
-export function SoundControls({ className = "" }: { className?: string }) {
+export function SoundControls({ className = "", hideMusic = false, compact = false }: SoundControlsProps) {
   const [, force] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
     const unsubscribe = sound.subscribe(() => force((n) => n + 1));
     return () => {
       unsubscribe();
     };
   }, []);
 
+  // Render a stable, identical placeholder on SSR and first client paint so we
+  // never trigger a hydration mismatch. The real controls appear after mount.
+  if (!hydrated) {
+    return (
+      <div
+        className={`flex h-9 items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
+        aria-hidden="true"
+      >
+        <div className="h-7 w-7 rounded-full" />
+        <div className="h-7 w-7 rounded-full" />
+      </div>
+    );
+  }
+
   return (
     <div
       className={`flex items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
     >
-      <button
-        type="button"
-        data-no-sound
-        onClick={() => sound.setMusic(!sound.musicEnabled)}
-        aria-label={sound.musicEnabled ? "Turn calm music off" : "Turn calm music on"}
-        title={sound.musicEnabled ? "Calm music: on" : "Calm music: off"}
-        className={`cursor-pointer rounded-full p-2 transition ${
-          sound.musicEnabled
-            ? "bg-primary/15 text-primary"
-            : "text-muted-foreground hover:text-foreground"
-        }`}
-      >
-        {sound.musicEnabled ? <Music className="h-4 w-4" /> : <Music2 className="h-4 w-4" />}
-      </button>
-      {sound.musicEnabled ? (
+      {!hideMusic && (
+        <button
+          type="button"
+          data-no-sound
+          onClick={() => sound.setMusic(!sound.musicEnabled)}
+          aria-label={sound.musicEnabled ? "Turn calm music off" : "Turn calm music on"}
+          title={sound.musicEnabled ? "Calm music: on" : "Calm music: off"}
+          className={`cursor-pointer rounded-full p-2 transition ${
+            sound.musicEnabled
+              ? "bg-primary/15 text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {sound.musicEnabled ? <Music className="h-4 w-4" /> : <Music2 className="h-4 w-4" />}
+        </button>
+      )}
+      {sound.musicEnabled && !compact && (
         <input
           type="range"
           min={0}
@@ -93,7 +119,7 @@ export function SoundControls({ className = "" }: { className?: string }) {
           title={`Music volume: ${volumeToSlider(sound.musicVolume)}%`}
           className="h-1 w-20 cursor-pointer appearance-none rounded-full bg-border accent-primary"
         />
-      ) : null}
+      )}
       <button
         type="button"
         data-no-sound
@@ -111,3 +137,4 @@ export function SoundControls({ className = "" }: { className?: string }) {
     </div>
   );
 }
+
