@@ -77,14 +77,21 @@ export function SoundControls({ className = "", hideMusic = false, compact = fal
   if (!hydrated) {
     return (
       <div
-        className={`flex h-9 items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
+        className={`flex items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
         aria-hidden="true"
       >
-        <div className="h-7 w-7 rounded-full" />
-        <div className="h-7 w-7 rounded-full" />
+        {!hideMusic && (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <Music className="h-4 w-4" />
+          </div>
+        )}
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
+          <Volume2 className="h-4 w-4" />
+        </div>
       </div>
     );
   }
+
 
   return (
     <div
