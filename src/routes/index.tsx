@@ -64,14 +64,18 @@ function Landing() {
 function TopNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Addiblock logo" className="h-8 w-8 rounded-xl object-contain" />
-          <span className="font-black tracking-tight">Addiblock</span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8">
+        <Link to="/" className="flex min-w-0 items-center gap-2">
+          <img
+            src={logo}
+            alt="Addiblock logo"
+            className="h-8 w-8 shrink-0 rounded-xl object-contain"
+          />
+          <span className="truncate font-black tracking-tight">Addiblock</span>
         </Link>
 
-        <nav className="flex items-center gap-2">
-          <SoundControls className="mr-1" />
+        <nav className="flex shrink-0 items-center gap-2">
+          <SoundControls className="mr-1" compact />
           <Link
             to="/auth"
             className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
@@ -96,12 +100,18 @@ function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute -left-40 top-0 h-[36rem] w-[36rem] rounded-full opacity-30 blur-3xl"
-        style={{ background: "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.5), transparent))" }}
+        style={{
+          background:
+            "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.5), transparent))",
+        }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute -right-40 top-40 h-[32rem] w-[32rem] rounded-full opacity-20 blur-3xl"
-        style={{ background: "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.4), transparent))" }}
+        style={{
+          background:
+            "var(--gradient-aurora, radial-gradient(closest-side, hsl(var(--primary)/0.4), transparent))",
+        }}
       />
 
       <div className="relative mx-auto max-w-6xl px-5 pt-16 pb-20 text-center md:px-8 md:pt-24 md:pb-28">
@@ -114,9 +124,9 @@ function Hero() {
           Rebuild the <span className="text-aurora">you</span> underneath.
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          A structured recovery companion for the addictions that shape your day.
-          Pick one to work on, follow a small daily plan, and stack real wins —
-          without the shame, the lectures, or the toxic positivity.
+          A structured recovery companion for the addictions that shape your day. Pick one to work
+          on, follow a small daily plan, and stack real wins — without the shame, the lectures, or
+          the toxic positivity.
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -135,9 +145,15 @@ function Hero() {
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-primary" /> Free to start</span>
-          <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-primary" /> No credit card</span>
-          <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-primary" /> Private & synced</span>
+          <span className="inline-flex items-center gap-1">
+            <Check className="h-3 w-3 text-primary" /> Free to start
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Check className="h-3 w-3 text-primary" /> No credit card
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <ShieldCheck className="h-3 w-3 text-primary" /> Private & synced
+          </span>
         </div>
       </div>
     </section>
@@ -176,12 +192,13 @@ function Method() {
             The method
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-            Small daily wins.<br className="hidden md:block" /> Compounded into a new <span className="text-aurora">identity</span>.
+            Small daily wins.
+            <br className="hidden md:block" /> Compounded into a new{" "}
+            <span className="text-aurora">identity</span>.
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-            Recovery isn't willpower — it's structure. Addiblock gives you a
-            tiny, evidence-informed plan you can follow on your worst day, not just
-            your best one.
+            Recovery isn't willpower — it's structure. Addiblock gives you a tiny, evidence-informed
+            plan you can follow on your worst day, not just your best one.
           </p>
         </div>
 
@@ -197,9 +214,7 @@ function Method() {
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-5 text-lg font-bold">{m.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {m.body}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{m.body}</p>
               </div>
             );
           })}
@@ -218,12 +233,13 @@ function Categories() {
             What we help with
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-            Eight loops.<br className="hidden md:block" /> One <span className="text-aurora">calm</span> way out.
+            Eight loops.
+            <br className="hidden md:block" /> One <span className="text-aurora">calm</span> way
+            out.
           </h2>
           <p className="mt-4 text-sm text-muted-foreground md:text-base">
-            Each category has its own daily missions, health recovery timeline,
-            and craving toolkit — designed around what actually works for that
-            specific loop.
+            Each category has its own daily missions, health recovery timeline, and craving toolkit
+            — designed around what actually works for that specific loop.
           </p>
         </div>
 
@@ -317,8 +333,8 @@ function FinalCta() {
           The next choice is the <span className="text-aurora">only</span> one that matters.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-sm text-muted-foreground md:text-base">
-          Create a free account. Start your first journey in under a minute.
-          Your progress syncs across every device you sign in on.
+          Create a free account. Start your first journey in under a minute. Your progress syncs
+          across every device you sign in on.
         </p>
         <Link
           to="/auth"
@@ -342,15 +358,23 @@ function Footer() {
             <span>Addiblock © {new Date().getFullYear()}</span>
           </div>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
-            <Link to="/terms" className="hover:text-foreground">Terms</Link>
-            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-            <Link to="/refund" className="hover:text-foreground">Refunds</Link>
+            <Link to="/pricing" className="hover:text-foreground">
+              Pricing
+            </Link>
+            <Link to="/terms" className="hover:text-foreground">
+              Terms
+            </Link>
+            <Link to="/privacy" className="hover:text-foreground">
+              Privacy
+            </Link>
+            <Link to="/refund" className="hover:text-foreground">
+              Refunds
+            </Link>
           </nav>
         </div>
         <div className="text-center md:text-left">
-          Not a therapist, doctor, or medical service. In a crisis, contact
-          local emergency services.
+          Not a therapist, doctor, or medical service. In a crisis, contact local emergency
+          services.
         </div>
       </div>
     </footer>
