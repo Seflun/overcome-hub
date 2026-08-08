@@ -1,33 +1,15 @@
-import { Music, Music2, Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { sound, sliderToVolume, volumeToSlider } from "@/lib/audio";
+import { sound } from "@/lib/audio";
 
 /**
- * Mounts the app-wide sound layer: restores preferences, unlocks audio on the
- * first user gesture, and plays a subtle click for interactive elements.
+ * Mounts the app-wide sound layer: restores preferences and plays a subtle
+ * click for interactive elements.
  */
 export function SoundProvider() {
   useEffect(() => {
     sound.hydrate();
-
-    const unlock = () => {
-      sound.resumeIfEnabled();
-      if (sound.isPlaying) detachUnlock();
-    };
-
-    const detachUnlock = () => {
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
-      window.removeEventListener("visibilitychange", unlock);
-    };
-
-    // Try immediately (works when the tab already has audio permission, e.g.
-    // coming back from checkout), then keep retrying on user gestures.
-    sound.resumeIfEnabled();
-    window.addEventListener("pointerdown", unlock);
-    window.addEventListener("keydown", unlock);
-    window.addEventListener("visibilitychange", unlock);
 
     const onPointerDown = (e: Event) => {
       const target = e.target as HTMLElement | null;
@@ -43,7 +25,6 @@ export function SoundProvider() {
 
     window.addEventListener("pointerdown", onPointerDown, true);
     return () => {
-      detachUnlock();
       window.removeEventListener("pointerdown", onPointerDown, true);
     };
   }, []);
@@ -53,18 +34,13 @@ export function SoundProvider() {
 
 interface SoundControlsProps {
   className?: string;
-  /** Hide the ambient music toggle. */
+  /** Kept for compatibility with existing call sites. */
   hideMusic?: boolean;
-  /** Hide the volume slider when music is enabled. */
   compact?: boolean;
 }
 
-/** Small floating pill to toggle the ambient music and the UI sounds. */
-export function SoundControls({
-  className = "",
-  hideMusic = false,
-  compact = false,
-}: SoundControlsProps) {
+/** Small floating pill to toggle the interface sounds. */
+export function SoundControls({ className = "" }: SoundControlsProps) {
   const [, force] = useState(0);
   const [hydrated, setHydrated] = useState(false);
 
@@ -84,11 +60,6 @@ export function SoundControls({
         className={`flex items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
         aria-hidden="true"
       >
-        {!hideMusic && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-            <Music className="h-4 w-4" />
-          </div>
-        )}
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
           <Volume2 className="h-4 w-4" />
         </div>
@@ -100,36 +71,6 @@ export function SoundControls({
     <div
       className={`flex items-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-soft backdrop-blur-xl ${className}`}
     >
-      {!hideMusic && (
-        <button
-          type="button"
-          data-no-sound
-          onClick={() => sound.setMusic(!sound.musicEnabled)}
-          aria-label={sound.musicEnabled ? "Turn calm music off" : "Turn calm music on"}
-          title={sound.musicEnabled ? "Calm music: on" : "Calm music: off"}
-          className={`cursor-pointer rounded-full p-2 transition ${
-            sound.musicEnabled
-              ? "bg-primary/15 text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {sound.musicEnabled ? <Music className="h-4 w-4" /> : <Music2 className="h-4 w-4" />}
-        </button>
-      )}
-      {sound.musicEnabled && !compact && (
-        <input
-          type="range"
-          min={0}
-          max={100}
-          step={1}
-          data-no-sound
-          value={volumeToSlider(sound.musicVolume)}
-          onChange={(e) => sound.setMusicVolume(sliderToVolume(Number(e.target.value)))}
-          aria-label="Music volume"
-          title={`Music volume: ${volumeToSlider(sound.musicVolume)}%`}
-          className="h-1 w-20 cursor-pointer appearance-none rounded-full bg-border accent-primary"
-        />
-      )}
       <button
         type="button"
         data-no-sound

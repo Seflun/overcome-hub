@@ -2,12 +2,7 @@
  * Addiblock sound engine.
  *
  * UI sound effects are synthesised live in the browser with the Web Audio API.
- * The background ambience is a looped audio track supplied by the project owner.
  */
-
-import ambientLoop from "@/assets/ambient-loop.mp3.asset.json";
-
-
 
 type SfxName =
   | "click"
@@ -19,50 +14,13 @@ type SfxName =
   | "error"
   | "breath";
 
-const MUSIC_KEY = "addiblock.sound.music";
-const MUSIC_VOL_KEY = "addiblock.sound.musicVolume";
-/** Ceiling for the ambience: "normal" background level, never foreground loud. */
-export const MAX_MUSIC_VOLUME = 0.28;
-/** Slider curve so the low end is near-silent and the middle is soft background. */
-const VOLUME_CURVE = 2.2;
-/** Slider position (0-100) -> actual gain. */
-export function sliderToVolume(pos: number) {
-  const p = Math.min(100, Math.max(0, pos)) / 100;
-  return MAX_MUSIC_VOLUME * Math.pow(p, VOLUME_CURVE);
-}
-/** Actual gain -> slider position (0-100). */
-export function volumeToSlider(vol: number) {
-  const v = Math.min(1, Math.max(0, vol / MAX_MUSIC_VOLUME));
-  return Math.round(Math.pow(v, 1 / VOLUME_CURVE) * 100);
-}
-/** Soft default: mid-slider, sits behind the interface but still audible. */
-const DEFAULT_MUSIC_VOLUME = sliderToVolume(50);
 const SFX_KEY = "addiblock.sound.sfx";
-
-// A slow, airy D-major-ish drift: low sustained pads with long crossfades so it
-// sits far behind the interface instead of feeling like a song being played.
-const CHORDS: number[][] = [
-  [146.83, 220.0, 293.66], // D3 A3 D4
-  [164.81, 246.94, 329.63], // E3 B3 E4
-  [110.0, 164.81, 220.0], // A2 E3 A3
-  [123.47, 185.0, 246.94], // B2 F#3 B3
-];
-// Sparse, very soft high notes that just colour the air.
-const BELLS = [587.33, 659.25, 880.0, 987.77];
-
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
-  private musicGain: GainNode | null = null;
   private sfxGain: GainNode | null = null;
-  private musicNodes: AudioNode[] = [];
-  private timers: number[] = [];
-  private chordIndex = 0;
-  private running = false;
 
-  musicEnabled = true;
-  musicVolume = DEFAULT_MUSIC_VOLUME;
   sfxEnabled = true;
 
   private listeners = new Set<() => void>();
@@ -70,17 +28,10 @@ class SoundEngine {
   /** Restore saved preferences (browser only). */
   hydrate() {
     if (typeof window === "undefined") return;
-    const music = window.localStorage.getItem(MUSIC_KEY);
     const sfx = window.localStorage.getItem(SFX_KEY);
-    const vol = Number(window.localStorage.getItem(MUSIC_VOL_KEY));
-    // Music is on by default; only an explicit "off" disables it.
-    this.musicEnabled = music !== "off";
-    this.musicVolume =
-      Number.isFinite(vol) && vol > 0 && vol <= 1 ? vol : DEFAULT_MUSIC_VOLUME;
     this.sfxEnabled = sfx !== "off";
     this.emit();
   }
-
 
   subscribe(fn: () => void) {
     this.listeners.add(fn);
@@ -104,138 +55,12 @@ class SoundEngine {
       this.master.gain.value = 0.9;
       this.master.connect(this.ctx.destination);
 
-      this.musicGain = this.ctx.createGain();
-      this.musicGain.gain.value = 0;
-      this.musicGain.connect(this.master);
-
       this.sfxGain = this.ctx.createGain();
       this.sfxGain.gain.value = 0.5;
       this.sfxGain.connect(this.master);
     }
     if (this.ctx.state === "suspended") void this.ctx.resume();
     return this.ctx;
-  }
-
-  // ---------------------------------------------------------------- ambience
-
-  private padVoice(freq: number, at: number, dur: number) {
-    const ctx = this.ctx!;
-    const gain = ctx.createGain();
-    // Very long fade in/out so chords blur into each other — no attack, no beat.
-    gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(0.1, at + dur * 0.45);
-    gain.gain.linearRampToValueAtTime(0, at + dur);
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value = 520;
-    filter.Q.value = 0.2;
-
-    gain.connect(filter);
-    filter.connect(this.musicGain!);
-
-    [0, 2.5].forEach((detune) => {
-      const osc = ctx.createOscillator();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      osc.detune.value = detune;
-      osc.connect(gain);
-      osc.start(at);
-      osc.stop(at + dur + 0.4);
-    });
-  }
-
-  private bell(at: number) {
-    const ctx = this.ctx!;
-    const freq = BELLS[Math.floor(Math.random() * BELLS.length)];
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(0.018, at + 0.6);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + 5);
-    osc.connect(gain);
-    gain.connect(this.musicGain!);
-    osc.start(at);
-    osc.stop(at + 5.1);
-  }
-
-  private trackEl: HTMLAudioElement | null = null;
-  private graphConnected = false;
-
-  private startMusic() {
-    const ctx = this.ensureContext();
-    if (!ctx || this.running) return;
-    this.running = true;
-
-    if (!this.trackEl) {
-      const el = new Audio(ambientLoop.url);
-      el.loop = true;
-      el.preload = "auto";
-      el.crossOrigin = "anonymous";
-      this.trackEl = el;
-      try {
-        const src = ctx.createMediaElementSource(el);
-        src.connect(this.musicGain!);
-        this.graphConnected = true;
-      } catch {
-        // Fallback: element plays directly at the chosen level.
-        el.volume = this.musicVolume;
-      }
-    }
-
-    this.musicGain!.gain.cancelScheduledValues(ctx.currentTime);
-    this.musicGain!.gain.setValueAtTime(this.musicGain!.gain.value, ctx.currentTime);
-    this.musicGain!.gain.linearRampToValueAtTime(this.musicVolume, ctx.currentTime + 3);
-    void this.trackEl.play().catch(() => {
-      // Autoplay blocked (e.g. right after returning from checkout) — allow a retry.
-      this.running = false;
-    });
-  }
-
-  private stopMusic() {
-    this.running = false;
-    if (this.ctx && this.musicGain) {
-      const now = this.ctx.currentTime;
-      this.musicGain.gain.cancelScheduledValues(now);
-      this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
-      this.musicGain.gain.linearRampToValueAtTime(0, now + 1);
-    }
-    const el = this.trackEl;
-    if (el) window.setTimeout(() => el.pause(), 1100);
-    this.timers.forEach((t) => window.clearInterval(t));
-    this.timers = [];
-  }
-
-  /** Live volume for the ambience, 0–1. */
-  setMusicVolume(value: number) {
-    const v = Math.min(1, Math.max(0, value));
-    this.musicVolume = v;
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(MUSIC_VOL_KEY, String(v));
-    }
-    if (this.trackEl && !this.graphConnected) this.trackEl.volume = v;
-    if (this.ctx && this.musicGain && this.running) {
-      const now = this.ctx.currentTime;
-      this.musicGain.gain.cancelScheduledValues(now);
-      this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
-      this.musicGain.gain.linearRampToValueAtTime(v, now + 0.15);
-    }
-    this.emit();
-  }
-
-
-
-
-  setMusic(on: boolean) {
-    this.musicEnabled = on;
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(MUSIC_KEY, on ? "on" : "off");
-    }
-    if (on) this.startMusic();
-    else this.stopMusic();
-    this.emit();
   }
 
   setSfx(on: boolean) {
@@ -245,16 +70,6 @@ class SoundEngine {
     }
     this.emit();
     if (on) this.play("toggle");
-  }
-
-  /** True once the ambience is actually playing. */
-  get isPlaying() {
-    return this.running && !!this.trackEl && !this.trackEl.paused;
-  }
-
-  /** Called on user gestures so autoplay policies are respected. */
-  resumeIfEnabled() {
-    if (this.musicEnabled && !this.isPlaying) this.startMusic();
   }
 
   // --------------------------------------------------------------------- sfx
