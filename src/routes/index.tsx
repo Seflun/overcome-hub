@@ -73,7 +73,7 @@ function TopNav() {
         </Link>
 
         <nav className="flex shrink-0 items-center gap-2">
-          <SoundControls className="mr-1 hidden sm:flex" />
+          <SoundControls className="mr-1" compact />
           <Link
             to="/auth"
             className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
@@ -91,6 +91,7 @@ function TopNav() {
     </header>
   );
 }
+
 
 
 function Hero() {
