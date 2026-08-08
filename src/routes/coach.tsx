@@ -14,7 +14,11 @@ export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
       { title: "Coach — Addiblock" },
-      { name: "description", content: "Talk to an AI companion trained to help you ride out cravings and rebuild habits. Not a therapist." },
+      {
+        name: "description",
+        content:
+          "Talk to an AI companion trained to help you ride out cravings and rebuild habits. Not a therapist.",
+      },
       { property: "og:title", content: "Coach — Addiblock" },
       { property: "og:description", content: "An AI companion for the tough moments in recovery." },
     ],
@@ -28,7 +32,6 @@ const STARTERS = [
   "Analyze my relapse patterns.",
   "Build me a daily routine that protects my streak.",
 ];
-
 
 function Coach() {
   const { state, useCoachCredit } = useStore();
@@ -64,17 +67,20 @@ function Coach() {
 
     try {
       const triggerCounts = new Map<string, number>();
-      for (const c of state.cravings) triggerCounts.set(c.trigger, (triggerCounts.get(c.trigger) ?? 0) + 1);
-      for (const r of state.relapses) triggerCounts.set(r.trigger, (triggerCounts.get(r.trigger) ?? 0) + 1);
+      for (const c of state.cravings)
+        triggerCounts.set(c.trigger, (triggerCounts.get(c.trigger) ?? 0) + 1);
+      for (const r of state.relapses)
+        triggerCounts.set(r.trigger, (triggerCounts.get(r.trigger) ?? 0) + 1);
       const topTriggers = [...triggerCounts.entries()]
         .sort((a, b) => b[1] - a[1])
         .slice(0, 4)
         .map(([t, n]) => `${t} (${n})`)
         .join(", ");
       const recentCheckin = state.checkins[0];
-      const base = active && meta
-        ? `The user is working on quitting ${meta.name.toLowerCase()}. They are ${days} day(s) in.`
-        : "The user has not picked an addiction yet.";
+      const base =
+        active && meta
+          ? `The user is working on quitting ${meta.name.toLowerCase()}. They are ${days} day(s) in.`
+          : "The user has not picked an addiction yet.";
       const ctx = [
         base,
         `They have logged ${state.relapses.length} relapse(s) and ${state.cravings.length} resisted craving(s).`,
@@ -107,7 +113,9 @@ function Coach() {
         <div className="mb-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Coach</div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Coach
+              </div>
               <h1 className="mt-1 text-3xl font-black tracking-tight">
                 Talk it <span className="text-aurora">out</span>
               </h1>
@@ -155,7 +163,10 @@ function Coach() {
           )}
 
           {messages.map((m, i) => (
-            <div key={i} className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              key={i}
+              className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
+            >
               {m.role === "assistant" && (
                 <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
                   <Bot className="h-3.5 w-3.5" />
@@ -221,12 +232,17 @@ function Coach() {
             </button>
           </form>
         )}
-        {!state.isPremium && !outOfCredits && creditsLeft !== Infinity && state.coachCredits <= 5 && (
-          <div className="mt-2 text-center text-[11px] text-muted-foreground">
-            {state.coachCredits} free Coach credits left ·{" "}
-            <a href="/plus" className="text-primary underline">Go unlimited</a>
-          </div>
-        )}
+        {!state.isPremium &&
+          !outOfCredits &&
+          creditsLeft !== Infinity &&
+          state.coachCredits <= 5 && (
+            <div className="mt-2 text-center text-[11px] text-muted-foreground">
+              {state.coachCredits} free Coach credits left ·{" "}
+              <a href="/plus" className="text-primary underline">
+                Go unlimited
+              </a>
+            </div>
+          )}
       </div>
     </AppShell>
   );

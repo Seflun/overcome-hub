@@ -57,7 +57,15 @@ const moreNav: NavItem[] = nav.filter(
   (n) => !mobileNav.find((m) => m.to === n.to) && n.to !== "/settings",
 );
 
-function NavLink({ item, active, onClick }: { item: NavItem; active: boolean; onClick?: () => void }) {
+function NavLink({
+  item,
+  active,
+  onClick,
+}: {
+  item: NavItem;
+  active: boolean;
+  onClick?: () => void;
+}) {
   const Icon = item.icon;
   const isSos = item.to === "/sos";
   const isCoach = item.to === "/coach";
@@ -107,9 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (!authChecked || !userId) {
     return (
       <div className="grid min-h-dvh place-items-center bg-background">
-        <div className="text-xs uppercase tracking-widest text-muted-foreground">
-          Loading…
-        </div>
+        <div className="text-xs uppercase tracking-widest text-muted-foreground">Loading…</div>
       </div>
     );
   }
@@ -141,9 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="flex-1 space-y-1 px-3">
           {nav.map((item) => {
             const active =
-              item.to === "/today"
-                ? pathname === "/today"
-                : pathname.startsWith(item.to);
+              item.to === "/today" ? pathname === "/today" : pathname.startsWith(item.to);
             return <NavLink key={item.to} item={item} active={active} />;
           })}
         </nav>
@@ -168,7 +172,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile top bar: keeps sound + settings off the main content surface */}
         <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border/40 bg-background/70 px-4 py-2 backdrop-blur-xl lg:hidden">
           <Link to="/today" className="flex min-w-0 items-center gap-2">
-            <img src={logo} alt="Addiblock logo" className="h-7 w-7 shrink-0 rounded-xl object-contain" />
+            <img
+              src={logo}
+              alt="Addiblock logo"
+              className="h-7 w-7 shrink-0 rounded-xl object-contain"
+            />
             <div className="min-w-0">
               <div className="flex min-w-0 items-center gap-1.5">
                 <span className="truncate font-black tracking-tight">Addiblock</span>
@@ -209,9 +217,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
 
         <main className="flex-1 pb-28 lg:pb-12">
-          <div className="mx-auto w-full max-w-md lg:max-w-3xl xl:max-w-4xl">
-            {children}
-          </div>
+          <div className="mx-auto w-full max-w-md lg:max-w-3xl xl:max-w-4xl">{children}</div>
         </main>
 
         {/* Mobile bottom nav */}
@@ -219,9 +225,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-around rounded-full border border-border/60 bg-card/80 px-1.5 py-2 shadow-soft backdrop-blur-xl">
             {mobileNav.map((item) => {
               const active =
-                item.to === "/today"
-                  ? pathname === "/today"
-                  : pathname.startsWith(item.to);
+                item.to === "/today" ? pathname === "/today" : pathname.startsWith(item.to);
               const Icon = item.icon;
               const isSos = item.to === "/sos";
               const isCoach = item.to === "/coach";
@@ -262,10 +266,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <div className="grid grid-cols-2 gap-1.5">
                   {moreNav.map((item) => {
                     const active =
-                      item.to === "/today"
-                        ? pathname === "/today"
-                        : pathname.startsWith(item.to);
-                    return <NavLink key={item.to} item={item} active={active} onClick={() => setMoreOpen(false)} />;
+                      item.to === "/today" ? pathname === "/today" : pathname.startsWith(item.to);
+                    return (
+                      <NavLink
+                        key={item.to}
+                        item={item}
+                        active={active}
+                        onClick={() => setMoreOpen(false)}
+                      />
+                    );
                   })}
                 </div>
                 <div className="mt-2 border-t border-border/40 pt-2">
@@ -283,4 +292,3 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

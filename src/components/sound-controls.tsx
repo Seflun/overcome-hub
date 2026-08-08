@@ -60,7 +60,11 @@ interface SoundControlsProps {
 }
 
 /** Small floating pill to toggle the ambient music and the UI sounds. */
-export function SoundControls({ className = "", hideMusic = false, compact = false }: SoundControlsProps) {
+export function SoundControls({
+  className = "",
+  hideMusic = false,
+  compact = false,
+}: SoundControlsProps) {
   const [, force] = useState(0);
   const [hydrated, setHydrated] = useState(false);
 
@@ -91,7 +95,6 @@ export function SoundControls({ className = "", hideMusic = false, compact = fal
       </div>
     );
   }
-
 
   return (
     <div
@@ -144,4 +147,3 @@ export function SoundControls({ className = "", hideMusic = false, compact = fal
     </div>
   );
 }
-
